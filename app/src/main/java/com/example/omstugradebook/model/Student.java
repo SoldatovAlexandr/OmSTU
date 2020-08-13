@@ -5,13 +5,13 @@ import java.util.Objects;
 public class Student {
     private String fullName;
     private String numberGradeBook;
-    private String Speciality;
+    private String speciality;
     private String educationForm;
 
     public Student(String fullName, String numberGradeBook, String speciality, String educationForm) {
         this.fullName = fullName;
         this.numberGradeBook = numberGradeBook;
-        Speciality = speciality;
+        this.speciality = speciality;
         this.educationForm = educationForm;
     }
 
@@ -32,11 +32,11 @@ public class Student {
     }
 
     public String getSpeciality() {
-        return Speciality;
+        return speciality;
     }
 
     public void setSpeciality(String speciality) {
-        Speciality = speciality;
+        this.speciality = speciality;
     }
 
     public String getEducationForm() {
@@ -52,7 +52,7 @@ public class Student {
         return "Student{" +
                 "fullName='" + fullName + '\'' +
                 ", numberGradeBook='" + numberGradeBook + '\'' +
-                ", Speciality='" + Speciality + '\'' +
+                ", Speciality='" + speciality + '\'' +
                 ", educationForm='" + educationForm + '\'' +
                 '}';
     }
@@ -64,12 +64,12 @@ public class Student {
         Student user = (Student) o;
         return Objects.equals(fullName, user.fullName) &&
                 Objects.equals(numberGradeBook, user.numberGradeBook) &&
-                Objects.equals(Speciality, user.Speciality) &&
+                Objects.equals(speciality, user.speciality) &&
                 Objects.equals(educationForm, user.educationForm);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fullName, numberGradeBook, Speciality, educationForm);
+        return Objects.hash(fullName, numberGradeBook, speciality, educationForm);
     }
 }

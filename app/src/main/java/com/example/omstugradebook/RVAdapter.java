@@ -62,13 +62,13 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.GradeViewHolder> {
         View view;
         switch (viewType) {
             case 0:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_view, parent, false);
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.subject_card_view, parent, false);
                 return new SubjectViewHolder(view);
             case 1:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.title_view, parent, false);
                 return new TitleViewHolder(view);
         }
-        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_view, parent, false);
+        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.subject_card_view, parent, false);
         return new GradeViewHolder(view);
     }
 

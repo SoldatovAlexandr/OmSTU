@@ -30,6 +30,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 + "id integer primary key autoincrement,"
                 + "login text,"
                 + "token text,"
+                + "fullName text,"
+                + "numberGradeBook text,"
+                + "speciality text,"
+                + "educationForm text,"
+                + "isActive integer,"
                 + "password text" + ");");
     }
 

@@ -19,9 +19,11 @@ import com.example.omstugradebook.ConnectionDetector;
 import com.example.omstugradebook.R;
 import com.example.omstugradebook.RVAdapter;
 import com.example.omstugradebook.database.SubjectTable;
+import com.example.omstugradebook.database.UserTable;
 import com.example.omstugradebook.model.GradeBook;
 import com.example.omstugradebook.model.Subject;
 import com.example.omstugradebook.model.Term;
+import com.example.omstugradebook.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,11 +91,16 @@ public class GradeFragment extends Fragment {
 
     class OmSTUSender extends AsyncTask<String, String, String> {
         private GradeBook gradeBook = null;
+        UserTable userTable = new UserTable(getContext());
+
 
         @Override
         protected String doInBackground(String... strings) {
             Log.d(TAG, "Вызван метод doInBackground");
             Auth auth = new Auth();
+            if (userTable.getActiveUser() == null) {
+                return null;
+            }
             gradeBook = auth.getGradeBook(getContext());
             return null;
         }
@@ -114,6 +121,10 @@ public class GradeFragment extends Fragment {
                 }
                 Log.d(TAG, "из запроса получены все элементы");
                 SubjectTable subjectTable = new SubjectTable(getContext());
+                User user = userTable.getActiveUser();
+                user.setStudent(gradeBook.getStudent());
+                userTable.update(user);
+
                 if (!subjectTable.equalsSubjects(subjects)) {
                     subjectTable.readSubjectsByTerm(activeTerm);
                     subjectTable.removeAllSubjects();

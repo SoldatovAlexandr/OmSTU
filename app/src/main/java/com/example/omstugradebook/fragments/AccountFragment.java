@@ -1,5 +1,6 @@
 package com.example.omstugradebook.fragments;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,8 +13,10 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.example.omstugradebook.Auth;
+import com.example.omstugradebook.activity.LoginActivity;
 import com.example.omstugradebook.R;
 import com.example.omstugradebook.database.UserTable;
+import com.example.omstugradebook.model.Student;
 import com.example.omstugradebook.model.User;
 
 public class AccountFragment extends Fragment implements View.OnClickListener {
@@ -21,7 +24,10 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
     private UserTable userTable;
     private User activeUser;
     private static final String TAG = "User Fragment Logs";
-    TextView textView;
+    private TextView fullName;
+    private TextView numberGradeBook;
+    private TextView speciality;
+    private TextView educationForm;
     Button button;
 
     public AccountFragment() {
@@ -35,19 +41,25 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        userTable = new UserTable(getContext());
-        activeUser = userTable.getActiveUser();
-        if (activeUser == null) {
-            User user = new User("Aleksandr_Soldatov", "cjcbcjxrf123", "");
-            userTable.insert(user);
-            activeUser = user;
-        }
         Log.d(TAG, activeUser + " is active user");
         View view = inflater.inflate(R.layout.fragment_account, container, false);
-        textView = view.findViewById(R.id.cookie);
-        button = view.findViewById(R.id.button_ok);
-        button.setOnClickListener(this);
-        button.setText("Get token");
+        userTable = new UserTable(getContext());
+        activeUser = userTable.getActiveUser();
+
+//            User user = new User("Aleksandr_Soldatov", "cjcbcjxrf123", "");
+//            user.setStudent(new Student("-", "-", "-", "-"));
+//            user.setIsActive(1);
+//            userTable.insert(user);
+//            activeUser = user;
+        fullName = view.findViewById(R.id.fullName);
+        speciality = view.findViewById(R.id.speciality);
+        numberGradeBook = view.findViewById(R.id.numberGradeBook);
+        educationForm = view.findViewById(R.id.educationForm);
+        Student student = activeUser.getStudent();
+        fullName.setText(student.getFullName());
+        speciality.setText(student.getSpeciality());
+        numberGradeBook.setText(student.getNumberGradeBook());
+        educationForm.setText(student.getEducationForm());
         return view;
     }
 
@@ -84,7 +96,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             Log.d(TAG, "onPostExecute");
-            textView.setText("Вы вошли на сайт!");
         }
     }
+
 }

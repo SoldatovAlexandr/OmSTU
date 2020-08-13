@@ -17,11 +17,11 @@ public class GradeBook {
         this.student = student;
     }
 
-    public Student getUser() {
+    public Student getStudent() {
         return student;
     }
 
-    public void setUser(Student student) {
+    public void setStudent(Student student) {
         this.student = student;
     }
 
