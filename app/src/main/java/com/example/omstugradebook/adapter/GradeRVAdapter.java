@@ -1,4 +1,4 @@
-package com.example.omstugradebook;
+package com.example.omstugradebook.adapter;
 
 import android.content.res.Resources;
 import android.view.LayoutInflater;
@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.omstugradebook.R;
 import com.example.omstugradebook.model.Subject;
 
 import java.util.HashMap;

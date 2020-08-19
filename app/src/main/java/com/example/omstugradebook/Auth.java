@@ -28,7 +28,6 @@ import javax.net.ssl.HttpsURLConnection;
 public class Auth {
     private final static String URL_AUTH = "https://omgtu.ru/ecab/index.php?login=yes";
     private final static String URL_STUDENT_1 = "https://omgtu.ru/ecab/up.php?student=1";
-    private UserTable userTable;
     static final String URL = "https://up.omgtu.ru/index.php?r=student/index";
     static final String STUD_SES_ID = "STUDSESSID";
     private static final String TAG = "Auth Logs";
@@ -43,13 +42,11 @@ public class Auth {
         redirectConnection.setInstanceFollowRedirects(false);
         redirectConnection.connect();
         List<String> studSesId = redirectConnection.getHeaderFields().get("Set-Cookie");
-        System.out.println(studSesId);
         String studSes = studSesId.get(1);
         return studSes.split(";")[0];
     }
 
     public String getStudSessId(String cookie) {
-        System.out.println(cookie);
         try {
             URL url = new URL(URL_STUDENT_1);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -59,7 +56,6 @@ public class Auth {
             connection.connect();
             String redirectURL = connection.getHeaderField("Location");
             String id = getStudSessionString(redirectURL);
-            System.out.println(id);
             return id.substring("STUDSESSID=".length());
         } catch (IOException e) {
             e.printStackTrace();
@@ -119,7 +115,7 @@ public class Auth {
 
     public GradeBook getGradeBook(Context context) {
         Document doc = null;
-        userTable = new UserTable(context);
+        UserTable userTable = new UserTable(context);
         try {
             User activeUser = userTable.getActiveUser();
             String token = activeUser.getToken();

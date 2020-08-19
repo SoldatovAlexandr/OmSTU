@@ -1,23 +1,19 @@
 package com.example.omstugradebook.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.omstugradebook.Auth;
 import com.example.omstugradebook.R;
 import com.example.omstugradebook.database.UserTable;
 import com.example.omstugradebook.model.User;
-
-import java.util.List;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     private Button buttonOk;

@@ -83,7 +83,6 @@ public class UserTable {
     }
 
     public User getActiveUser() {
-        System.out.println(readAllUsers());
         for (User user : readAllUsers()) {
             if (user.getIsActive() == 1) {
                 return user;
@@ -173,7 +172,10 @@ public class UserTable {
                 changeActiveUser(users.get(0));
             }
         }
-        return database.delete("users", "id =" + user.getId(), null) > 0;
+        database = dbHelper.getWritableDatabase();
+        int result = database.delete("users", "id =" + user.getId(), null);
+        database.close();
+        return result > 0;
     }
 
 }

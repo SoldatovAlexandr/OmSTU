@@ -1,4 +1,4 @@
-package com.example.omstugradebook;
+package com.example.omstugradebook.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.omstugradebook.R;
 import com.example.omstugradebook.database.UserTable;
 import com.example.omstugradebook.model.Student;
 import com.example.omstugradebook.model.User;
@@ -85,7 +86,6 @@ public class UserRVAdapter extends RecyclerView.Adapter<UserRVAdapter.UserViewHo
         @Override
         public void onClick(View v) {
             for (Button button : buttons) {
-                System.out.println(v.getId() + "   " + button.getId());
                 if (v.getId() == button.getId()) {
                     User user = userTable.getUserByLogin(login.getText().toString());
                     if (userTable.removeUser(user)) {

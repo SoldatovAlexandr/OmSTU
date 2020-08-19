@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.omstugradebook.Auth;
-import com.example.omstugradebook.GradeRVAdapter;
+import com.example.omstugradebook.adapter.GradeRVAdapter;
 import com.example.omstugradebook.R;
 import com.example.omstugradebook.database.SubjectTable;
 import com.example.omstugradebook.database.UserTable;
