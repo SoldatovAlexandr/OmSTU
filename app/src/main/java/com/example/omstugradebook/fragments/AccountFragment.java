@@ -24,13 +24,17 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "User Fragment Logs";
     private UserRVAdapter adapter;
     private RecyclerView recyclerView;
+    private static AccountFragment instance;
 
-    public AccountFragment() {
+    private AccountFragment() {
 
     }
 
-    public static AccountFragment newInstance() {
-        return new AccountFragment();
+    public static AccountFragment getInstance() {
+        if (instance == null) {
+            instance = new AccountFragment();
+        }
+        return instance;
     }
 
     @Override
@@ -81,7 +85,15 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             Log.d(TAG, "onPostExecute");
+            adapter.setUsers(userTable.readAllUsers());
+            adapter.notifyDataSetChanged();
         }
     }
 
+
+    public void update() {
+        userTable = new UserTable(getContext());
+        adapter.setUsers(userTable.readAllUsers());
+        adapter.notifyDataSetChanged();
+    }
 }

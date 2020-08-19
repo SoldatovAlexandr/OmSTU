@@ -19,7 +19,6 @@ import java.util.Map;
 
 public class GradeRVAdapter extends RecyclerView.Adapter<GradeRVAdapter.GradeViewHolder> {
 
-    private List<Subject> subjects;
     private static int size = 0;
     private Map<Integer, Integer> typeByPosition = new HashMap<>();
     private Map<Integer, Integer> subjectPositionByAbsolutePosition = new HashMap<>();
@@ -31,7 +30,6 @@ public class GradeRVAdapter extends RecyclerView.Adapter<GradeRVAdapter.GradeVie
 
 
     public void setSubjects(List<Subject> subjects) {
-        this.subjects = subjects;
         size = 0;
         int currentType = -1;
         typeByPosition.clear();

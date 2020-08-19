@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -56,10 +55,10 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
                     loadFragment(GradeFragment.newInstance());
                     return true;
                 case R.id.bottom_navigation_item_timetable:
-                    loadFragment(TimetableFragment.newInstance());
+                    loadFragment(TimetableFragment.getInstance());
                     return true;
                 case R.id.bottom_navigation_item_profile:
-                    loadFragment(AccountFragment.newInstance());
+                    loadFragment(AccountFragment.getInstance());
                     return true;
             }
             return false;
@@ -154,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         String login = data.getStringExtra("login");
         userButtons.remove(login);
         activeUser = userTable.getActiveUser();
+        AccountFragment.getInstance().update();
     }
 
     class OmSTUSender extends AsyncTask<String, String, String> {

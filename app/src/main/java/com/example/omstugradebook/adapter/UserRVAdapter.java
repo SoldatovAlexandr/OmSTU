@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.omstugradebook.R;
 import com.example.omstugradebook.database.UserTable;
+import com.example.omstugradebook.fragments.AccountFragment;
 import com.example.omstugradebook.model.Student;
 import com.example.omstugradebook.model.User;
 
@@ -30,6 +31,10 @@ public class UserRVAdapter extends RecyclerView.Adapter<UserRVAdapter.UserViewHo
     public UserRVAdapter(List<User> users, Context context) {
         this.users = users;
         userTable = new UserTable(context);
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
     }
 
     @NonNull
@@ -90,7 +95,7 @@ public class UserRVAdapter extends RecyclerView.Adapter<UserRVAdapter.UserViewHo
                     User user = userTable.getUserByLogin(login.getText().toString());
                     if (userTable.removeUser(user)) {
                         Log.d(TAG, USER_REMOVED);
-                        notifyDataSetChanged();
+                        AccountFragment.getInstance().update();
                     }
                 }
             }

@@ -10,10 +10,19 @@ import androidx.fragment.app.Fragment;
 import com.example.omstugradebook.R;
 
 public class TimetableFragment extends Fragment {
+    private static TimetableFragment instance;
 
-    public static TimetableFragment newInstance() {
-        return new TimetableFragment();
+    private TimetableFragment() {
+
     }
+
+    public static TimetableFragment getInstance() {
+        if (instance == null) {
+            instance = new TimetableFragment();
+        }
+        return instance;
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

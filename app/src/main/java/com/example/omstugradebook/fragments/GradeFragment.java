@@ -36,15 +36,19 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     private static int activeTerm = 1;
     private static final String TAG = "Grade Fragment Logs";
     private static int countTerms = 0;
+    private static GradeFragment instance;
 
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    public GradeFragment() {
+    private GradeFragment() {
 
     }
 
     public static GradeFragment newInstance() {
-        return new GradeFragment();
+        if (instance == null) {
+            instance = new GradeFragment();
+        }
+        return instance;
     }
 
     @Override
