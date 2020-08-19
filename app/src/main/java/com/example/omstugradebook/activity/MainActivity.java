@@ -86,6 +86,8 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         buttonProfile = findViewById(R.id.bottom_navigation_item_profile);
         buttonProfile.setOnLongClickListener(this);
         loadFragment(GradeFragment.newInstance());
+
+
         llBottomSheet = findViewById(R.id.bottom_sheet);
         bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
@@ -98,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
             Intent intent = new Intent(this, LoginActivity.class);
             startActivityForResult(intent, 1);
         }
+
     }
 
     @Override
@@ -106,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         userButtons.clear();
         for (User user : userTable.readAllUsers()) {
             Button userButton = new Button(this);
-            userButtons.put(userButton.getText().toString(), userButton);
+            userButtons.put(user.getLogin(), userButton);
             userButton.setText(user.getLogin());
             if (user.getIsActive() == 1) {
                 userButton.setTextColor(Color.BLUE);
@@ -130,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         if (v.getId() == R.id.add_new_user_button) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivityForResult(intent, 1);
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         }
         for (Button button : userButtons.values()) {
             if (button.getId() == v.getId()) {
@@ -137,11 +141,11 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
                 if (!userTable.getActiveUser().getLogin().equals(login)) {
                     userTable.changeActiveUser(userTable.getUserByLogin(login));
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                    AccountFragment.getInstance().update();
                     return;
                 }
             }
         }
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
     }
 
     @Override

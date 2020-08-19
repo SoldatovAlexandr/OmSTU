@@ -1,7 +1,6 @@
 package com.example.omstugradebook.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,7 +48,9 @@ public class UserRVAdapter extends RecyclerView.Adapter<UserRVAdapter.UserViewHo
         User user = users.get(position);
         Student student = user.getStudent();
         if (user.getIsActive() == 1) {
-            holder.cardView.setCardBackgroundColor(Color.BLUE);
+            holder.isActive.setText("Активный");
+        } else {
+            holder.isActive.setText("");
         }
         holder.fullName.setText(student.getFullName());
         holder.speciality.setText(student.getSpeciality());
@@ -67,6 +68,7 @@ public class UserRVAdapter extends RecyclerView.Adapter<UserRVAdapter.UserViewHo
     public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private CardView cardView;
+        private TextView isActive;
         private TextView fullName;
         private TextView numberGradeBook;
         private TextView speciality;
@@ -77,6 +79,7 @@ public class UserRVAdapter extends RecyclerView.Adapter<UserRVAdapter.UserViewHo
 
         public UserViewHolder(@NonNull View itemView) {
             super(itemView);
+            isActive = itemView.findViewById(R.id.is_active_user_card_view);
             cardView = itemView.findViewById(R.id.user_card_view);
             fullName = itemView.findViewById(R.id.fullName);
             numberGradeBook = itemView.findViewById(R.id.numberGradeBook);
@@ -86,6 +89,8 @@ public class UserRVAdapter extends RecyclerView.Adapter<UserRVAdapter.UserViewHo
             button = itemView.findViewById(R.id.delete_user_button);
             button.setOnClickListener(this);
             buttons.add(button);
+            //установить слушателя на пользователя, так же сделать удаление элемента из view про свайпе в лево
+            // cardView.setOnClickListener();
         }
 
         @Override

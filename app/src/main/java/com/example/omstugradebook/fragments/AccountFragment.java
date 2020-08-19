@@ -17,8 +17,7 @@ import com.example.omstugradebook.adapter.UserRVAdapter;
 import com.example.omstugradebook.database.UserTable;
 import com.example.omstugradebook.model.User;
 
-public class AccountFragment extends Fragment implements View.OnClickListener {
-    OmSTUSender omSTUSender = new OmSTUSender();
+public class AccountFragment extends Fragment {
     private UserTable userTable;
     private User activeUser;
     private static final String TAG = "User Fragment Logs";
@@ -51,30 +50,23 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
-    public void onClick(View v) {
-        if (userTable.getActiveUser() == null) {
-            return;
-        }
-        try {
-            omSTUSender.execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+    public void update() {
+        userTable = new UserTable(getContext());
+        adapter.setUsers(userTable.readAllUsers());
+        adapter.notifyDataSetChanged();
     }
 
     class OmSTUSender extends AsyncTask<String, String, String> {
-        private String cookie = "";
-        private String studSesId = "";
-
         @Override
         protected String doInBackground(String... strings) {
             Log.d(TAG, "сделан запрос в doInBackground");
             Auth auth = new Auth();
-            cookie = auth.getAuth(activeUser.getLogin(), activeUser.getPassword());
+            String cookie = auth.getAuth(activeUser.getLogin(), activeUser.getPassword());
             if (cookie.equals("error")) {
                 return null;
             }
-            studSesId = auth.getStudSessId(cookie);
+            String studSesId = auth.getStudSessId(cookie);
             activeUser.setToken(studSesId);
             userTable.update(activeUser);
             Log.d(TAG, "studSessId equals " + studSesId);
@@ -88,12 +80,5 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
             adapter.setUsers(userTable.readAllUsers());
             adapter.notifyDataSetChanged();
         }
-    }
-
-
-    public void update() {
-        userTable = new UserTable(getContext());
-        adapter.setUsers(userTable.readAllUsers());
-        adapter.notifyDataSetChanged();
     }
 }
