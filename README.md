@@ -1,6 +1,6 @@
 # OmSTU gradebook
 
-OmSTU is an android app. It can get your marks if you are OmSTU student. Also the app will hava timetable. 
+OmSTU is an android app. It can get your marks if you are OmSTU student. Also the app will have a timetable. 
 
 ## Contributing
 Pull requests are welcome. If you want to help, just join [me](https://vk.com/s1dtv)! If you are ios or web developer, you also can develop this app on either platform.
