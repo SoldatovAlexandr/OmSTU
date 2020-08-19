@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RVAdapter extends RecyclerView.Adapter<RVAdapter.GradeViewHolder> {
+public class GradeRVAdapter extends RecyclerView.Adapter<GradeRVAdapter.GradeViewHolder> {
 
     private List<Subject> subjects;
     private static int size = 0;
@@ -24,7 +24,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.GradeViewHolder> {
     private Map<Integer, Integer> subjectPositionByAbsolutePosition = new HashMap<>();
     private Map<Integer, Integer> titleByPosition = new HashMap<>();
 
-    public RVAdapter(List<Subject> subjects) {
+    public GradeRVAdapter(List<Subject> subjects) {
         setSubjects(subjects);
     }
 
@@ -108,10 +108,10 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.GradeViewHolder> {
                 case 1:
                     text = "Зачёты";
                     break;
-                case 2:
+                case 3:
                     text = "Практики";
                     break;
-                case 3:
+                case 2:
                     text = "Курсовые работы";
                     break;
                 case 4:
@@ -147,46 +147,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.GradeViewHolder> {
             subjectDate = itemView.findViewById(R.id.subject_date);
         }
 
-        public TextView getSubjectDate() {
-            return subjectDate;
-        }
-
-        public void setSubjectDate(TextView subjectDate) {
-            this.subjectDate = subjectDate;
-        }
-
-        public CardView getCardView() {
-            return cardView;
-        }
-
-        public void setCardView(CardView cardView) {
-            this.cardView = cardView;
-        }
-
-        public TextView getSubjectName() {
-            return subjectName;
-        }
-
-        public void setSubjectName(TextView subjectName) {
-            this.subjectName = subjectName;
-        }
-
-        public TextView getSubjectGrade() {
-            return subjectGrade;
-        }
-
-        public void setSubjectGrade(TextView subjectGrade) {
-            this.subjectGrade = subjectGrade;
-        }
-
-        public TextView getSubjectTeacher() {
-            return subjectTeacher;
-        }
-
-        public void setSubjectTeacher(TextView subjectTeacher) {
-            this.subjectTeacher = subjectTeacher;
-        }
-
         @Override
         public void draw(int i) {
             Subject subject = subjects.get(i);
@@ -196,7 +156,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.GradeViewHolder> {
                 subjectTeacher.setText(subject.getTeacher());
                 subjectDate.setText(subject.getDate());
                 int color;
-                Resources resources = getCardView().getContext().getResources();
+                Resources resources = cardView.getContext().getResources();
                 switch (subject.getMark()) {
                     case "Зачтено":
                     case "Отлично":
@@ -212,7 +172,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.GradeViewHolder> {
                         color = resources.getColor(R.color.colorWhite);
                         break;
                 }
-                getCardView().setCardBackgroundColor(color);
+                cardView.setCardBackgroundColor(color);
             }
         }
     }

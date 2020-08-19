@@ -44,6 +44,7 @@ public class SubjectTable {
             int toDiplomaColIndex = cursor.getColumnIndex("toDiploma");
             int termColIndex = cursor.getColumnIndex("term");
             int typeColIndex = cursor.getColumnIndex("type");
+            int userIdColIndex = cursor.getColumnIndex("userId");
             do {
                 String name = cursor.getString(nameColIndex);
                 String hours = cursor.getString(hoursColIndex);

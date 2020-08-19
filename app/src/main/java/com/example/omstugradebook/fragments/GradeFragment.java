@@ -9,32 +9,35 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.omstugradebook.Auth;
-import com.example.omstugradebook.ConnectionDetector;
+import com.example.omstugradebook.GradeRVAdapter;
 import com.example.omstugradebook.R;
-import com.example.omstugradebook.RVAdapter;
 import com.example.omstugradebook.database.SubjectTable;
 import com.example.omstugradebook.database.UserTable;
 import com.example.omstugradebook.model.GradeBook;
 import com.example.omstugradebook.model.Subject;
 import com.example.omstugradebook.model.Term;
-import com.example.omstugradebook.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GradeFragment extends Fragment {
+public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private RecyclerView recyclerView;
-    private RVAdapter adapter = new RVAdapter(new ArrayList<Subject>());
+    private GradeRVAdapter adapter = new GradeRVAdapter(new ArrayList<Subject>());
     private SubjectTable subjectTable;
+    private UserTable userTable;
     private static int activeTerm = 1;
     private static final String TAG = "Grade Fragment Logs";
     private static int countTerms = 0;
+
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public GradeFragment() {
 
@@ -70,18 +73,16 @@ public class GradeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         subjectTable = new SubjectTable(getContext());
+        userTable = new UserTable(getContext());
         countTerms = subjectTable.getCountTerm();
         setHasOptionsMenu(true);
         List<Subject> subjectList = subjectTable.readSubjectsByTerm(activeTerm);
         adapter.setSubjects(subjectList);
-        ConnectionDetector connectionDetector = new ConnectionDetector(getContext());
-        if (connectionDetector.ConnectingToInternet()) {
-            Log.d(TAG, "есть соединение с интернетом");
-            OmSTUSender omSTUSender = new OmSTUSender();
-            omSTUSender.execute();
-        }
         View view = inflater.inflate(R.layout.fragment_grade, container, false);
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(this);
         recyclerView = view.findViewById(R.id.rv);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -89,57 +90,47 @@ public class GradeFragment extends Fragment {
         return view;
     }
 
-    class OmSTUSender extends AsyncTask<String, String, String> {
-        private GradeBook gradeBook = null;
-        UserTable userTable = new UserTable(getContext());
+    @Override
+    public void onRefresh() {
+        userTable = new UserTable(getContext());
+        if (userTable.getActiveUser() != null) {
+            OmSTUSender omSTUSender = new OmSTUSender();
+            omSTUSender.execute();
+        } else {
+            swipeRefreshLayout.setRefreshing(false);
+            adapter.notifyDataSetChanged();
+        }
+    }
 
+    class OmSTUSender extends AsyncTask<String, String, String> {
+        GradeBook gradeBook;
 
         @Override
         protected String doInBackground(String... strings) {
-            Log.d(TAG, "Вызван метод doInBackground");
             Auth auth = new Auth();
-            if (userTable.getActiveUser() == null) {
+            gradeBook = auth.getGradeBook(getContext());
+            if (gradeBook == null) {
+                Toast.makeText(getContext(), "Проблемы с подключением к серверу", Toast.LENGTH_SHORT).show();
                 return null;
             }
-            gradeBook = auth.getGradeBook(getContext());
+            List<Subject> subjects = new ArrayList<>();
+            for (Term term : gradeBook.getTerms()) {
+                subjects.addAll(term.getSubjects());
+            }
+            if (!subjects.equals(subjectTable.readAllSubjects())) {
+                subjectTable.removeAllSubjects();
+                subjectTable.insertAllSubjects(subjects);
+            }
             return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(String... values) {
-            super.onProgressUpdate(values);
         }
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            Log.d(TAG, "Вызван метод onPostExecute");
-            if (gradeBook != null) {
-                List<Subject> subjects = new ArrayList<>();
-                for (Term term : gradeBook.getTerms()) {
-                    subjects.addAll(term.getSubjects());
-                }
-                Log.d(TAG, "из запроса получены все элементы");
-                SubjectTable subjectTable = new SubjectTable(getContext());
-                User user = userTable.getActiveUser();
-                user.setStudent(gradeBook.getStudent());
-                userTable.update(user);
-
-                if (!subjectTable.equalsSubjects(subjects)) {
-                    subjectTable.readSubjectsByTerm(activeTerm);
-                    subjectTable.removeAllSubjects();
-                    subjectTable.insertAllSubjects(subjects);
-                }
-                countTerms = subjectTable.getCountTerm();
-                List<Subject> subjectList = new ArrayList<>();
-                for (Subject subject : subjects) {
-                    if (subject.getTerm() == activeTerm) {
-                        subjectList.add(subject);
-                    }
-                }
-                adapter.setSubjects(subjectList);
-                adapter.notifyDataSetChanged();
-            }
+            adapter.setSubjects(subjectTable.readSubjectsByTerm(activeTerm));
+            swipeRefreshLayout.setRefreshing(false);
+            adapter.notifyDataSetChanged();
         }
     }
 }
+

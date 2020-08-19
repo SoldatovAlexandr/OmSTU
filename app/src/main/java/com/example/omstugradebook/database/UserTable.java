@@ -83,6 +83,7 @@ public class UserTable {
     }
 
     public User getActiveUser() {
+        System.out.println(readAllUsers());
         for (User user : readAllUsers()) {
             if (user.getIsActive() == 1) {
                 return user;
@@ -154,12 +155,25 @@ public class UserTable {
         return getUsers(cursor);
     }
 
-    public void changeActiveUser(User activeUser) {
+    public void changeActiveUser(User newUser) {
         User user = getActiveUser();
-        user.setIsActive(0);
-        update(user);
-        activeUser.setIsActive(1);
-        update(activeUser);
+        if (user != null) {
+            user.setIsActive(0);
+            update(user);
+        }
+        newUser.setIsActive(1);
+        update(newUser);
+
+    }
+
+    public boolean removeUser(User user) {
+        if (user.getIsActive() == 1) {
+            List<User> users = readAllUsers();
+            if (users != null) {
+                changeActiveUser(users.get(0));
+            }
+        }
+        return database.delete("users", "id =" + user.getId(), null) > 0;
     }
 
 }
