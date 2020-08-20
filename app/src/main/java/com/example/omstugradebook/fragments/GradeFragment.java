@@ -114,7 +114,6 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             Auth auth = new Auth();
             gradeBook = auth.getGradeBook(getContext());
             if (gradeBook == null) {
-                Toast.makeText(getContext(), "Проблемы с подключением к серверу", Toast.LENGTH_SHORT).show();
                 return null;
             }
             List<Subject> subjects = new ArrayList<>();
@@ -134,6 +133,9 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             adapter.setSubjects(subjectTable.readSubjectsByTerm(activeTerm));
             swipeRefreshLayout.setRefreshing(false);
             adapter.notifyDataSetChanged();
+            if (gradeBook == null) {
+                Toast.makeText(getContext(), "Проблемы с подключением к серверу", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

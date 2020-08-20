@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -121,7 +122,7 @@ public class Auth {
             String token = activeUser.getToken();
             doc = Jsoup.connect(URL).cookie(STUD_SES_ID, token).get();
             Log.d(TAG, "сделан запрос");
-            if (doc == null ||!doc.baseUri().equals(URL)) {
+            if (doc == null || !doc.baseUri().equals(URL)) {
                 Log.d(TAG, "токен не активный");
                 String cookie = getAuth(activeUser.getLogin(), activeUser.getPassword());
                 String studSesId = getStudSessId(cookie);
@@ -134,6 +135,9 @@ public class Auth {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        if (doc == null) {
+            return null;
         }
         return new Parser().getGradeBook(doc);
     }
