@@ -21,7 +21,6 @@ import com.example.omstugradebook.database.UserTable;
 import com.example.omstugradebook.fragments.AccountFragment;
 import com.example.omstugradebook.model.Student;
 import com.example.omstugradebook.model.User;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.util.ArrayList;
 import java.util.List;

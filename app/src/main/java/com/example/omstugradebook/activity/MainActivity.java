@@ -41,18 +41,19 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     private View buttonProfile;
     private Button buttonAddNewUser;
     private LinearLayout llAccounts;
-    UserTable userTable = new UserTable(this);
+    private UserTable userTable = new UserTable(this);
     private LinearLayout llBottomSheet;
     private BottomSheetBehavior bottomSheetBehavior;
     private Map<String, Button> userButtons;
     private User activeUser;
+    private BottomNavigationView navigation;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.bottom_navigation_item_grade:
-                    loadFragment(GradeFragment.newInstance());
+                    loadFragment(GradeFragment.getInstance());
                     return true;
                 case R.id.bottom_navigation_item_timetable:
                     loadFragment(TimetableFragment.getInstance());
@@ -81,13 +82,11 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
             omSTUSender.execute();
         }
         setContentView(R.layout.activity_main);
-        BottomNavigationView navigation = findViewById(R.id.bottom_navigation_view);
+        navigation = findViewById(R.id.bottom_navigation_view);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         buttonProfile = findViewById(R.id.bottom_navigation_item_profile);
         buttonProfile.setOnLongClickListener(this);
-        loadFragment(GradeFragment.newInstance());
-
-
+        loadFragment(GradeFragment.getInstance());
         llBottomSheet = findViewById(R.id.bottom_sheet);
         bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
@@ -141,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
                 if (!userTable.getActiveUser().getLogin().equals(login)) {
                     userTable.changeActiveUser(userTable.getUserByLogin(login));
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-                    AccountFragment.getInstance().update();
+                    updateCurrentFragment();
                     return;
                 }
             }
@@ -157,7 +156,20 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         String login = data.getStringExtra("login");
         userButtons.remove(login);
         activeUser = userTable.getActiveUser();
-        AccountFragment.getInstance().update();
+        updateCurrentFragment();
+    }
+
+    private void updateCurrentFragment() {
+        switch (navigation.getSelectedItemId()) {
+            case R.id.bottom_navigation_item_profile:
+                AccountFragment.getInstance().update();
+                break;
+            case R.id.bottom_navigation_item_grade:
+                GradeFragment.getInstance().update();
+                break;
+            case R.id.bottom_navigation_item_timetable:
+                break;
+        }
     }
 
     class OmSTUSender extends AsyncTask<String, String, String> {

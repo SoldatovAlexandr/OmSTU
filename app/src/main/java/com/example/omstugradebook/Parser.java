@@ -36,14 +36,10 @@ public class Parser {
         List<Term> terms = new ArrayList<>();
         int term = 1;
         for (Element element : elements) {
-            terms.add(getTerm(element, term));
+            terms.add(new Term(getPartTerm(element.select("div.col-xs-12"), term)));
             term++;
         }
         return terms;
-    }
-
-    private Term getTerm(Element element, int term) {
-        return new Term(getPartTerm(element.select("div.col-xs-12"), term));
     }
 
     private List<Subject> getPartTerm(Elements elements, int term) {

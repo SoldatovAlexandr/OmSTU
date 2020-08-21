@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -44,7 +45,7 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
     }
 
-    public static GradeFragment newInstance() {
+    public static GradeFragment getInstance() {
         if (instance == null) {
             instance = new GradeFragment();
         }
@@ -52,7 +53,7 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         for (int i = 1; i <= countTerms; i++) {
             menu.add("Семестр " + i);
         }
@@ -72,6 +73,10 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void update() {
+        onRefresh();
     }
 
     @Override
