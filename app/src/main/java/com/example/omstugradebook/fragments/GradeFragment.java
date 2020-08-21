@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.omstugradebook.Auth;
+import com.example.omstugradebook.activity.MainActivity;
 import com.example.omstugradebook.adapter.GradeRVAdapter;
 import com.example.omstugradebook.R;
 import com.example.omstugradebook.database.SubjectTable;
@@ -138,8 +139,10 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             adapter.setSubjects(subjectTable.readSubjectsByTerm(activeTerm));
             swipeRefreshLayout.setRefreshing(false);
             adapter.notifyDataSetChanged();
-            if (gradeBook == null) {
-                Toast.makeText(getContext(), "Проблемы с подключением к серверу", Toast.LENGTH_SHORT).show();
+            if (MainActivity.getNavigation().getSelectedItemId() == R.id.bottom_navigation_item_grade) {
+                if (gradeBook == null) {
+                    Toast.makeText(getContext(), "Проблемы с подключением к серверу", Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }

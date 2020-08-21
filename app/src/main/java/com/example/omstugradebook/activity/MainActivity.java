@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     private BottomSheetBehavior bottomSheetBehavior;
     private Map<String, Button> userButtons;
     private User activeUser;
-    private BottomNavigationView navigation;
+    private static BottomNavigationView navigation;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
@@ -102,6 +102,10 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
 
     }
 
+    public static BottomNavigationView getNavigation() {
+        return navigation;
+    }
+
     @Override
     public boolean onLongClick(View v) {
         llAccounts.removeAllViews();
@@ -134,16 +138,15 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
             startActivityForResult(intent, 1);
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         }
-        for (Button button : userButtons.values()) {
-            if (button.getId() == v.getId()) {
-                String login = button.getText().toString();
-                if (!userTable.getActiveUser().getLogin().equals(login)) {
-                    userTable.changeActiveUser(userTable.getUserByLogin(login));
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-                    updateCurrentFragment();
-                    return;
-                }
+        try {
+            String loginOnView = ((Button) v).getText().toString();
+            if (!userTable.getActiveUser().getLogin().equals(loginOnView)) {
+                userTable.changeActiveUser(userTable.getUserByLogin(loginOnView));
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                updateCurrentFragment();
             }
+        } catch (ClassCastException ex) {
+            ex.printStackTrace();
         }
     }
 
