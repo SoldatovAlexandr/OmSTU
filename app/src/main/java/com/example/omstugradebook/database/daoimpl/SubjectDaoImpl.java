@@ -1,23 +1,26 @@
-package com.example.omstugradebook.database;
+package com.example.omstugradebook.database.daoimpl;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.example.omstugradebook.database.DataBaseHelper;
+import com.example.omstugradebook.database.dao.SubjectDao;
 import com.example.omstugradebook.model.Subject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SubjectTable {
+public class SubjectDaoImpl implements SubjectDao {
     private DataBaseHelper dbHelper;
     private SQLiteDatabase database;
 
-    public SubjectTable(Context context) {
+    public SubjectDaoImpl(Context context) {
         dbHelper = new DataBaseHelper(context);
     }
 
+    @Override
     public int removeAllSubjects() {
         database = dbHelper.getWritableDatabase();
         int clearCount = database.delete("subjects", null, null);
@@ -25,11 +28,59 @@ public class SubjectTable {
         return clearCount;
     }
 
+    @Override
     public List<Subject> readSubjectsByTerm(int termFilter) {
         database = dbHelper.getWritableDatabase();
         Cursor cursor = database.query("subjects", null, "term = " + termFilter, null, null, null, null);
         return getSubjects(cursor);
     }
+
+    @Override
+    public List<Subject> readAllSubjects() {
+        database = dbHelper.getWritableDatabase();
+        Cursor cursor = database.query("subjects", null, null, null, null, null, null);
+        return getSubjects(cursor);
+    }
+
+    @Override
+    public void insertAllSubjects(List<Subject> subjects) {
+        database = dbHelper.getWritableDatabase();
+        for (Subject subject : subjects) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("name", subject.getName());
+            contentValues.put("hours", subject.getHours());
+            contentValues.put("attendance", subject.getAttendance());
+            contentValues.put("tempRating", subject.getTempRating());
+            contentValues.put("mark", subject.getMark());
+            contentValues.put("date", subject.getDate());
+            contentValues.put("teacher", subject.getTeacher());
+            contentValues.put("toDiploma", subject.getToDiploma());
+            contentValues.put("term", subject.getTerm());
+            contentValues.put("type", subject.getType());
+            database.insert("subjects", null, contentValues);
+        }
+        database.close();
+    }
+
+    @Override
+    public boolean equalsSubjects(List<Subject> subjects) {
+        List<Subject> dataBaseSubjects = readAllSubjects();
+        return dataBaseSubjects.equals(subjects);
+    }
+
+    @Override
+    public int getCountTerm() {
+        String selectQuery = "SELECT max(term) as term FROM subjects";
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        Cursor cursor = database.rawQuery(selectQuery, null);
+        cursor.moveToFirst();
+        return cursor.getInt(cursor.getColumnIndex("term"));
+    }
+
+    @Override
+    public long getCount() {
+        return readAllSubjects().size();
+    }//TODO
 
     private List<Subject> getSubjects(Cursor cursor) {
         List<Subject> subjects = new ArrayList<>();
@@ -63,46 +114,4 @@ public class SubjectTable {
         database.close();
         return subjects;
     }
-
-    public List<Subject> readAllSubjects() {
-        database = dbHelper.getWritableDatabase();
-        Cursor cursor = database.query("subjects", null, null, null, null, null, null);
-        return getSubjects(cursor);
-    }
-
-    public void insertAllSubjects(List<Subject> subjects) {
-        database = dbHelper.getWritableDatabase();
-        for (Subject subject : subjects) {
-            ContentValues contentValues = new ContentValues();
-            contentValues.put("name", subject.getName());
-            contentValues.put("hours", subject.getHours());
-            contentValues.put("attendance", subject.getAttendance());
-            contentValues.put("tempRating", subject.getTempRating());
-            contentValues.put("mark", subject.getMark());
-            contentValues.put("date", subject.getDate());
-            contentValues.put("teacher", subject.getTeacher());
-            contentValues.put("toDiploma", subject.getToDiploma());
-            contentValues.put("term", subject.getTerm());
-            contentValues.put("type", subject.getType());
-            database.insert("subjects", null, contentValues);
-        }
-        database.close();
-    }
-
-    public boolean equalsSubjects(List<Subject> subjects) {
-        List<Subject> dataBaseSubjects = readAllSubjects();
-        return dataBaseSubjects.equals(subjects);
-    }
-
-    public int getCountTerm() {
-        String selectQuery = "SELECT max(term) as term FROM subjects";
-        SQLiteDatabase database = dbHelper.getWritableDatabase();
-        Cursor cursor = database.rawQuery(selectQuery, null);
-        cursor.moveToFirst();
-        return cursor.getInt(cursor.getColumnIndex("term"));
-    }
-
-    public long getCount() {
-        return readAllSubjects().size();
-    }//TODO
 }

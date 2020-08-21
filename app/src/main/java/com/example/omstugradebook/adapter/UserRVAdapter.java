@@ -17,7 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.omstugradebook.R;
 import com.example.omstugradebook.activity.LoginActivity;
-import com.example.omstugradebook.database.UserTable;
+import com.example.omstugradebook.database.dao.UserDao;
+import com.example.omstugradebook.database.daoimpl.UserDaoImpl;
 import com.example.omstugradebook.fragments.AccountFragment;
 import com.example.omstugradebook.model.Student;
 import com.example.omstugradebook.model.User;
@@ -27,13 +28,13 @@ import java.util.List;
 
 public class UserRVAdapter extends RecyclerView.Adapter<UserRVAdapter.AbstractViewHolder> {
     private List<User> users;
-    private UserTable userTable;
+    private UserDao userDao;
     private List<ImageButton> buttons = new ArrayList<>();
     private static final String TAG = "User RVAdapter Logs";
 
     public UserRVAdapter(List<User> users, Context context) {
         this.users = users;
-        userTable = new UserTable(context);
+        userDao = new UserDaoImpl(context);
     }
 
     public void setUsers(List<User> users) {
@@ -157,8 +158,8 @@ public class UserRVAdapter extends RecyclerView.Adapter<UserRVAdapter.AbstractVi
         public void onClick(View v) {
             for (ImageButton button : buttons) {
                 if (v.getId() == button.getId()) {
-                    User user = userTable.getUserByLogin(login.getText().toString());
-                    if (userTable.removeUser(user)) {
+                    User user = userDao.getUserByLogin(login.getText().toString());
+                    if (userDao.removeUser(user)) {
                         Log.d(TAG, USER_REMOVED);
                         AccountFragment.getInstance().update();
                     }

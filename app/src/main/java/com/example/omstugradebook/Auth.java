@@ -3,7 +3,7 @@ package com.example.omstugradebook;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.omstugradebook.database.UserTable;
+import com.example.omstugradebook.database.daoimpl.UserDaoImpl;
 import com.example.omstugradebook.model.GradeBook;
 import com.example.omstugradebook.model.User;
 
@@ -115,7 +115,7 @@ public class Auth {
 
     public GradeBook getGradeBook(Context context) {
         Document doc = null;
-        UserTable userTable = new UserTable(context);
+        UserDaoImpl userTable = new UserDaoImpl(context);
         try {
             User activeUser = userTable.getActiveUser();
             String token = activeUser.getToken();

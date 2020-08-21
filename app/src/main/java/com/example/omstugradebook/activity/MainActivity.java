@@ -18,8 +18,10 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.omstugradebook.Auth;
 import com.example.omstugradebook.ConnectionDetector;
 import com.example.omstugradebook.R;
-import com.example.omstugradebook.database.SubjectTable;
-import com.example.omstugradebook.database.UserTable;
+import com.example.omstugradebook.database.dao.SubjectDao;
+import com.example.omstugradebook.database.dao.UserDao;
+import com.example.omstugradebook.database.daoimpl.SubjectDaoImpl;
+import com.example.omstugradebook.database.daoimpl.UserDaoImpl;
 import com.example.omstugradebook.fragments.AccountFragment;
 import com.example.omstugradebook.fragments.GradeFragment;
 import com.example.omstugradebook.fragments.TimetableFragment;
@@ -41,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     private View buttonProfile;
     private Button buttonAddNewUser;
     private LinearLayout llAccounts;
-    private UserTable userTable = new UserTable(this);
+    private UserDao userDao = new UserDaoImpl(this);
     private LinearLayout llBottomSheet;
     private BottomSheetBehavior bottomSheetBehavior;
     private Map<String, Button> userButtons;
@@ -77,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ConnectionDetector connectionDetector = new ConnectionDetector(getContext());
-        if (connectionDetector.ConnectingToInternet() && userTable.getActiveUser() != null) {
+        if (connectionDetector.ConnectingToInternet() && userDao.getActiveUser() != null) {
             OmSTUSender omSTUSender = new OmSTUSender();
             omSTUSender.execute();
         }
@@ -94,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         buttonAddNewUser = findViewById(R.id.add_new_user_button);
         buttonAddNewUser.setOnClickListener(this);
         userButtons = new HashMap<>();
-        activeUser = userTable.getActiveUser();
+        activeUser = userDao.getActiveUser();
         if (activeUser == null) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivityForResult(intent, 1);
@@ -110,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     public boolean onLongClick(View v) {
         llAccounts.removeAllViews();
         userButtons.clear();
-        for (User user : userTable.readAllUsers()) {
+        for (User user : userDao.readAllUsers()) {
             Button userButton = new Button(this);
             userButtons.put(user.getLogin(), userButton);
             userButton.setText(user.getLogin());
@@ -140,8 +142,8 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         }
         try {
             String loginOnView = ((Button) v).getText().toString();
-            if (!userTable.getActiveUser().getLogin().equals(loginOnView)) {
-                userTable.changeActiveUser(userTable.getUserByLogin(loginOnView));
+            if (!userDao.getActiveUser().getLogin().equals(loginOnView)) {
+                userDao.changeActiveUser(userDao.getUserByLogin(loginOnView));
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
                 updateCurrentFragment();
             }
@@ -158,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         }
         String login = data.getStringExtra("login");
         userButtons.remove(login);
-        activeUser = userTable.getActiveUser();
+        activeUser = userDao.getActiveUser();
         updateCurrentFragment();
     }
 
@@ -179,9 +181,9 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         @Override
         protected String doInBackground(String... strings) {
             Auth auth = new Auth();
-            UserTable userTable = new UserTable(getContext());
-            SubjectTable subjectTable = new SubjectTable(getContext());
-            if (userTable.getActiveUser() == null) {
+            UserDao userDao = new UserDaoImpl(getContext());
+            SubjectDao subjectDao = new SubjectDaoImpl(getContext());
+            if (userDao.getActiveUser() == null) {
                 return null;
             }
             GradeBook gradeBook = auth.getGradeBook(getContext());
@@ -190,12 +192,12 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
                 for (Term term : gradeBook.getTerms()) {
                     subjects.addAll(term.getSubjects());
                 }
-                User user = userTable.getActiveUser();
+                User user = userDao.getActiveUser();
                 user.setStudent(gradeBook.getStudent());
-                userTable.update(user);
-                if (!subjectTable.equalsSubjects(subjects)) {
-                    subjectTable.removeAllSubjects();
-                    subjectTable.insertAllSubjects(subjects);
+                userDao.update(user);
+                if (!subjectDao.equalsSubjects(subjects)) {
+                    subjectDao.removeAllSubjects();
+                    subjectDao.insertAllSubjects(subjects);
                 }
             }
             return null;

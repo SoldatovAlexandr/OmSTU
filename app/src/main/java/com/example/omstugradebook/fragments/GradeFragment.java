@@ -21,8 +21,10 @@ import com.example.omstugradebook.Auth;
 import com.example.omstugradebook.activity.MainActivity;
 import com.example.omstugradebook.adapter.GradeRVAdapter;
 import com.example.omstugradebook.R;
-import com.example.omstugradebook.database.SubjectTable;
-import com.example.omstugradebook.database.UserTable;
+import com.example.omstugradebook.database.dao.SubjectDao;
+import com.example.omstugradebook.database.dao.UserDao;
+import com.example.omstugradebook.database.daoimpl.SubjectDaoImpl;
+import com.example.omstugradebook.database.daoimpl.UserDaoImpl;
 import com.example.omstugradebook.model.GradeBook;
 import com.example.omstugradebook.model.Subject;
 import com.example.omstugradebook.model.Term;
@@ -33,8 +35,8 @@ import java.util.List;
 public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private RecyclerView recyclerView;
     private GradeRVAdapter adapter = new GradeRVAdapter(new ArrayList<Subject>());
-    private SubjectTable subjectTable;
-    private UserTable userTable;
+    private SubjectDao subjectDao;
+    private UserDao userDao;
     private static int activeTerm = 1;
     private static final String TAG = "Grade Fragment Logs";
     private static int countTerms = 0;
@@ -67,7 +69,7 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         for (int i = 1; i <= countTerms; i++) {
             if (title.equals("Семестр " + i)) {
                 activeTerm = i;
-                adapter.setSubjects(subjectTable.readSubjectsByTerm(i));
+                adapter.setSubjects(subjectDao.readSubjectsByTerm(i));
                 adapter.notifyDataSetChanged();
                 Log.d(TAG, "Выбран семестр номер " + i);
                 return true;
@@ -84,11 +86,11 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        subjectTable = new SubjectTable(getContext());
-        userTable = new UserTable(getContext());
-        countTerms = subjectTable.getCountTerm();
+        subjectDao = new SubjectDaoImpl(getContext());
+        userDao = new UserDaoImpl(getContext());
+        countTerms = subjectDao.getCountTerm();
         setHasOptionsMenu(true);
-        List<Subject> subjectList = subjectTable.readSubjectsByTerm(activeTerm);
+        List<Subject> subjectList = subjectDao.readSubjectsByTerm(activeTerm);
         adapter.setSubjects(subjectList);
         View view = inflater.inflate(R.layout.fragment_grade, container, false);
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
@@ -102,8 +104,8 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
     @Override
     public void onRefresh() {
-        userTable = new UserTable(getContext());
-        if (userTable.getActiveUser() != null) {
+        userDao = new UserDaoImpl(getContext());
+        if (userDao.getActiveUser() != null) {
             OmSTUSender omSTUSender = new OmSTUSender();
             omSTUSender.execute();
         } else {
@@ -126,9 +128,9 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             for (Term term : gradeBook.getTerms()) {
                 subjects.addAll(term.getSubjects());
             }
-            if (!subjects.equals(subjectTable.readAllSubjects())) {
-                subjectTable.removeAllSubjects();
-                subjectTable.insertAllSubjects(subjects);
+            if (!subjects.equals(subjectDao.readAllSubjects())) {
+                subjectDao.removeAllSubjects();
+                subjectDao.insertAllSubjects(subjects);
             }
             return null;
         }
@@ -136,7 +138,7 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            adapter.setSubjects(subjectTable.readSubjectsByTerm(activeTerm));
+            adapter.setSubjects(subjectDao.readSubjectsByTerm(activeTerm));
             swipeRefreshLayout.setRefreshing(false);
             adapter.notifyDataSetChanged();
             if (MainActivity.getNavigation().getSelectedItemId() == R.id.bottom_navigation_item_grade) {

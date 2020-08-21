@@ -12,14 +12,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.omstugradebook.Auth;
 import com.example.omstugradebook.R;
-import com.example.omstugradebook.database.UserTable;
+import com.example.omstugradebook.database.dao.UserDao;
+import com.example.omstugradebook.database.daoimpl.UserDaoImpl;
 import com.example.omstugradebook.model.User;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     private Button buttonOk;
     private EditText login;
     private EditText password;
-    private UserTable userTable;
+    private UserDao userDao;
 
     @Override
 
@@ -30,7 +31,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         buttonOk.setOnClickListener(this);
         login = findViewById(R.id.et_input_login);
         password = findViewById(R.id.et_input_password);
-        userTable = new UserTable(this);
+        userDao = new UserDaoImpl(this);
     }
 
     @Override
@@ -41,7 +42,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             Toast.makeText(this, "Не оставляйте поля пустыми", Toast.LENGTH_SHORT).show();
             return;
         }
-        for (User user : userTable.readAllUsers()) {
+        for (User user : userDao.readAllUsers()) {
             if (user.getLogin().equals(loginString)) {
                 Toast.makeText(this, "Пользователь " + loginString + " уже авторизован", Toast.LENGTH_SHORT).show();
                 return;
@@ -70,8 +71,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 String passwordString = password.getText().toString();
                 Toast.makeText(getApplicationContext(), "Вы успешно авторизовались!", Toast.LENGTH_SHORT).show();
                 User user = new User(loginString, passwordString, studSesId);
-                userTable.insert(user);
-                userTable.changeActiveUser(user);
+                userDao.insert(user);
+                userDao.changeActiveUser(user);
 
                 Intent intent = new Intent();
                 intent.putExtra("login", login.getText().toString());

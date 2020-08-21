@@ -14,11 +14,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.omstugradebook.Auth;
 import com.example.omstugradebook.R;
 import com.example.omstugradebook.adapter.UserRVAdapter;
-import com.example.omstugradebook.database.UserTable;
+import com.example.omstugradebook.database.dao.UserDao;
+import com.example.omstugradebook.database.daoimpl.UserDaoImpl;
 import com.example.omstugradebook.model.User;
 
 public class AccountFragment extends Fragment {
-    private UserTable userTable;
+    private UserDao userDao;
     private User activeUser;
     private static final String TAG = "User Fragment Logs";
     private UserRVAdapter adapter;
@@ -40,20 +41,20 @@ public class AccountFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_account, container, false);
-        userTable = new UserTable(getContext());
-        activeUser = userTable.getActiveUser();
+        userDao = new UserDaoImpl(getContext());
+        activeUser = userDao.getActiveUser();
         recyclerView = view.findViewById(R.id.user_recycle_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
-        adapter = new UserRVAdapter(userTable.readAllUsers(), getContext());
+        adapter = new UserRVAdapter(userDao.readAllUsers(), getContext());
         recyclerView.setAdapter(adapter);
         return view;
     }
 
 
     public void update() {
-        userTable = new UserTable(getContext());
-        adapter.setUsers(userTable.readAllUsers());
+        userDao = new UserDaoImpl(getContext());
+        adapter.setUsers(userDao.readAllUsers());
         adapter.notifyDataSetChanged();
     }
 
@@ -68,7 +69,7 @@ public class AccountFragment extends Fragment {
             }
             String studSesId = auth.getStudSessId(cookie);
             activeUser.setToken(studSesId);
-            userTable.update(activeUser);
+            userDao.update(activeUser);
             Log.d(TAG, "studSessId equals " + studSesId);
             return null;
         }
@@ -77,7 +78,7 @@ public class AccountFragment extends Fragment {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             Log.d(TAG, "onPostExecute");
-            adapter.setUsers(userTable.readAllUsers());
+            adapter.setUsers(userDao.readAllUsers());
             adapter.notifyDataSetChanged();
         }
     }
