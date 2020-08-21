@@ -1,4 +1,4 @@
-package com.example.omstugradebook.fragments;
+package com.example.omstugradebook.view.fragments;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.omstugradebook.Auth;
-import com.example.omstugradebook.activity.MainActivity;
+import com.example.omstugradebook.view.activity.MainActivity;
 import com.example.omstugradebook.adapter.GradeRVAdapter;
 import com.example.omstugradebook.R;
 import com.example.omstugradebook.database.dao.SubjectDao;

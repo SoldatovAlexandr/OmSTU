@@ -1,4 +1,4 @@
-package com.example.omstugradebook.fragments;
+package com.example.omstugradebook.view.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

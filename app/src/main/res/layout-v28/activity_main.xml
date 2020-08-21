@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:scrollbarThumbHorizontal="@drawable/ic_logs"
-    tools:context=".activity.MainActivity">
+    tools:context=".view.activity.MainActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

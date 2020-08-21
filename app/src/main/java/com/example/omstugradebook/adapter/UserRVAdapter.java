@@ -16,10 +16,10 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.omstugradebook.R;
-import com.example.omstugradebook.activity.LoginActivity;
+import com.example.omstugradebook.view.activity.LoginActivity;
 import com.example.omstugradebook.database.dao.UserDao;
 import com.example.omstugradebook.database.daoimpl.UserDaoImpl;
-import com.example.omstugradebook.fragments.AccountFragment;
+import com.example.omstugradebook.view.fragments.AccountFragment;
 import com.example.omstugradebook.model.Student;
 import com.example.omstugradebook.model.User;
 

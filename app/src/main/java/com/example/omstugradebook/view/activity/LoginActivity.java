@@ -1,4 +1,4 @@
-package com.example.omstugradebook.activity;
+package com.example.omstugradebook.view.activity;
 
 import android.content.Intent;
 import android.os.AsyncTask;

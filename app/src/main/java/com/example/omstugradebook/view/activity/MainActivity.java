@@ -1,4 +1,4 @@
-package com.example.omstugradebook.activity;
+package com.example.omstugradebook.view.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,9 +22,9 @@ import com.example.omstugradebook.database.dao.SubjectDao;
 import com.example.omstugradebook.database.dao.UserDao;
 import com.example.omstugradebook.database.daoimpl.SubjectDaoImpl;
 import com.example.omstugradebook.database.daoimpl.UserDaoImpl;
-import com.example.omstugradebook.fragments.AccountFragment;
-import com.example.omstugradebook.fragments.GradeFragment;
-import com.example.omstugradebook.fragments.TimetableFragment;
+import com.example.omstugradebook.view.fragments.AccountFragment;
+import com.example.omstugradebook.view.fragments.GradeFragment;
+import com.example.omstugradebook.view.fragments.TimetableFragment;
 import com.example.omstugradebook.model.GradeBook;
 import com.example.omstugradebook.model.Subject;
 import com.example.omstugradebook.model.Term;
