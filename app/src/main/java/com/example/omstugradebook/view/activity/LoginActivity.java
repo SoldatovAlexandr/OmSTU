@@ -20,7 +20,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private Button buttonOk;
     private EditText login;
     private EditText password;
-    private UserDao userDao;
+    private UserDao userDao = new UserDaoImpl(this);
 
     @Override
 
@@ -31,7 +31,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         buttonOk.setOnClickListener(this);
         login = findViewById(R.id.et_input_login);
         password = findViewById(R.id.et_input_password);
-        userDao = new UserDaoImpl(this);
     }
 
     @Override
@@ -73,7 +72,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 User user = new User(loginString, passwordString, studSesId);
                 userDao.insert(user);
                 userDao.changeActiveUser(user);
-
                 Intent intent = new Intent();
                 intent.putExtra("login", login.getText().toString());
                 setResult(RESULT_OK, intent);

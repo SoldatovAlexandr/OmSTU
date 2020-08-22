@@ -114,7 +114,7 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     }
 
     class OmSTUSender extends AsyncTask<String, String, String> {
-        GradeBook gradeBook;
+        private GradeBook gradeBook;
 
         @Override
         protected String doInBackground(String... strings) {
@@ -137,7 +137,6 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-
             if (MainActivity.getNavigation().getSelectedItemId() == R.id.bottom_navigation_item_grade) {
                 if (gradeBook == null) {
                     adapter.setSubjects(subjectDao.readSubjectsByTerm(activeTerm));

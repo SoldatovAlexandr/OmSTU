@@ -23,7 +23,6 @@ public class TimetableFragment extends Fragment {
         return instance;
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
