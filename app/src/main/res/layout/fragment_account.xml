@@ -10,5 +10,6 @@
         android:id="@+id/user_recycle_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingBottom="50dp"
         tools:listitem="@layout/user_card_view" />
 </RelativeLayout>

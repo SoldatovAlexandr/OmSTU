@@ -68,7 +68,6 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         }
     };
 
-
     private void loadFragment(Fragment fragment) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.frameLayout_content, fragment);
