@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.omstugradebook.Auth;
 import com.example.omstugradebook.R;
-import com.example.omstugradebook.adapter.UserRVAdapter;
+import com.example.omstugradebook.recyclerview.adapter.UserRVAdapter;
 import com.example.omstugradebook.database.dao.UserDao;
 import com.example.omstugradebook.database.daoimpl.UserDaoImpl;
 import com.example.omstugradebook.model.User;

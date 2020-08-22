@@ -9,7 +9,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -20,7 +19,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.omstugradebook.Auth;
 import com.example.omstugradebook.view.activity.MainActivity;
-import com.example.omstugradebook.adapter.GradeRVAdapter;
+import com.example.omstugradebook.recyclerview.adapter.GradeRVAdapter;
 import com.example.omstugradebook.R;
 import com.example.omstugradebook.database.dao.SubjectDao;
 import com.example.omstugradebook.database.dao.UserDao;
@@ -138,11 +137,12 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            adapter.setSubjects(subjectDao.readSubjectsByTerm(activeTerm));
-            swipeRefreshLayout.setRefreshing(false);
-            adapter.notifyDataSetChanged();
+
             if (MainActivity.getNavigation().getSelectedItemId() == R.id.bottom_navigation_item_grade) {
                 if (gradeBook == null) {
+                    adapter.setSubjects(subjectDao.readSubjectsByTerm(activeTerm));
+                    swipeRefreshLayout.setRefreshing(false);
+                    adapter.notifyDataSetChanged();
                     Toast.makeText(getContext(), "Проблемы с подключением к серверу", Toast.LENGTH_SHORT).show();
                 }
             }
