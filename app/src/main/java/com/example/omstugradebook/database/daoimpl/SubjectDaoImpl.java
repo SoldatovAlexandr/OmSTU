@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.example.omstugradebook.SubjectType;
 import com.example.omstugradebook.database.DataBaseHelper;
 import com.example.omstugradebook.database.dao.SubjectDao;
 import com.example.omstugradebook.model.Subject;
@@ -56,7 +57,7 @@ public class SubjectDaoImpl implements SubjectDao {
             contentValues.put("teacher", subject.getTeacher());
             contentValues.put("toDiploma", subject.getToDiploma());
             contentValues.put("term", subject.getTerm());
-            contentValues.put("type", subject.getType());
+            contentValues.put("type", subject.getType().ordinal());
             database.insert("subjects", null, contentValues);
         }
         database.close();
@@ -95,7 +96,6 @@ public class SubjectDaoImpl implements SubjectDao {
             int toDiplomaColIndex = cursor.getColumnIndex("toDiploma");
             int termColIndex = cursor.getColumnIndex("term");
             int typeColIndex = cursor.getColumnIndex("type");
-            int userIdColIndex = cursor.getColumnIndex("userId");
             do {
                 String name = cursor.getString(nameColIndex);
                 String hours = cursor.getString(hoursColIndex);
@@ -107,7 +107,7 @@ public class SubjectDaoImpl implements SubjectDao {
                 String toDiploma = cursor.getString(toDiplomaColIndex);
                 int term = cursor.getInt(termColIndex);
                 int type = cursor.getInt(typeColIndex);
-                subjects.add(new Subject(name, hours, attendance, tempRating, mark, date, teacher, toDiploma, term, type));
+                subjects.add(new Subject(name, hours, attendance, tempRating, mark, date, teacher, toDiploma, term, SubjectType.values()[type]));
             } while (cursor.moveToNext());
         }
         cursor.close();

@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.omstugradebook.R;
+import com.example.omstugradebook.SubjectType;
 
 public class GradeViewHolder extends RecyclerView.ViewHolder {
     private TextView textView;
@@ -17,21 +18,22 @@ public class GradeViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void draw(int i) {
+        SubjectType subjectType = SubjectType.values()[i];
         String text = "";
-        switch (i) {
-            case 0:
+        switch (subjectType) {
+            case EXAM:
                 text = "Экзамены";
                 break;
-            case 1:
+            case TEST:
                 text = "Зачёты";
                 break;
-            case 3:
+            case PRACTICE:
                 text = "Практики";
                 break;
-            case 2:
+            case COURSE_WORK:
                 text = "Курсовые работы";
                 break;
-            case 4:
+            case DIF_TEST:
                 text = "Дифференцированные зачеты";
                 break;
         }

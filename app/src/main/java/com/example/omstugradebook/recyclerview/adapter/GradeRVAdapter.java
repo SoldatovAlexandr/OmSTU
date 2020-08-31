@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.omstugradebook.R;
+import com.example.omstugradebook.SubjectType;
 import com.example.omstugradebook.model.Subject;
 import com.example.omstugradebook.recyclerview.holder.subject.GradeViewHolder;
 import com.example.omstugradebook.recyclerview.holder.subject.SubjectViewHolder;
@@ -31,7 +32,7 @@ public class GradeRVAdapter extends RecyclerView.Adapter<GradeViewHolder> {
 
     public void setSubjects(List<Subject> subjects) {
         size = 0;
-        int currentType = -1;
+        SubjectType currentType = null;
         typeByPosition.clear();
         titleByPosition.clear();
         subjectPositionByAbsolutePosition.clear();
@@ -40,7 +41,7 @@ public class GradeRVAdapter extends RecyclerView.Adapter<GradeViewHolder> {
             if (currentType != subject.getType()) {
                 currentType = subject.getType();
                 typeByPosition.put(size, 1);
-                titleByPosition.put(size, currentType);
+                titleByPosition.put(size, currentType.ordinal());
                 size++;
             }
             subjectPositionByAbsolutePosition.put(size, i);

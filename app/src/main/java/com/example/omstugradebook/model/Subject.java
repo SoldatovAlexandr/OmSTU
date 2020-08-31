@@ -2,6 +2,8 @@ package com.example.omstugradebook.model;
 
 import androidx.annotation.NonNull;
 
+import com.example.omstugradebook.SubjectType;
+
 import java.util.Objects;
 
 public class Subject {
@@ -14,14 +16,9 @@ public class Subject {
     private String teacher;
     private String toDiploma;
     private int term;
-    // 0  exam
-    // 1  test
-    // 2  practice
-    // 3  course work
-    // 4  dif test
-    private int type;
+    private SubjectType type;
 
-    public Subject(String name, String hours, String attendance, String tempRating, String mark, String date, String teacher, String toDiploma, int term, int type) {
+    public Subject(String name, String hours, String attendance, String tempRating, String mark, String date, String teacher, String toDiploma, int term, SubjectType type) {
         this.name = name;
         this.hours = hours;
         this.attendance = attendance;
@@ -34,11 +31,11 @@ public class Subject {
         this.type = type;
     }
 
-    public int getType() {
+    public SubjectType getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(SubjectType type) {
         this.type = type;
     }
 

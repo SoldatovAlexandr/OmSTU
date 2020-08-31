@@ -121,7 +121,7 @@ public class Auth {
             String token = activeUser.getToken();
             doc = Jsoup.connect(URL).cookie(STUD_SES_ID, token).get();
             Log.d(TAG, "сделан запрос");
-            if (doc == null || !doc.baseUri().equals(URL)) {
+            if (!doc.baseUri().equals(URL)) {
                 Log.d(TAG, "токен не активный");
                 String cookie = getAuth(activeUser.getLogin(), activeUser.getPassword());
                 String studSesId = getStudSessId(cookie);

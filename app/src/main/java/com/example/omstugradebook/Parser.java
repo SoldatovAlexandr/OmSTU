@@ -44,25 +44,25 @@ public class Parser {
 
     private List<Subject> getPartTerm(Elements elements, int term) {
         List<Subject> subjects = new ArrayList<>();
-        int type = -1;
+        SubjectType type = null;
         for (Element termElement : elements) {
             if (termElement.text().contains("Экзамены")) {
-                type = 0;
+                type = SubjectType.EXAM;
             } else if (termElement.text().contains("Зачёты")) {
-                type = 1;
+                type = SubjectType.TEST;
             } else if (termElement.text().contains("Курсовые работы")) {
-                type = 2;
+                type = SubjectType.COURSE_WORK;
             } else if (termElement.text().contains("Практики")) {
-                type = 3;
+                type = SubjectType.PRACTICE;
             } else if (termElement.text().contains("Дифференцированный зачет")) {
-                type = 4;
+                type = SubjectType.DIF_TEST;
             }
             subjects.addAll(getSubjectInPartTerm(termElement, term, type));
         }
         return subjects;
     }
 
-    private List<Subject> getSubjectInPartTerm(Element element, int term, int type) {
+    private List<Subject> getSubjectInPartTerm(Element element, int term, SubjectType type) {
         Elements subjectElements = element.select("tr");
         List<Subject> subjects = new ArrayList<>();
         for (Element se : subjectElements) {
@@ -72,7 +72,7 @@ public class Parser {
         return subjects;
     }
 
-    private Subject getSubject(Element element, int term, int type) {
+    private Subject getSubject(Element element, int term, SubjectType type) {
         Elements elements = element.select("td");
         if (elements.size() == 0) {
             return null;

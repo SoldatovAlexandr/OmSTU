@@ -48,6 +48,12 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        swipeRefreshLayout.setRefreshing(false);
+    }
+
     public static GradeFragment getInstance() {
         if (instance == null) {
             instance = new GradeFragment();
@@ -138,10 +144,10 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             if (MainActivity.getNavigation().getSelectedItemId() == R.id.bottom_navigation_item_grade) {
+                adapter.setSubjects(subjectDao.readSubjectsByTerm(activeTerm));
+                swipeRefreshLayout.setRefreshing(false);
+                adapter.notifyDataSetChanged();
                 if (gradeBook == null) {
-                    adapter.setSubjects(subjectDao.readSubjectsByTerm(activeTerm));
-                    swipeRefreshLayout.setRefreshing(false);
-                    adapter.notifyDataSetChanged();
                     Toast.makeText(getContext(), "Проблемы с подключением к серверу", Toast.LENGTH_SHORT).show();
                 }
             }
