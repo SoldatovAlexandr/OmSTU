@@ -3,4 +3,5 @@
     <string name="activity_main_bottom_screen_logs">Зачётка</string>
     <string name="activity_main_bottom_screen_progress">Расписание</string>
     <string name="activity_main_bottom_screen_profile">Профиль</string>
+    <string name="activity_main_bottom_screen_contact_work">Контактная работа</string>
 </resources>

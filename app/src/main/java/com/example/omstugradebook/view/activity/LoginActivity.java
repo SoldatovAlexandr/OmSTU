@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.omstugradebook.Auth;
+import com.example.omstugradebook.service.AuthService;
 import com.example.omstugradebook.R;
 import com.example.omstugradebook.database.dao.UserDao;
 import com.example.omstugradebook.database.daoimpl.UserDaoImpl;
@@ -56,7 +56,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         @Override
         protected String doInBackground(String... strings) {
-            Auth auth = new Auth();
+            AuthService auth = new AuthService();
             String cookie = auth.getAuth(login.getText().toString(), password.getText().toString());
             studSesId = auth.getStudSessId(cookie);
             return null;

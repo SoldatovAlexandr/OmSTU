@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.example.omstugradebook.Auth;
+import com.example.omstugradebook.service.AuthService;
 import com.example.omstugradebook.view.activity.MainActivity;
 import com.example.omstugradebook.recyclerview.adapter.GradeRVAdapter;
 import com.example.omstugradebook.R;
@@ -44,7 +44,7 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    private GradeFragment() {
+    public GradeFragment() {
 
     }
 
@@ -124,7 +124,7 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
         @Override
         protected String doInBackground(String... strings) {
-            Auth auth = new Auth();
+            AuthService auth = new AuthService();
             gradeBook = auth.getGradeBook(getContext());
             if (gradeBook == null) {
                 return null;

@@ -70,7 +70,7 @@ public class UserViewHolder extends AccountViewHolder implements View.OnClickLis
             if (v.getId() == button.getId()) {
                 User user = userDao.getUserByLogin(login.getText().toString());
                 if (userDao.removeUser(user)) {
-                    AccountFragment.getInstance().update();
+                    //AccountFragment.getInstance().update();
                 }
             }
         }

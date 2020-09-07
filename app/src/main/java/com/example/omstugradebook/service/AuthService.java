@@ -1,8 +1,9 @@
-package com.example.omstugradebook;
+package com.example.omstugradebook.service;
 
 import android.content.Context;
 import android.util.Log;
 
+import com.example.omstugradebook.Parser;
 import com.example.omstugradebook.database.daoimpl.UserDaoImpl;
 import com.example.omstugradebook.model.GradeBook;
 import com.example.omstugradebook.model.User;
@@ -25,14 +26,14 @@ import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class Auth {
+public class AuthService {
     private final static String URL_AUTH = "https://omgtu.ru/ecab/index.php?login=yes";
     private final static String URL_STUDENT_1 = "https://omgtu.ru/ecab/up.php?student=1";
     static final String URL = "https://up.omgtu.ru/index.php?r=student/index";
     static final String STUD_SES_ID = "STUDSESSID";
     private static final String TAG = "Auth Logs";
 
-    public Auth() {
+    public AuthService() {
     }
 
     private String getStudSessionString(String redirectURL) throws IOException {

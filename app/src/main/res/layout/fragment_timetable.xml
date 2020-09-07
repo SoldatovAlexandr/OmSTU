@@ -6,11 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".view.fragments.TimetableFragment">
 
-    <TextView
-        android:id="@+id/tv_home"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical|center_horizontal"
-        android:text="Расписание"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="50dp"
+        tools:listitem="@layout/subject_card_view" />
 </FrameLayout>

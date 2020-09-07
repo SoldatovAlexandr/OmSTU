@@ -3,7 +3,7 @@ package com.example.omstugradebook.dto;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class SubjectDtoResponse implements Serializable {
+public class ScheduleDtoResponse implements Serializable {
 
     private String auditorium;
     private String beginLesson;
@@ -18,8 +18,9 @@ public class SubjectDtoResponse implements Serializable {
     private String stream;
     private String group;
     private String subGroup;
+    private String dayOfWeekString;
 
-    public SubjectDtoResponse(String auditorium, String beginLesson, String building, String date, int dayOfWeek, String detailInfo, String discipline, String endLesson, String kindOfWork, String lecturer, String stream, String group, String subGroup) {
+    public ScheduleDtoResponse(String auditorium, String beginLesson, String building, String date, int dayOfWeek, String detailInfo, String discipline, String endLesson, String kindOfWork, String lecturer, String stream, String group, String subGroup, String dayOfWeekString) {
         this.auditorium = auditorium;
         this.beginLesson = beginLesson;
         this.building = building;
@@ -33,6 +34,15 @@ public class SubjectDtoResponse implements Serializable {
         this.stream = stream;
         this.group = group;
         this.subGroup = subGroup;
+        this.dayOfWeekString = dayOfWeekString;
+    }
+
+    public String getDayOfWeekString() {
+        return dayOfWeekString;
+    }
+
+    public void setDayOfWeekString(String dayOfWeekString) {
+        this.dayOfWeekString = dayOfWeekString;
     }
 
     public String getGroup() {
@@ -143,7 +153,7 @@ public class SubjectDtoResponse implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SubjectDtoResponse that = (SubjectDtoResponse) o;
+        ScheduleDtoResponse that = (ScheduleDtoResponse) o;
         return dayOfWeek == that.dayOfWeek &&
                 Objects.equals(auditorium, that.auditorium) &&
                 Objects.equals(beginLesson, that.beginLesson) &&

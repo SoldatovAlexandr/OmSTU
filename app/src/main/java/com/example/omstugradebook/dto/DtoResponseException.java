@@ -1,4 +1,5 @@
 package com.example.omstugradebook.dto;
 
-public class DtoResponseException {
+public class DtoResponseException extends Exception {
+
 }

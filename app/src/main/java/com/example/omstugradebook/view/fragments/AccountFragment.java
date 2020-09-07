@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.omstugradebook.Auth;
+import com.example.omstugradebook.service.AuthService;
 import com.example.omstugradebook.R;
 import com.example.omstugradebook.recyclerview.adapter.UserRVAdapter;
 import com.example.omstugradebook.database.dao.UserDao;
@@ -24,17 +24,9 @@ public class AccountFragment extends Fragment {
     private static final String TAG = "User Fragment Logs";
     private UserRVAdapter adapter;
     private RecyclerView recyclerView;
-    private static AccountFragment instance;
 
-    private AccountFragment() {
+    public AccountFragment() {
 
-    }
-
-    public static AccountFragment getInstance() {
-        if (instance == null) {
-            instance = new AccountFragment();
-        }
-        return instance;
     }
 
     @Override
@@ -62,7 +54,7 @@ public class AccountFragment extends Fragment {
         @Override
         protected String doInBackground(String... strings) {
             Log.d(TAG, "сделан запрос в doInBackground");
-            Auth auth = new Auth();
+            AuthService auth = new AuthService();
             String cookie = auth.getAuth(activeUser.getLogin(), activeUser.getPassword());
             if (cookie.equals("error")) {
                 return null;
