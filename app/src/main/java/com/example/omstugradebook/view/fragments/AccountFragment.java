@@ -18,7 +18,7 @@ import com.example.omstugradebook.database.dao.UserDao;
 import com.example.omstugradebook.database.daoimpl.UserDaoImpl;
 import com.example.omstugradebook.model.User;
 
-public class AccountFragment extends Fragment {
+public class AccountFragment extends Fragment implements Updatable {
     private UserDao userDao;
     private User activeUser;
     private static final String TAG = "User Fragment Logs";
@@ -43,7 +43,7 @@ public class AccountFragment extends Fragment {
         return view;
     }
 
-
+    @Override
     public void update() {
         userDao = new UserDaoImpl(getContext());
         adapter.setUsers(userDao.readAllUsers());

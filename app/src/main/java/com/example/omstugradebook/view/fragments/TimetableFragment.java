@@ -23,7 +23,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-public class TimetableFragment extends Fragment {
+public class TimetableFragment extends Fragment implements Updatable {
     private Calendar start;
     private Calendar finish;
     private RecyclerView recyclerView;
@@ -85,6 +85,7 @@ public class TimetableFragment extends Fragment {
         omSTUSender.execute();
     }
 
+    @Override
     public void update() {
         if (!userDao.getActiveUser().getStudent().getSpeciality().equals(groupString)) {
             groupString = userDao.getActiveUser().getStudent().getSpeciality();

@@ -14,7 +14,7 @@ import org.jsoup.nodes.Document;
 
 import java.io.IOException;
 
-public class ContactWorkFragment extends Fragment {
+public class ContactWorkFragment extends Fragment implements Updatable {
     private static String PATH = "http://up.omgtu.ru/index.php?r=remote/read";
     static final String STUD_SES_ID = "STUDSESSID";
     private UserDao userDao;
@@ -24,6 +24,11 @@ public class ContactWorkFragment extends Fragment {
         super.onCreate(savedInstanceState);
         OmSTUSender omSTUSender = new OmSTUSender();
         omSTUSender.execute();
+    }
+
+    @Override
+    public void update() {
+
     }
 
     class OmSTUSender extends AsyncTask<String, String, String> {

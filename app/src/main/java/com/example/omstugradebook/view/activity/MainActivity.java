@@ -33,6 +33,7 @@ import com.example.omstugradebook.model.GradeBook;
 import com.example.omstugradebook.model.Subject;
 import com.example.omstugradebook.model.Term;
 import com.example.omstugradebook.model.User;
+import com.example.omstugradebook.view.fragments.Updatable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
@@ -216,19 +217,21 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     }
 
     private void updateCurrentFragment() {
+        getCurrentUpdatableFragment().update();
+    }
+
+    private Updatable getCurrentUpdatableFragment() {
         switch (navigation.getSelectedItemId()) {
             case R.id.bottom_navigation_item_profile:
-                accountFragment.update();
-                break;
+                return accountFragment;
             case R.id.bottom_navigation_item_grade:
-                gradeFragment.update();
-                break;
+                return gradeFragment;
             case R.id.bottom_navigation_item_timetable:
-                timetableFragment.update();
-                break;
+                return timetableFragment;
             case R.id.bottom_navigation_item_contactwork:
-                break;
+                return contactWorkFragment;
         }
+        return contactWorkFragment;
     }
 
     class OmSTUSender extends AsyncTask<String, String, String> {

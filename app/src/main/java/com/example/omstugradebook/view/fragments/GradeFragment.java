@@ -32,7 +32,7 @@ import com.example.omstugradebook.model.Term;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, Updatable {
     private RecyclerView recyclerView;
     private GradeRVAdapter adapter = new GradeRVAdapter(new ArrayList<Subject>());
     private SubjectDao subjectDao;
@@ -84,6 +84,7 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
     public void update() {
         onRefresh();
     }
