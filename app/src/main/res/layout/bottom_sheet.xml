@@ -16,18 +16,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" />
 
-    <Button
-        android:id="@+id/add_new_user_button"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"
-        android:background="@android:color/white"
-        android:drawableStart="@drawable/ic_add"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:text="Добавить нового пользователя"
-        android:textColor="@color/colorBlack" />
-
+        android:layout_height="50dp" />
 
 </LinearLayout>

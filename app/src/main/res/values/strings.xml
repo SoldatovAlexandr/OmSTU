@@ -4,4 +4,9 @@
     <string name="activity_main_bottom_screen_progress">Расписание</string>
     <string name="activity_main_bottom_screen_profile">Профиль</string>
     <string name="activity_main_bottom_screen_contact_work">Контактная работа</string>
+    <string-array name="spinnerStrings">
+        <item>Группа</item>
+        <item>Преподаватель</item>
+        <item>Аудитория</item>
+    </string-array>
 </resources>

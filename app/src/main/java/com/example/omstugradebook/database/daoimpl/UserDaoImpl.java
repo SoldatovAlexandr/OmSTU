@@ -59,6 +59,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User getActiveUser() {
         for (User user : readAllUsers()) {
+            System.out.println(user);
             if (user.getIsActive() == 1) {
                 return user;
             }

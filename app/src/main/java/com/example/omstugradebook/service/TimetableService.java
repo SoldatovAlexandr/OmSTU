@@ -2,8 +2,6 @@ package com.example.omstugradebook.service;
 
 import android.annotation.SuppressLint;
 
-import com.example.omstugradebook.dto.DtoResponseException;
-import com.example.omstugradebook.dto.DtoValidator;
 import com.example.omstugradebook.dto.GroupDtoResponse;
 import com.example.omstugradebook.dto.ScheduleBuilder;
 import com.example.omstugradebook.dto.ScheduleDtoResponse;
@@ -20,7 +18,6 @@ import java.util.List;
 
 public class TimetableService {
     private final String API_URL = "https://rasp.omgtu.ru/api/schedule/group/";
-    private DtoValidator validator = new DtoValidator();
     private ScheduleBuilder builder = new ScheduleBuilder();
     private int groupNumber = -1;
 
@@ -32,11 +29,10 @@ public class TimetableService {
             Gson gson = new Gson();
             ScheduleDtoResponse[] dtoResponses = gson.fromJson(response, ScheduleDtoResponse[].class);
             for (ScheduleDtoResponse dtoResponse : dtoResponses) {
-                validator.validate(dtoResponse);
                 scheduleList.add(builder.build(dtoResponse));
             }
             System.out.println(scheduleList);
-        } catch (IOException | DtoResponseException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return scheduleList;

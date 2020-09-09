@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,19 +29,25 @@ public class TimetableFragment extends Fragment {
     private RecyclerView recyclerView;
     private ScheduleRVAdapter adapter = new ScheduleRVAdapter(new ArrayList<Schedule>());
     private UserDao userDao;
+    private String groupString = "";
+
 
     public TimetableFragment() {
-
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         if (start == null) {
             setNewCalendar(Calendar.getInstance());
         } else {
             setNewCalendar(start);
         }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_timetable, container, false);
         recyclerView = view.findViewById(R.id.rv);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
@@ -62,8 +69,27 @@ public class TimetableFragment extends Fragment {
         finish = new GregorianCalendar(calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH));
+        sendRequest();
+    }
+
+    public void setGroupString(String groupString) {
+        if (!this.groupString.equals(groupString)) {
+            this.groupString = groupString;
+            sendRequest();
+        }
+    }
+
+
+    private void sendRequest() {
         OmSTUSender omSTUSender = new OmSTUSender();
         omSTUSender.execute();
+    }
+
+    public void update() {
+        if (!userDao.getActiveUser().getStudent().getSpeciality().equals(groupString)) {
+            groupString = userDao.getActiveUser().getStudent().getSpeciality();
+            sendRequest();
+        }
     }
 
 
@@ -75,7 +101,12 @@ public class TimetableFragment extends Fragment {
         protected String doInBackground(String... strings) {
             userDao = new UserDaoImpl(getContext());
             TimetableService timetableService = new TimetableService();
-            String group=userDao.getActiveUser().getStudent().getSpeciality().trim();
+            String group;
+            if (groupString.isEmpty()) {
+                group = userDao.getActiveUser().getStudent().getSpeciality().trim();
+            } else {
+                group = groupString.trim();
+            }
             schedules = timetableService.getTimetable(group, start, finish, 1);
             return null;
         }

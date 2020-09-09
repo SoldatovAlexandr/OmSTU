@@ -9,6 +9,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
@@ -49,7 +51,6 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     private ContactWorkFragment contactWorkFragment = new ContactWorkFragment();
     private View buttonProfile;
     private View buttonCalendar;
-    private Button buttonAddNewUser;
     private LinearLayout llAccounts;
     private UserDao userDao = new UserDaoImpl(this);
     private LinearLayout userLLBottomSheet;
@@ -60,10 +61,13 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     private User activeUser;
     private static BottomNavigationView navigation;
     private CalendarView calendarView;
+    private EditText searchEditText;
+    private ImageButton searchButton;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
             switch (item.getItemId()) {
                 case R.id.bottom_navigation_item_grade:
                     loadFragment(gradeFragment);
@@ -93,43 +97,61 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         timetableFragment.setNewCalendar(new GregorianCalendar(year, month, dayOfMonth));
     }
 
+    private void setCalendarBottomShit() {
+        calendarLLBottomSheet = findViewById(R.id.calendar_bottom_sheet);
+        calendarBottomSheetBehavior = BottomSheetBehavior.from(calendarLLBottomSheet);
+        calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        searchEditText = findViewById(R.id.search_edit_text);
+        if (activeUser != null && activeUser.getStudent().getSpeciality() != null) {
+            searchEditText.setText(activeUser.getStudent().getSpeciality());
+        }
+        calendarView = findViewById(R.id.calendar_view);
+        calendarView.setOnDateChangeListener(this);
+        searchButton = findViewById(R.id.search_button_calendar);
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String selectString = searchEditText.getText().toString();
+                timetableFragment.setGroupString(selectString);
+            }
+        });
+    }
+
+    private void setUserLLBottomSheet() {
+        userLLBottomSheet = findViewById(R.id.bottom_sheet);
+        userBottomSheetBehavior = BottomSheetBehavior.from(userLLBottomSheet);
+        userBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        llAccounts = findViewById(R.id.accounts_change_layout);
+        userButtons = new HashMap<>();
+        if (activeUser == null && userDao.readAllUsers().isEmpty()) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivityForResult(intent, 1);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        activeUser = userDao.getActiveUser();
         ConnectionDetector connectionDetector = new ConnectionDetector(getContext());
         if (connectionDetector.ConnectingToInternet() && userDao.getActiveUser() != null) {
             OmSTUSender omSTUSender = new OmSTUSender();
             omSTUSender.execute();
         }
-        setContentView(R.layout.activity_main);
+        setNavigationMenu();
+        loadFragment(GradeFragment.getInstance());
+        setCalendarBottomShit();
+        setUserLLBottomSheet();
+    }
+
+    private void setNavigationMenu() {
         navigation = findViewById(R.id.bottom_navigation_view);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         buttonProfile = findViewById(R.id.bottom_navigation_item_profile);
         buttonProfile.setOnLongClickListener(this);
         buttonCalendar = findViewById(R.id.bottom_navigation_item_timetable);
         buttonCalendar.setOnLongClickListener(this);
-        loadFragment(GradeFragment.getInstance());
-
-        calendarLLBottomSheet = findViewById(R.id.calendar_bottom_sheet);
-        calendarBottomSheetBehavior = BottomSheetBehavior.from(calendarLLBottomSheet);
-        calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-
-        userLLBottomSheet = findViewById(R.id.bottom_sheet);
-        userBottomSheetBehavior = BottomSheetBehavior.from(userLLBottomSheet);
-        userBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-        calendarView = findViewById(R.id.calendar_view);
-        calendarView.setOnDateChangeListener(this);
-
-        llAccounts = findViewById(R.id.accounts_change_layout);
-        buttonAddNewUser = findViewById(R.id.add_new_user_button);
-        buttonAddNewUser.setOnClickListener(this);
-        userButtons = new HashMap<>();
-        activeUser = userDao.getActiveUser();
-        if (activeUser == null) {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivityForResult(intent, 1);
-        }
-
     }
 
     public static BottomNavigationView getNavigation() {
@@ -169,11 +191,6 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.add_new_user_button) {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivityForResult(intent, 1);
-            userBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-        }
         try {
             String loginOnView = ((Button) v).getText().toString();
             if (!userDao.getActiveUser().getLogin().equals(loginOnView)) {
@@ -207,6 +224,9 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
                 gradeFragment.update();
                 break;
             case R.id.bottom_navigation_item_timetable:
+                timetableFragment.update();
+                break;
+            case R.id.bottom_navigation_item_contactwork:
                 break;
         }
     }
