@@ -9,7 +9,6 @@ import androidx.cardview.widget.CardView;
 import com.example.omstugradebook.R;
 import com.example.omstugradebook.model.Schedule;
 
-import java.util.List;
 import java.util.Map;
 
 public class ScheduleViewHolder extends AbstractScheduleHolder {
@@ -20,6 +19,7 @@ public class ScheduleViewHolder extends AbstractScheduleHolder {
     private TextView lecturer;
     private TextView group;
     private static Map<Integer, Schedule> schedules;
+    private TextView building;
 
     public ScheduleViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -29,6 +29,7 @@ public class ScheduleViewHolder extends AbstractScheduleHolder {
         timeEnd = itemView.findViewById(R.id.schedule_time_end);
         lecturer = itemView.findViewById(R.id.schedule_lecturer);
         group = itemView.findViewById(R.id.schedule_group);
+        building = itemView.findViewById(R.id.schedule_building);
     }
 
     public static void setSchedules(Map<Integer, Schedule> schedules) {
@@ -42,6 +43,7 @@ public class ScheduleViewHolder extends AbstractScheduleHolder {
         timeEnd.setText(schedule.getEndLesson());
         timeStart.setText(schedule.getBeginLesson());
         lecturer.setText(schedule.getLecturer());
+        building.setText(schedule.getBuilding());
         String groupString = "";
         if (schedule.getGroup() != null) {
             groupString = schedule.getGroup();
