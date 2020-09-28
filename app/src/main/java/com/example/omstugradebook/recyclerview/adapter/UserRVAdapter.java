@@ -10,10 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.omstugradebook.R;
-import com.example.omstugradebook.model.User;
+import com.example.omstugradebook.model.grade.User;
 import com.example.omstugradebook.recyclerview.holder.user.AccountViewHolder;
 import com.example.omstugradebook.recyclerview.holder.user.InfoViewHolder;
 import com.example.omstugradebook.recyclerview.holder.user.UserViewHolder;
+import com.example.omstugradebook.view.fragments.AccountFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,12 +22,14 @@ import java.util.List;
 public class UserRVAdapter extends RecyclerView.Adapter<AccountViewHolder> {
     private static List<User> users;
     private Context context;
+    private AccountFragment accountFragment;
 
     public static List<ImageButton> buttons = new ArrayList<>();
 
-    public UserRVAdapter(List<User> users, Context context) {
+    public UserRVAdapter(List<User> users, Context context, AccountFragment accountFragment) {
         UserRVAdapter.users = users;
         this.context = context;
+        this.accountFragment = accountFragment;
     }
 
     public void setUsers(List<User> users) {
@@ -44,7 +47,7 @@ public class UserRVAdapter extends RecyclerView.Adapter<AccountViewHolder> {
         switch (viewType) {
             case 0:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.user_card_view, parent, false);
-                return new UserViewHolder(view, context);
+                return new UserViewHolder(view, context, accountFragment);
             case 1:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.add_new_user_card_view, parent, false);
                 return new InfoViewHolder(view);

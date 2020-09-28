@@ -7,7 +7,7 @@
     android:padding="4dp">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/schedule_card_view"
+        android:id="@+id/login_card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="8dp"
@@ -21,83 +21,80 @@
             android:padding="16dp">
 
             <LinearLayout
+                android:id="@+id/linearLayout_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:ignore="MissingConstraints,Orientation">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     tools:ignore="MissingConstraints">
 
                     <TextView
-                        android:id="@+id/schedule_time_start"
-                        android:layout_marginTop="2pt"
+                        android:id="@+id/login_text_view"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="16dp"
-                        android:text="start"
+                        android:text="Логин"
                         android:textColor="@color/colorBlack"
-                        android:textSize="16sp"
+                        android:textSize="20sp"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:id="@+id/schedule_time_end"
+                        android:id="@+id/password_text_view"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4pt"
-                        android:layout_marginEnd="16dp"
-                        android:text="end"
-                        android:textSize="16sp"
+                        android:text="Пароль"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="20sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/schedule_time_start" />
+                        app:layout_constraintTop_toBottomOf="@+id/login_text_view" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10pt"
-                    android:layout_weight="6"
+                    android:layout_weight="2"
                     tools:ignore="MissingConstraints">
 
-                    <TextView
-                        android:id="@+id/schedule_discipline"
-                        android:layout_width="wrap_content"
+                    <EditText
+                        android:id="@+id/login_edit_text"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Discipline"
-                        android:textSize="20sp"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/schedule_group"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="group"
-                        app:layout_constraintStart_toStartOf="@+id/schedule_discipline"
-                        app:layout_constraintTop_toBottomOf="@+id/schedule_discipline" />
-
-                    <TextView
-                        android:id="@+id/schedule_lecturer"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="lecturer"
-                        app:layout_constraintStart_toStartOf="@+id/schedule_discipline"
-                        app:layout_constraintTop_toBottomOf="@+id/schedule_group" />
-
-                    <TextView
-                        android:id="@+id/schedule_auditorium"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:text="auditorium"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/schedule_group" />
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <EditText
+                        android:id="@+id/password_edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPassword"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/login_edit_text" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
+
+            <Button
+                android:id="@+id/login_button_ok"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text="OK"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout_login"
+                tools:ignore="MissingConstraints" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>

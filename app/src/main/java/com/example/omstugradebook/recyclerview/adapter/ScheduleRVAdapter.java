@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.omstugradebook.R;
-import com.example.omstugradebook.model.Schedule;
+import com.example.omstugradebook.model.schedule.Schedule;
 import com.example.omstugradebook.recyclerview.holder.schedule.AbstractScheduleHolder;
 import com.example.omstugradebook.recyclerview.holder.schedule.ScheduleViewHolder;
 import com.example.omstugradebook.recyclerview.holder.schedule.TitleViewHolder;

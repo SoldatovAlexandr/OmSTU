@@ -1,4 +1,4 @@
-package com.example.omstugradebook.model;
+package com.example.omstugradebook.model.schedule;
 
 import java.util.Objects;
 

@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.omstugradebook.R;
 import com.example.omstugradebook.SubjectType;
-import com.example.omstugradebook.model.Subject;
+import com.example.omstugradebook.model.grade.Subject;
 import com.example.omstugradebook.recyclerview.holder.subject.GradeViewHolder;
 import com.example.omstugradebook.recyclerview.holder.subject.SubjectViewHolder;
 import com.example.omstugradebook.recyclerview.holder.subject.TitleViewHolder;

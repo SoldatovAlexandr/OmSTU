@@ -17,17 +17,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.example.omstugradebook.service.AuthService;
-import com.example.omstugradebook.view.activity.MainActivity;
-import com.example.omstugradebook.recyclerview.adapter.GradeRVAdapter;
 import com.example.omstugradebook.R;
 import com.example.omstugradebook.database.dao.SubjectDao;
 import com.example.omstugradebook.database.dao.UserDao;
 import com.example.omstugradebook.database.daoimpl.SubjectDaoImpl;
 import com.example.omstugradebook.database.daoimpl.UserDaoImpl;
-import com.example.omstugradebook.model.GradeBook;
-import com.example.omstugradebook.model.Subject;
-import com.example.omstugradebook.model.Term;
+import com.example.omstugradebook.model.grade.GradeBook;
+import com.example.omstugradebook.model.grade.Subject;
+import com.example.omstugradebook.model.grade.Term;
+import com.example.omstugradebook.recyclerview.adapter.GradeRVAdapter;
+import com.example.omstugradebook.service.AuthService;
+import com.example.omstugradebook.view.activity.MainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,8 +75,9 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         for (int i = 1; i <= countTerms; i++) {
             if (title.equals("Семестр " + i)) {
                 activeTerm = i;
-                adapter.setSubjects(subjectDao.readSubjectsByTerm(i));
+                adapter.setSubjects(subjectDao.readSubjectsByTerm(i, getContext()));
                 adapter.notifyDataSetChanged();
+                requireActivity().setTitle("Семестр " + i);
                 Log.d(TAG, "Выбран семестр номер " + i);
                 return true;
             }
@@ -92,11 +93,15 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        subjectDao = new SubjectDaoImpl(getContext());
-        userDao = new UserDaoImpl(getContext());
-        countTerms = subjectDao.getCountTerm();
+        requireActivity().setTitle("Зачетная книжка");
+        subjectDao = new SubjectDaoImpl();
+        userDao = new UserDaoImpl();
+        countTerms = subjectDao.getCountTerm(getContext());
         setHasOptionsMenu(true);
-        List<Subject> subjectList = subjectDao.readSubjectsByTerm(activeTerm);
+        List<Subject> subjectList = subjectDao.readSubjectsByTerm(activeTerm, getContext());
+        if (!subjectList.isEmpty()) {
+            requireActivity().setTitle("Семестр " + activeTerm);
+        }
         adapter.setSubjects(subjectList);
         View view = inflater.inflate(R.layout.fragment_grade, container, false);
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
@@ -110,8 +115,8 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
     @Override
     public void onRefresh() {
-        userDao = new UserDaoImpl(getContext());
-        if (userDao.getActiveUser() != null) {
+        userDao = new UserDaoImpl();
+        if (userDao.getActiveUser(getContext()) != null) {
             OmSTUSender omSTUSender = new OmSTUSender();
             omSTUSender.execute();
         } else {
@@ -119,6 +124,7 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             adapter.notifyDataSetChanged();
         }
     }
+
 
     class OmSTUSender extends AsyncTask<String, String, String> {
         private GradeBook gradeBook;
@@ -134,9 +140,9 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             for (Term term : gradeBook.getTerms()) {
                 subjects.addAll(term.getSubjects());
             }
-            if (!subjects.equals(subjectDao.readAllSubjects())) {
-                subjectDao.removeAllSubjects();
-                subjectDao.insertAllSubjects(subjects);
+            if (!subjects.equals(subjectDao.readAllSubjects(getContext()))) {
+                subjectDao.removeAllSubjects(getContext());
+                subjectDao.insertAllSubjects(subjects, getContext());
             }
             return null;
         }
@@ -145,7 +151,7 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             if (MainActivity.getNavigation().getSelectedItemId() == R.id.bottom_navigation_item_grade) {
-                adapter.setSubjects(subjectDao.readSubjectsByTerm(activeTerm));
+                adapter.setSubjects(subjectDao.readSubjectsByTerm(activeTerm, getContext()));
                 swipeRefreshLayout.setRefreshing(false);
                 adapter.notifyDataSetChanged();
                 if (gradeBook == null) {

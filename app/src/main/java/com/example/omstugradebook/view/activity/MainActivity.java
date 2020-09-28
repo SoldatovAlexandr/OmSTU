@@ -18,24 +18,25 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.omstugradebook.service.AuthService;
 import com.example.omstugradebook.ConnectionDetector;
 import com.example.omstugradebook.R;
 import com.example.omstugradebook.database.dao.SubjectDao;
 import com.example.omstugradebook.database.dao.UserDao;
 import com.example.omstugradebook.database.daoimpl.SubjectDaoImpl;
 import com.example.omstugradebook.database.daoimpl.UserDaoImpl;
+import com.example.omstugradebook.model.grade.GradeBook;
+import com.example.omstugradebook.model.grade.Subject;
+import com.example.omstugradebook.model.grade.Term;
+import com.example.omstugradebook.model.grade.User;
+import com.example.omstugradebook.service.AuthService;
 import com.example.omstugradebook.view.fragments.AccountFragment;
 import com.example.omstugradebook.view.fragments.ContactWorkFragment;
 import com.example.omstugradebook.view.fragments.GradeFragment;
 import com.example.omstugradebook.view.fragments.TimetableFragment;
-import com.example.omstugradebook.model.GradeBook;
-import com.example.omstugradebook.model.Subject;
-import com.example.omstugradebook.model.Term;
-import com.example.omstugradebook.model.User;
 import com.example.omstugradebook.view.fragments.Updatable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     private View buttonProfile;
     private View buttonCalendar;
     private LinearLayout llAccounts;
-    private UserDao userDao = new UserDaoImpl(this);
+    private UserDao userDao = new UserDaoImpl();
     private LinearLayout userLLBottomSheet;
     private BottomSheetBehavior userBottomSheetBehavior;
     private LinearLayout calendarLLBottomSheet;
@@ -64,17 +65,20 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     private CalendarView calendarView;
     private EditText searchEditText;
     private ImageButton searchButton;
+    private FloatingActionButton fab;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+            fab.hide();
             switch (item.getItemId()) {
                 case R.id.bottom_navigation_item_grade:
                     loadFragment(gradeFragment);
                     return true;
                 case R.id.bottom_navigation_item_timetable:
                     loadFragment(timetableFragment);
+                    fab.show();
                     return true;
                 case R.id.bottom_navigation_item_profile:
                     loadFragment(accountFragment);
@@ -96,6 +100,8 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     @Override
     public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
         timetableFragment.setNewCalendar(new GregorianCalendar(year, month, dayOfMonth));
+        calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        fab.show();
     }
 
     private void setCalendarBottomShit() {
@@ -114,9 +120,12 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
             public void onClick(View v) {
                 String selectString = searchEditText.getText().toString();
                 timetableFragment.setGroupString(selectString);
+                fab.show();
+                calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
             }
         });
     }
+
 
     private void setUserLLBottomSheet() {
         userLLBottomSheet = findViewById(R.id.bottom_sheet);
@@ -124,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         userBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         llAccounts = findViewById(R.id.accounts_change_layout);
         userButtons = new HashMap<>();
-        if (activeUser == null && userDao.readAllUsers().isEmpty()) {
+        if (activeUser == null && userDao.readAllUsers(this).isEmpty()) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivityForResult(intent, 1);
         }
@@ -134,9 +143,9 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        activeUser = userDao.getActiveUser();
+        activeUser = userDao.getActiveUser(this);
         ConnectionDetector connectionDetector = new ConnectionDetector(getContext());
-        if (connectionDetector.ConnectingToInternet() && userDao.getActiveUser() != null) {
+        if (connectionDetector.ConnectingToInternet() && userDao.getActiveUser(this) != null) {
             OmSTUSender omSTUSender = new OmSTUSender();
             omSTUSender.execute();
         }
@@ -144,6 +153,22 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         loadFragment(GradeFragment.getInstance());
         setCalendarBottomShit();
         setUserLLBottomSheet();
+        setFloatingActionBar();
+    }
+
+    private void setFloatingActionBar() {
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setBackgroundColor(Color.BLUE);
+        fab.hide();
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (navigation.getSelectedItemId() == R.id.bottom_navigation_item_timetable) {
+                    calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    fab.hide();
+                }
+            }
+        });
     }
 
     private void setNavigationMenu() {
@@ -164,11 +189,12 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         if (v.getId() == R.id.bottom_navigation_item_timetable) {
             if (navigation.getSelectedItemId() == R.id.bottom_navigation_item_timetable) {
                 calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                fab.hide();
             }
         } else {
             llAccounts.removeAllViews();
             userButtons.clear();
-            for (User user : userDao.readAllUsers()) {
+            for (User user : userDao.readAllUsers(this)) {
                 Button userButton = new Button(this);
                 userButtons.put(user.getLogin(), userButton);
                 userButton.setText(user.getLogin());
@@ -194,8 +220,8 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     public void onClick(View v) {
         try {
             String loginOnView = ((Button) v).getText().toString();
-            if (!userDao.getActiveUser().getLogin().equals(loginOnView)) {
-                userDao.changeActiveUser(userDao.getUserByLogin(loginOnView));
+            if (!userDao.getActiveUser(this).getLogin().equals(loginOnView)) {
+                userDao.changeActiveUser(userDao.getUserByLogin(loginOnView, this), this);
                 userBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
                 updateCurrentFragment();
             }
@@ -204,21 +230,10 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (data == null) {
-            return;
-        }
-        String login = data.getStringExtra("login");
-        userButtons.remove(login);
-        activeUser = userDao.getActiveUser();
-        updateCurrentFragment();
-    }
-
     private void updateCurrentFragment() {
         getCurrentUpdatableFragment().update();
     }
+
 
     private Updatable getCurrentUpdatableFragment() {
         switch (navigation.getSelectedItemId()) {
@@ -238,9 +253,9 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         @Override
         protected String doInBackground(String... strings) {
             AuthService auth = new AuthService();
-            UserDao userDao = new UserDaoImpl(getContext());
-            SubjectDao subjectDao = new SubjectDaoImpl(getContext());
-            if (userDao.getActiveUser() == null) {
+            UserDao userDao = new UserDaoImpl();
+            SubjectDao subjectDao = new SubjectDaoImpl();
+            if (userDao.getActiveUser(getContext()) == null) {
                 return null;
             }
             GradeBook gradeBook = auth.getGradeBook(getContext());
@@ -249,12 +264,15 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
                 for (Term term : gradeBook.getTerms()) {
                     subjects.addAll(term.getSubjects());
                 }
-                User user = userDao.getActiveUser();
+                for (Subject subject : subjects) {
+                    subject.setUserId((int) activeUser.getId());
+                }
+                User user = userDao.getActiveUser(getContext());
                 user.setStudent(gradeBook.getStudent());
-                userDao.update(user);
-                if (!subjectDao.equalsSubjects(subjects)) {
-                    subjectDao.removeAllSubjects();
-                    subjectDao.insertAllSubjects(subjects);
+                userDao.update(user, getContext());
+                if (!subjectDao.equalsSubjects(subjects, getContext())) {
+                    subjectDao.removeAllSubjects(getContext());
+                    subjectDao.insertAllSubjects(subjects, getContext());
                 }
             }
             return null;

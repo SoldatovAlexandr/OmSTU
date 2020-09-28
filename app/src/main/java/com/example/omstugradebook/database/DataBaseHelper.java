@@ -24,6 +24,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 + "teacher text,"
                 + "toDiploma text,"
                 + "term integer,"
+                + "user_id integer,"
                 + "type integer" + ");");
 
         db.execSQL("create table users ("
@@ -36,6 +37,23 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 + "educationForm text,"
                 + "isActive integer,"
                 + "password text" + ");");
+
+        db.execSQL("create table schedules ("
+                + "id integer primary key autoincrement,"
+                + "auditorium text,"
+                + "beginLesson text,"
+                + "building text,"
+                + "date text,"
+                + "dayOfWeek integer,"
+                + "detailInfo text,"
+                + "discipline text,"
+                + "endLesson text,"
+                + "kindOfWork text,"
+                + "lecturer text,"
+                + "stream text,"
+                + "groups text,"
+                + "subGroup text,"
+                + "dayOfWeekString text" + ");");
     }
 
     @Override

@@ -2,22 +2,26 @@ package com.example.omstugradebook.view.fragments;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.omstugradebook.database.dao.UserDao;
-import com.example.omstugradebook.database.daoimpl.UserDaoImpl;
+import com.example.omstugradebook.R;
+import com.example.omstugradebook.model.contactwork.ContactWork;
+import com.example.omstugradebook.recyclerview.adapter.ContactWorkRVAdapter;
+import com.example.omstugradebook.service.ContactWorkService;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ContactWorkFragment extends Fragment implements Updatable {
-    private static String PATH = "http://up.omgtu.ru/index.php?r=remote/read";
-    static final String STUD_SES_ID = "STUDSESSID";
-    private UserDao userDao;
+    private RecyclerView recyclerView;
+    private ContactWorkRVAdapter adapter = new ContactWorkRVAdapter(new ArrayList<ContactWork>(), getContext());
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -26,30 +30,42 @@ public class ContactWorkFragment extends Fragment implements Updatable {
         omSTUSender.execute();
     }
 
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        requireActivity().setTitle("Контактная работа");
+        View view = inflater.inflate(R.layout.fragment_contact_work, container, false);
+        recyclerView = view.findViewById(R.id.contact_work_recycler_view);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setAdapter(adapter);
+        return view;
+    }
+
+
     @Override
     public void update() {
 
     }
 
     class OmSTUSender extends AsyncTask<String, String, String> {
-        private Document doc;
+        private List<ContactWork> contactWorks;
 
         @Override
         protected String doInBackground(String... strings) {
-            userDao = new UserDaoImpl(getContext());
-            String token = userDao.getActiveUser().getToken();
-            try {
-                doc = Jsoup.connect(PATH).cookie(STUD_SES_ID, token).get();
-                System.out.println(doc);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            ContactWorkService contactWorkService = new ContactWorkService();
+            contactWorks = contactWorkService.getContactWork(getContext());
             return null;
         }
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            if (contactWorks == null) {
+                return;
+            }
+            adapter.setContactWorks(contactWorks, getContext());
+            adapter.notifyDataSetChanged();
         }
     }
 }

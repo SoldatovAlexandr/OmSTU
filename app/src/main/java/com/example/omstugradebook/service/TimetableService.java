@@ -5,7 +5,7 @@ import android.annotation.SuppressLint;
 import com.example.omstugradebook.dto.GroupDtoResponse;
 import com.example.omstugradebook.dto.ScheduleBuilder;
 import com.example.omstugradebook.dto.ScheduleDtoResponse;
-import com.example.omstugradebook.model.Schedule;
+import com.example.omstugradebook.model.schedule.Schedule;
 import com.google.gson.Gson;
 
 import org.jsoup.Jsoup;

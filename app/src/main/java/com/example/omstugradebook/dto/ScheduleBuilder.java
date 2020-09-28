@@ -1,6 +1,6 @@
 package com.example.omstugradebook.dto;
 
-import com.example.omstugradebook.model.Schedule;
+import com.example.omstugradebook.model.schedule.Schedule;
 
 public class ScheduleBuilder {
     public Schedule build(ScheduleDtoResponse response) {

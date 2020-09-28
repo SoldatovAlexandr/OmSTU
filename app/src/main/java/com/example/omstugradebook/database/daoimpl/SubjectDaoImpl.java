@@ -8,80 +8,107 @@ import android.database.sqlite.SQLiteDatabase;
 import com.example.omstugradebook.SubjectType;
 import com.example.omstugradebook.database.DataBaseHelper;
 import com.example.omstugradebook.database.dao.SubjectDao;
-import com.example.omstugradebook.model.Subject;
+import com.example.omstugradebook.model.grade.Subject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SubjectDaoImpl implements SubjectDao {
-    private DataBaseHelper dbHelper;
-    private SQLiteDatabase database;
 
-    public SubjectDaoImpl(Context context) {
-        dbHelper = new DataBaseHelper(context);
+    public SubjectDaoImpl() {
     }
 
     @Override
-    public int removeAllSubjects() {
-        database = dbHelper.getWritableDatabase();
-        int clearCount = database.delete("subjects", null, null);
-        database.close();
-        return clearCount;
-    }
-
-    @Override
-    public List<Subject> readSubjectsByTerm(int termFilter) {
-        database = dbHelper.getWritableDatabase();
-        Cursor cursor = database.query("subjects", null, "term = " + termFilter, null, null, null, null);
-        return getSubjects(cursor);
-    }
-
-    @Override
-    public List<Subject> readAllSubjects() {
-        database = dbHelper.getWritableDatabase();
-        Cursor cursor = database.query("subjects", null, null, null, null, null, null);
-        return getSubjects(cursor);
-    }
-
-    @Override
-    public void insertAllSubjects(List<Subject> subjects) {
-        database = dbHelper.getWritableDatabase();
-        for (Subject subject : subjects) {
-            ContentValues contentValues = new ContentValues();
-            contentValues.put("name", subject.getName());
-            contentValues.put("hours", subject.getHours());
-            contentValues.put("attendance", subject.getAttendance());
-            contentValues.put("tempRating", subject.getTempRating());
-            contentValues.put("mark", subject.getMark());
-            contentValues.put("date", subject.getDate());
-            contentValues.put("teacher", subject.getTeacher());
-            contentValues.put("toDiploma", subject.getToDiploma());
-            contentValues.put("term", subject.getTerm());
-            contentValues.put("type", subject.getType().ordinal());
-            database.insert("subjects", null, contentValues);
+    public int removeAllSubjects(Context context) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            return database.delete("subjects", null, null);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return -1;
         }
-        database.close();
     }
 
     @Override
-    public boolean equalsSubjects(List<Subject> subjects) {
-        List<Subject> dataBaseSubjects = readAllSubjects();
+    public List<Subject> readSubjectsByTerm(int termFilter, Context context) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            Cursor cursor = database.query("subjects", null, "term = " + termFilter, null, null, null, null);
+            return getSubjects(cursor);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
+    public List<Subject> readAllSubjects(Context context) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            Cursor cursor = database.query("subjects", null, null, null, null, null, null);
+            return getSubjects(cursor);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
+    public boolean insertAllSubjects(List<Subject> subjects, Context context) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            for (Subject subject : subjects) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("name", subject.getName());
+                contentValues.put("hours", subject.getHours());
+                contentValues.put("attendance", subject.getAttendance());
+                contentValues.put("tempRating", subject.getTempRating());
+                contentValues.put("mark", subject.getMark());
+                contentValues.put("date", subject.getDate());
+                contentValues.put("teacher", subject.getTeacher());
+                contentValues.put("toDiploma", subject.getToDiploma());
+                contentValues.put("term", subject.getTerm());
+                contentValues.put("type", subject.getType().ordinal());
+                contentValues.put("user_id", subject.getUserId());
+                database.insert("subjects", null, contentValues);
+            }
+            return true;
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean equalsSubjects(List<Subject> subjects, Context context) {
+        List<Subject> dataBaseSubjects = readAllSubjects(context);
         return dataBaseSubjects.equals(subjects);
     }
 
     @Override
-    public int getCountTerm() {
-        String selectQuery = "SELECT max(term) as term FROM subjects";
-        SQLiteDatabase database = dbHelper.getWritableDatabase();
-        Cursor cursor = database.rawQuery(selectQuery, null);
-        cursor.moveToFirst();
-        return cursor.getInt(cursor.getColumnIndex("term"));
+    public int getCountTerm(Context context) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            String selectQuery = "SELECT max(term) as term FROM subjects";
+            Cursor cursor = database.rawQuery(selectQuery, null);
+            cursor.moveToFirst();
+            return cursor.getInt(cursor.getColumnIndex("term"));
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return -1;
+        }
     }
 
     @Override
-    public long getCount() {
-        return readAllSubjects().size();
+    public long getCount(Context context) {
+        return readAllSubjects(context).size();
     }//TODO
+
+    @Override
+    public List<Subject> getSubjectsByUser(int userId, int termFilter, Context context) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            Cursor cursor = database.query("subjects", null, "term = " + termFilter + ", user_id =" + userId, null, null, null, null);
+            return getSubjects(cursor);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
 
     private List<Subject> getSubjects(Cursor cursor) {
         List<Subject> subjects = new ArrayList<>();
@@ -96,6 +123,7 @@ public class SubjectDaoImpl implements SubjectDao {
             int toDiplomaColIndex = cursor.getColumnIndex("toDiploma");
             int termColIndex = cursor.getColumnIndex("term");
             int typeColIndex = cursor.getColumnIndex("type");
+            int userIdColIndex = cursor.getColumnIndex("user_id");
             do {
                 String name = cursor.getString(nameColIndex);
                 String hours = cursor.getString(hoursColIndex);
@@ -107,11 +135,11 @@ public class SubjectDaoImpl implements SubjectDao {
                 String toDiploma = cursor.getString(toDiplomaColIndex);
                 int term = cursor.getInt(termColIndex);
                 int type = cursor.getInt(typeColIndex);
-                subjects.add(new Subject(name, hours, attendance, tempRating, mark, date, teacher, toDiploma, term, SubjectType.values()[type]));
+                int userId = cursor.getInt(userIdColIndex);
+                subjects.add(new Subject(name, hours, attendance, tempRating, mark, date, teacher, toDiploma, term, SubjectType.values()[type], userId));
             } while (cursor.moveToNext());
         }
         cursor.close();
-        database.close();
         return subjects;
     }
 }

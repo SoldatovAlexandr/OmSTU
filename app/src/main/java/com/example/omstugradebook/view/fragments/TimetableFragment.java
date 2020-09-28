@@ -12,9 +12,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.omstugradebook.R;
+import com.example.omstugradebook.database.dao.ScheduleDao;
 import com.example.omstugradebook.database.dao.UserDao;
+import com.example.omstugradebook.database.daoimpl.ScheduleDaoImpl;
 import com.example.omstugradebook.database.daoimpl.UserDaoImpl;
-import com.example.omstugradebook.model.Schedule;
+import com.example.omstugradebook.model.grade.User;
+import com.example.omstugradebook.model.schedule.Schedule;
 import com.example.omstugradebook.recyclerview.adapter.ScheduleRVAdapter;
 import com.example.omstugradebook.service.TimetableService;
 
@@ -30,6 +33,7 @@ public class TimetableFragment extends Fragment implements Updatable {
     private ScheduleRVAdapter adapter = new ScheduleRVAdapter(new ArrayList<Schedule>());
     private UserDao userDao;
     private String groupString = "";
+    private ScheduleDao scheduleDao;
 
 
     public TimetableFragment() {
@@ -48,12 +52,19 @@ public class TimetableFragment extends Fragment implements Updatable {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        requireActivity().setTitle("Расписание");
         View view = inflater.inflate(R.layout.fragment_timetable, container, false);
         recyclerView = view.findViewById(R.id.rv);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);
+        loadScheduleFromDB();
         return view;
+    }
+
+    private void loadScheduleFromDB() {
+        scheduleDao = new ScheduleDaoImpl();
+        adapter.setScheduleList(scheduleDao.readAllSchedule(getContext()));
     }
 
     public void setNewCalendar(Calendar calendar) {
@@ -87,8 +98,8 @@ public class TimetableFragment extends Fragment implements Updatable {
 
     @Override
     public void update() {
-        if (!userDao.getActiveUser().getStudent().getSpeciality().equals(groupString)) {
-            groupString = userDao.getActiveUser().getStudent().getSpeciality();
+        if (!userDao.getActiveUser(getContext()).getStudent().getSpeciality().equals(groupString)) {
+            groupString = userDao.getActiveUser(getContext()).getStudent().getSpeciality();
             sendRequest();
         }
     }
@@ -100,11 +111,15 @@ public class TimetableFragment extends Fragment implements Updatable {
 
         @Override
         protected String doInBackground(String... strings) {
-            userDao = new UserDaoImpl(getContext());
+            userDao = new UserDaoImpl();
             TimetableService timetableService = new TimetableService();
             String group;
             if (groupString.isEmpty()) {
-                group = userDao.getActiveUser().getStudent().getSpeciality().trim();
+                User user = userDao.getActiveUser(getContext());
+                if (user == null) {
+                    return null;
+                }
+                group = user.getStudent().getSpeciality().trim();
             } else {
                 group = groupString.trim();
             }
@@ -117,6 +132,9 @@ public class TimetableFragment extends Fragment implements Updatable {
             super.onPostExecute(s);
             if (schedules != null) {
                 adapter.setScheduleList(schedules);
+                scheduleDao = new ScheduleDaoImpl();
+                scheduleDao.insertAllSchedule(schedules, getContext());
+                System.out.println(scheduleDao.readAllSchedule(getContext()));
                 adapter.notifyDataSetChanged();
             }
         }

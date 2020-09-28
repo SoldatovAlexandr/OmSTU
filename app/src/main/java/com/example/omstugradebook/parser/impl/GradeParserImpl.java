@@ -1,9 +1,11 @@
-package com.example.omstugradebook;
+package com.example.omstugradebook.parser.impl;
 
-import com.example.omstugradebook.model.GradeBook;
-import com.example.omstugradebook.model.Subject;
-import com.example.omstugradebook.model.Term;
-import com.example.omstugradebook.model.Student;
+import com.example.omstugradebook.SubjectType;
+import com.example.omstugradebook.model.grade.GradeBook;
+import com.example.omstugradebook.model.grade.Student;
+import com.example.omstugradebook.model.grade.Subject;
+import com.example.omstugradebook.model.grade.Term;
+import com.example.omstugradebook.parser.iface.GradeParser;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -12,24 +14,12 @@ import org.jsoup.select.Elements;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Parser {
+public class GradeParserImpl implements GradeParser {
+    @Override
     public GradeBook getGradeBook(final Document document) {
         Student user = getUser(document.selectFirst("div.jumbotron.bs-example-bg-classes"));
         List<Term> terms = getTerms(document.select("div.row.tab-pane"));
         return new GradeBook(terms, user);
-    }
-
-    private Student getUser(Element element) {
-        String fullName = element.selectFirst("h1").text();
-        Element elementsUserInfo = element.selectFirst("p");
-        String[] strings = elementsUserInfo.toString().split("(</b>|<br>)");
-        List<String> userData = new ArrayList<>();
-        for (String string : strings) {
-            if (!string.contains("<")) {
-                userData.add(string);
-            }
-        }
-        return new Student(fullName, userData.get(0), userData.get(2), userData.get(3));
     }
 
     private List<Term> getTerms(Elements elements) {
@@ -106,5 +96,18 @@ public class Parser {
             toDiploma = elementList.get(7).text();
         }
         return new Subject(name, hours, attendance, tempRating, mark, date, teacher, toDiploma, term, type);
+    }
+
+    private Student getUser(Element element) {
+        String fullName = element.selectFirst("h1").text();
+        Element elementsUserInfo = element.selectFirst("p");
+        String[] strings = elementsUserInfo.toString().split("(</b>|<br>)");
+        List<String> userData = new ArrayList<>();
+        for (String string : strings) {
+            if (!string.contains("<")) {
+                userData.add(string);
+            }
+        }
+        return new Student(fullName, userData.get(0), userData.get(2), userData.get(3));
     }
 }

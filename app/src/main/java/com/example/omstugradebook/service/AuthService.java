@@ -3,10 +3,10 @@ package com.example.omstugradebook.service;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.omstugradebook.Parser;
 import com.example.omstugradebook.database.daoimpl.UserDaoImpl;
-import com.example.omstugradebook.model.GradeBook;
-import com.example.omstugradebook.model.User;
+import com.example.omstugradebook.model.grade.GradeBook;
+import com.example.omstugradebook.model.grade.User;
+import com.example.omstugradebook.parser.impl.GradeParserImpl;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -116,9 +116,9 @@ public class AuthService {
 
     public GradeBook getGradeBook(Context context) {
         Document doc = null;
-        UserDaoImpl userTable = new UserDaoImpl(context);
+        UserDaoImpl userTable = new UserDaoImpl();
         try {
-            User activeUser = userTable.getActiveUser();
+            User activeUser = userTable.getActiveUser(context);
             String token = activeUser.getToken();
             doc = Jsoup.connect(URL).cookie(STUD_SES_ID, token).get();
             Log.d(TAG, "сделан запрос");
@@ -127,7 +127,7 @@ public class AuthService {
                 String cookie = getAuth(activeUser.getLogin(), activeUser.getPassword());
                 String studSesId = getStudSessId(cookie);
                 activeUser.setToken(studSesId);
-                userTable.update(activeUser);
+                userTable.update(activeUser, context);
                 doc = Jsoup.connect(URL).cookie(STUD_SES_ID, token).get();
                 if (doc == null || !doc.baseUri().equals(URL)) {
                     return null;
@@ -139,7 +139,7 @@ public class AuthService {
         if (doc == null) {
             return null;
         }
-        return new Parser().getGradeBook(doc);
+        return new GradeParserImpl().getGradeBook(doc);
     }
 
 }

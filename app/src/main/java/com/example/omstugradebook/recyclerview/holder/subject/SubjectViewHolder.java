@@ -7,7 +7,7 @@ import android.widget.TextView;
 import androidx.cardview.widget.CardView;
 
 import com.example.omstugradebook.R;
-import com.example.omstugradebook.model.Subject;
+import com.example.omstugradebook.model.grade.Subject;
 
 import java.util.List;
 

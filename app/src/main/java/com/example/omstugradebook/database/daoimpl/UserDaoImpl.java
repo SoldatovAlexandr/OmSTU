@@ -7,59 +7,58 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.example.omstugradebook.database.DataBaseHelper;
 import com.example.omstugradebook.database.dao.UserDao;
-import com.example.omstugradebook.model.Student;
-import com.example.omstugradebook.model.User;
+import com.example.omstugradebook.model.grade.Student;
+import com.example.omstugradebook.model.grade.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoImpl implements UserDao {
-    private DataBaseHelper dbHelper;
-    private SQLiteDatabase database;
 
-    public UserDaoImpl(Context context) {
-        dbHelper = new DataBaseHelper(context);
+    public UserDaoImpl() {
     }
 
     @Override
-    public long insert(User user) {
-        database = dbHelper.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("login", user.getLogin());
-        contentValues.put("password", user.getPassword());
-        contentValues.put("token", user.getToken());
-        Student student = user.getStudent();
-        contentValues.put("fullName", student.getFullName());
-        contentValues.put("numberGradeBook", student.getNumberGradeBook());
-        contentValues.put("speciality", student.getSpeciality());
-        contentValues.put("educationForm", student.getEducationForm());
-        contentValues.put("isActive", user.getIsActive());
-        long id = database.insert("users", null, contentValues);
-        user.setId(id);
-        database.close();
-        return id;
+    public long insert(User user, Context context) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("login", user.getLogin());
+            contentValues.put("password", user.getPassword());
+            contentValues.put("token", user.getToken());
+            Student student = user.getStudent();
+            contentValues.put("fullName", student.getFullName());
+            contentValues.put("numberGradeBook", student.getNumberGradeBook());
+            contentValues.put("speciality", student.getSpeciality());
+            contentValues.put("educationForm", student.getEducationForm());
+            contentValues.put("isActive", user.getIsActive());
+            long id = database.insert("users", null, contentValues);
+            user.setId(id);
+            return id;
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return -1;
+        }
     }
 
     @Override
-    public User getUserByLogin(String login) {
-        return getUser("login = '" + login + "'");
+    public User getUserByLogin(String login, Context context) {
+        return getUser("login = '" + login + "'", context);
     }
 
     @Override
-    public User getUserByToken(String token) {
-        return getUser("token = '" + token + "'");
+    public User getUserByToken(String token, Context context) {
+        return getUser("token = '" + token + "'", context);
     }
 
     @Override
-    public User getUserById(long id) {
-        return getUser("id = " + id);
+    public User getUserById(long id, Context context) {
+        return getUser("id = " + id, context);
     }
 
 
     @Override
-    public User getActiveUser() {
-        for (User user : readAllUsers()) {
-            System.out.println(user);
+    public User getActiveUser(Context context) {
+        for (User user : readAllUsers(context)) {
             if (user.getIsActive() == 1) {
                 return user;
             }
@@ -68,67 +67,98 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public int removeAllUsers() {
-        database = dbHelper.getWritableDatabase();
-        int clearCount = database.delete("users", null, null);
-        database.close();
-        return clearCount;
+    public int removeAllUsers(Context context) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            return database.delete("users", null, null);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return -1;
+        }
     }
 
     @Override
-    public long update(User user) {
-        database = dbHelper.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("login", user.getLogin());
-        contentValues.put("password", user.getPassword());
-        contentValues.put("token", user.getToken());
-        Student student = user.getStudent();
-        contentValues.put("fullName", student.getFullName());
-        contentValues.put("numberGradeBook", student.getNumberGradeBook());
-        contentValues.put("speciality", student.getSpeciality());
-        contentValues.put("educationForm", student.getEducationForm());
-        contentValues.put("isActive", user.getIsActive());
-        long id = database.update("users", contentValues, "id =" + user.getId(), null);
-        user.setId(id);
-        database.close();
-        return id;
+    public long update(User user, Context context) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("login", user.getLogin());
+            contentValues.put("password", user.getPassword());
+            contentValues.put("token", user.getToken());
+            Student student = user.getStudent();
+            contentValues.put("fullName", student.getFullName());
+            contentValues.put("numberGradeBook", student.getNumberGradeBook());
+            contentValues.put("speciality", student.getSpeciality());
+            contentValues.put("educationForm", student.getEducationForm());
+            contentValues.put("isActive", user.getIsActive());
+            long id = database.update("users",
+                    contentValues,
+                    "id =" + user.getId(),
+                    null);
+            user.setId(id);
+            return id;
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return -1;
+        }
     }
 
     @Override
-    public List<User> readAllUsers() {
-        database = dbHelper.getWritableDatabase();
-        Cursor cursor = database.query("users", null, null, null, null, null, null);
-        return getUsers(cursor);
+    public List<User> readAllUsers(Context context) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            Cursor cursor = database.query("users",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null);
+            return getUsers(cursor);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
     }
 
     @Override
-    public void changeActiveUser(User newUser) {
-        User user = getActiveUser();
+    public void changeActiveUser(User newUser, Context context) {
+        User user = getActiveUser(context);
         if (user != null) {
             user.setIsActive(0);
-            update(user);
+            update(user, context);
         }
         newUser.setIsActive(1);
-        update(newUser);
+        update(newUser, context);
     }
 
     @Override
-    public boolean removeUser(User user) {
-        if (user.getIsActive() == 1) {
-            List<User> users = readAllUsers();
-            if (users != null) {
-                changeActiveUser(users.get(0));
+    public boolean removeUser(User user, Context context) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            if (user.getIsActive() == 1) {
+                List<User> users = readAllUsers(context);
+                if (users != null) {
+                    changeActiveUser(users.get(0), context);
+                }
             }
+            int result = database.delete("users", "id =" + user.getId(), null);
+            return result > 0;
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return false;
         }
-        database = dbHelper.getWritableDatabase();
-        int result = database.delete("users", "id =" + user.getId(), null);
-        database.close();
-        return result > 0;
     }
 
-    private User getUser(String selection) {
-        database = dbHelper.getWritableDatabase();
-        return getUser(database.query("users", null, selection, null, null, null, null));
+    private User getUser(String selection, Context context) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            return getUser(database.query("users",
+                    null,
+                    selection,
+                    null,
+                    null,
+                    null,
+                    null));
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 
@@ -152,7 +182,8 @@ public class UserDaoImpl implements UserDao {
             String numberGradeBook = cursor.getString(numberGBColIndex);
             String speciality = cursor.getString(specialityColIndex);
             String educationForm = cursor.getString(educationFormColIndex);
-            return new User(id, login, password, token, new Student(fullName, numberGradeBook, speciality, educationForm), isActive);
+            Student student = new Student(fullName, numberGradeBook, speciality, educationForm);
+            return new User(id, login, password, token, student, isActive);
         }
         return null;
     }
@@ -179,11 +210,11 @@ public class UserDaoImpl implements UserDao {
                 String numberGradeBook = cursor.getString(numberGBColIndex);
                 String speciality = cursor.getString(specialityColIndex);
                 String educationForm = cursor.getString(educationFormColIndex);
-                users.add(new User(id, login, password, token, new Student(fullName, numberGradeBook, speciality, educationForm), isActive));
+                Student student = new Student(fullName, numberGradeBook, speciality, educationForm);
+                users.add(new User(id, login, password, token, student, isActive));
             } while (cursor.moveToNext());
         }
         cursor.close();
-        database.close();
         return users;
     }
 

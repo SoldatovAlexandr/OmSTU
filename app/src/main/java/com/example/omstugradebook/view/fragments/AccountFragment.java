@@ -11,12 +11,14 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.omstugradebook.service.AuthService;
 import com.example.omstugradebook.R;
-import com.example.omstugradebook.recyclerview.adapter.UserRVAdapter;
 import com.example.omstugradebook.database.dao.UserDao;
 import com.example.omstugradebook.database.daoimpl.UserDaoImpl;
-import com.example.omstugradebook.model.User;
+import com.example.omstugradebook.model.grade.User;
+import com.example.omstugradebook.recyclerview.adapter.UserRVAdapter;
+import com.example.omstugradebook.service.AuthService;
+
+import java.util.Objects;
 
 public class AccountFragment extends Fragment implements Updatable {
     private UserDao userDao;
@@ -32,23 +34,31 @@ public class AccountFragment extends Fragment implements Updatable {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        userDao = new UserDaoImpl(getContext());
+        requireActivity().setTitle("Управление аккаунтами");
+        userDao = new UserDaoImpl();
         View view = inflater.inflate(R.layout.fragment_account, container, false);
-        activeUser = userDao.getActiveUser();
+        activeUser = userDao.getActiveUser(getContext());
         recyclerView = view.findViewById(R.id.user_recycle_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
-        adapter = new UserRVAdapter(userDao.readAllUsers(), getContext());
+        adapter = new UserRVAdapter(userDao.readAllUsers(getContext()), getContext(), this);
         recyclerView.setAdapter(adapter);
         return view;
     }
 
     @Override
     public void update() {
-        userDao = new UserDaoImpl(getContext());
-        adapter.setUsers(userDao.readAllUsers());
+        userDao = new UserDaoImpl();
+        adapter.setUsers(userDao.readAllUsers(getContext()));
         adapter.notifyDataSetChanged();
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        update();
+    }
+
 
     class OmSTUSender extends AsyncTask<String, String, String> {
         @Override
@@ -61,16 +71,17 @@ public class AccountFragment extends Fragment implements Updatable {
             }
             String studSesId = auth.getStudSessId(cookie);
             activeUser.setToken(studSesId);
-            userDao.update(activeUser);
+            userDao.update(activeUser, getContext());
             Log.d(TAG, "studSessId equals " + studSesId);
             return null;
         }
+
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             Log.d(TAG, "onPostExecute");
-            adapter.setUsers(userDao.readAllUsers());
+            adapter.setUsers(userDao.readAllUsers(getContext()));
             adapter.notifyDataSetChanged();
         }
     }

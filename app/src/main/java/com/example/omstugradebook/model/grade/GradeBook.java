@@ -1,4 +1,4 @@
-package com.example.omstugradebook.model;
+package com.example.omstugradebook.model.grade;
 
 import androidx.annotation.NonNull;
 

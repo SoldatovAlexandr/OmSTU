@@ -1,4 +1,4 @@
-package com.example.omstugradebook.model;
+package com.example.omstugradebook.model.grade;
 
 import androidx.annotation.NonNull;
 
@@ -17,6 +17,7 @@ public class Subject {
     private String toDiploma;
     private int term;
     private SubjectType type;
+    private int userId;
 
     public Subject(String name, String hours, String attendance, String tempRating, String mark, String date, String teacher, String toDiploma, int term, SubjectType type) {
         this.name = name;
@@ -29,6 +30,28 @@ public class Subject {
         this.toDiploma = toDiploma;
         this.term = term;
         this.type = type;
+    }
+
+    public Subject(String name, String hours, String attendance, String tempRating, String mark, String date, String teacher, String toDiploma, int term, SubjectType type, int userId) {
+        this.name = name;
+        this.hours = hours;
+        this.attendance = attendance;
+        this.tempRating = tempRating;
+        this.mark = mark;
+        this.date = date;
+        this.teacher = teacher;
+        this.toDiploma = toDiploma;
+        this.term = term;
+        this.type = type;
+        this.userId = userId;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public SubjectType getType() {
