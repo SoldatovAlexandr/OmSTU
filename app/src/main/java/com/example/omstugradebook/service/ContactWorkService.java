@@ -24,12 +24,12 @@ public class ContactWorkService {
     private static final String TAG = "Auth Logs";
     private static final String UP_OMGTU = "http://up.omgtu.ru/";
 
-    public List<ContactWork> getContactWork(Context context) {
+    public List<ContactWork> getContactWork(Context context, int userId) {
         Document doc = tryToGetConnection(context, REMOTE_URL);
         if (doc == null) {
             return null;
         }
-        return new ContactWorkParserImpl().getContactWorks(doc);
+        return new ContactWorkParserImpl().getContactWorks(doc, userId);
     }
 
     public List<ContactWorksTask> getTaskContactWork(String path, Context context) {

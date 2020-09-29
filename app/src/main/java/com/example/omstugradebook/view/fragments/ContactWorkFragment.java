@@ -13,9 +13,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.omstugradebook.R;
+import com.example.omstugradebook.database.dao.ContactWorkDao;
 import com.example.omstugradebook.database.dao.UserDao;
+import com.example.omstugradebook.database.daoimpl.ContactWorkDaoImpl;
 import com.example.omstugradebook.database.daoimpl.UserDaoImpl;
 import com.example.omstugradebook.model.contactwork.ContactWork;
+import com.example.omstugradebook.model.grade.User;
 import com.example.omstugradebook.recyclerview.adapter.ContactWorkRVAdapter;
 import com.example.omstugradebook.service.ContactWorkService;
 
@@ -27,6 +30,7 @@ public class ContactWorkFragment extends Fragment implements Updatable {
     private ContactWorkRVAdapter adapter = new ContactWorkRVAdapter(new ArrayList<ContactWork>(), getContext());
     private UserDao userDao = new UserDaoImpl();
     private TextView information;
+    private ContactWorkDao contactWorkDao;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,6 +49,9 @@ public class ContactWorkFragment extends Fragment implements Updatable {
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);
         information = view.findViewById(R.id.contact_work_information);
+        contactWorkDao = new ContactWorkDaoImpl();
+        List<ContactWork> contactWorks = contactWorkDao.readAllToContactWork(getContext());
+        adapter.setContactWorks(contactWorks, getContext());
         if (userDao.getActiveUser(getContext()) == null) {
             information.setText("Чтобы пользоваться контактной работой, войдите в аккаунт.");
         } else {
@@ -65,7 +72,11 @@ public class ContactWorkFragment extends Fragment implements Updatable {
         @Override
         protected String doInBackground(String... strings) {
             ContactWorkService contactWorkService = new ContactWorkService();
-            contactWorks = contactWorkService.getContactWork(getContext());
+            UserDao userDao = new UserDaoImpl();
+            User activeUser = userDao.getActiveUser(getContext());
+            if (activeUser != null) {
+                contactWorks = contactWorkService.getContactWork(getContext(), (int) activeUser.getId());
+            }
             return null;
         }
 
@@ -76,6 +87,11 @@ public class ContactWorkFragment extends Fragment implements Updatable {
                 return;
             }
             information.setText("");
+            contactWorkDao = new ContactWorkDaoImpl();
+            if (!contactWorkDao.readAllToContactWork(getContext()).equals(contactWorks)) {
+                contactWorkDao.removeAllToContactWork(getContext());
+                contactWorkDao.insertAllToContactWork(contactWorks, getContext());
+            }
             adapter.setContactWorks(contactWorks, getContext());
             adapter.notifyDataSetChanged();
         }

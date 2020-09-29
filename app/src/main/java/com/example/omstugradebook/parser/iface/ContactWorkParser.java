@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ContactWorkParser {
 
-    List<ContactWork> getContactWorks(Document document);
+    List<ContactWork> getContactWorks(Document document, int userId);
 
     List<ContactWorksTask> getTasks(Document doc);
 }

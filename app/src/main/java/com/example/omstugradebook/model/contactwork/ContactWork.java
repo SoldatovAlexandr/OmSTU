@@ -5,12 +5,22 @@ public class ContactWork {
     private String teacher;
     private String numberOfTasks;
     private String taskLink;
+    private int userId;
 
-    public ContactWork(String discipline, String teacher, String numberOfTasks, String taskLink) {
+    public ContactWork(String discipline, String teacher, String numberOfTasks, String taskLink, int userId) {
         this.discipline = discipline;
         this.teacher = teacher;
         this.numberOfTasks = numberOfTasks;
         this.taskLink = taskLink;
+        this.userId = userId;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public String getDiscipline() {

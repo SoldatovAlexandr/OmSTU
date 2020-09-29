@@ -11,8 +11,17 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         super(context, "OmSTU_DB", null, 1);
     }
 
+
     @Override
     public void onCreate(SQLiteDatabase db) {
+        db.execSQL("create table contact_work ("
+                + "id integer primary key autoincrement,"
+                + "discipline text,"
+                + "teacher text,"
+                + "number_of_tasks text,"
+                + "task_link text,"
+                + "user_id integet" + ");");
+
         db.execSQL("create table subjects ("
                 + "id integer primary key autoincrement,"
                 + "name text,"
