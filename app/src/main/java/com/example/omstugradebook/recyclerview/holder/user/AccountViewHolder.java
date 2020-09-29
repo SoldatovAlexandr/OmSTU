@@ -5,12 +5,13 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class AccountViewHolder extends RecyclerView.ViewHolder {
+import com.example.omstugradebook.model.grade.User;
+
+public abstract class AccountViewHolder extends RecyclerView.ViewHolder {
 
     public AccountViewHolder(@NonNull View itemView) {
         super(itemView);
     }
 
-    public void draw(int position) {
-    }
+    public abstract void bind(int position, User user);
 }

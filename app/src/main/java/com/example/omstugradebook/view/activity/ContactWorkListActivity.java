@@ -18,7 +18,7 @@ import java.util.Objects;
 
 public class ContactWorkListActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
-    private ContactWorkListRVAdapter adapter = new ContactWorkListRVAdapter(getContext());
+    private ContactWorkListRVAdapter adapter = new ContactWorkListRVAdapter();
     private String path;
 
     @Override

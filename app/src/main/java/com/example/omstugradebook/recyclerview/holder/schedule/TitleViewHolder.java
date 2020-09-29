@@ -6,16 +6,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.example.omstugradebook.R;
-
-import java.util.Map;
+import com.example.omstugradebook.recyclerview.holder.HolderContent;
+import com.example.omstugradebook.recyclerview.holder.schedule.content.TitleHolderContent;
 
 public class TitleViewHolder extends AbstractScheduleHolder {
-    private TextView textView;
-    private static Map<Integer, String> titleByPosition;
-
-    public static void setTitleByPosition(Map<Integer, String> titleByPosition) {
-        TitleViewHolder.titleByPosition = titleByPosition;
-    }
+    private final TextView textView;
 
     public TitleViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -23,8 +18,7 @@ public class TitleViewHolder extends AbstractScheduleHolder {
     }
 
     @Override
-    public void draw(int position) {
-        super.draw(position);
-        textView.setText(titleByPosition.get(position));
+    public void bind(HolderContent holderContent) {
+        textView.setText(((TitleHolderContent) holderContent).getTitle());
     }
 }

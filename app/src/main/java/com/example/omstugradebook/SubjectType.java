@@ -1,9 +1,18 @@
 package com.example.omstugradebook;
 
 public enum SubjectType {
-    EXAM,
-    TEST,
-    PRACTICE,
-    COURSE_WORK,
-    DIF_TEST
+    EXAM("Экзамены"),
+    TEST("Зачеты"),
+    PRACTICE("Практики"),
+    COURSE_WORK("Курсовые работы"),
+    DIF_TEST("Дифференцированные зачеты");
+    private final String textString;
+
+    SubjectType(String textString) {
+        this.textString = textString;
+    }
+
+    public String getTextString() {
+        return textString;
+    }
 }

@@ -20,9 +20,9 @@ import com.example.omstugradebook.database.daoimpl.UserDaoImpl;
 import com.example.omstugradebook.model.grade.User;
 import com.example.omstugradebook.model.schedule.Schedule;
 import com.example.omstugradebook.recyclerview.adapter.ScheduleRVAdapter;
+import com.example.omstugradebook.recyclerview.holder.schedule.ScheduleContentHolderConverter;
 import com.example.omstugradebook.service.TimetableService;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -31,7 +31,7 @@ public class TimetableFragment extends Fragment implements Updatable {
     private Calendar start;
     private Calendar finish;
     private RecyclerView recyclerView;
-    private ScheduleRVAdapter adapter = new ScheduleRVAdapter(new ArrayList<Schedule>());
+    private ScheduleRVAdapter adapter = new ScheduleRVAdapter();
     private UserDao userDao;
     private String groupString = "";
     private ScheduleDao scheduleDao;
@@ -78,7 +78,7 @@ public class TimetableFragment extends Fragment implements Updatable {
     private boolean loadScheduleFromDB() {
         scheduleDao = new ScheduleDaoImpl();
         List<Schedule> schedules = scheduleDao.readAllSchedule(getContext());
-        adapter.setScheduleList(schedules);
+        adapter.setScheduleList(new ScheduleContentHolderConverter(schedules));
         return schedules.isEmpty();
     }
 
@@ -146,7 +146,7 @@ public class TimetableFragment extends Fragment implements Updatable {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             if (schedules != null) {
-                adapter.setScheduleList(schedules);
+                adapter.setScheduleList(new ScheduleContentHolderConverter(schedules));
                 scheduleDao = new ScheduleDaoImpl();
                 scheduleDao.insertAllSchedule(schedules, getContext());
                 information.setText("");

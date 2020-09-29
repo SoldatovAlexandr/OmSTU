@@ -25,9 +25,6 @@ public class AccountFragment extends Fragment implements Updatable {
     private UserRVAdapter adapter;
     private RecyclerView recyclerView;
 
-    public AccountFragment() {
-
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,7 +36,7 @@ public class AccountFragment extends Fragment implements Updatable {
         recyclerView = view.findViewById(R.id.user_recycle_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
-        adapter = new UserRVAdapter(userDao.readAllUsers(getContext()), getContext(), this);
+        adapter = new UserRVAdapter();
         recyclerView.setAdapter(adapter);
         return view;
     }

@@ -1,6 +1,5 @@
 package com.example.omstugradebook.recyclerview.adapter;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,28 +14,27 @@ import com.example.omstugradebook.recyclerview.holder.contactwork.ContactWorkVie
 import java.util.List;
 
 public class ContactWorkRVAdapter extends RecyclerView.Adapter<ContactWorkViewHolder> {
-    private List<ContactWork> contactWorks;
-    private Context context;
+    private final List<ContactWork> contactWorks;
 
-    public ContactWorkRVAdapter(@NonNull List<ContactWork> contactWorks, @NonNull Context context) {
-        setContactWorks(contactWorks, context);
+    public ContactWorkRVAdapter(List<ContactWork> contactWorks) {
+        this.contactWorks = contactWorks;
     }
 
-    public void setContactWorks(List<ContactWork> contactWorks, Context context) {
-        this.contactWorks = contactWorks;
-        this.context = context;
+    public void setContactWorks(List<ContactWork> contactWorks) {
+        this.contactWorks.clear();
+        this.contactWorks.addAll(contactWorks);
     }
 
     @NonNull
     @Override
     public ContactWorkViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_work_card, parent, false);
-        return new ContactWorkViewHolder(view, context);
+        return new ContactWorkViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ContactWorkViewHolder holder, int position) {
-        holder.draw(contactWorks.get(position));
+        holder.bind(contactWorks.get(position));
     }
 
     @Override

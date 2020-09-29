@@ -8,16 +8,15 @@ import androidx.cardview.widget.CardView;
 
 import com.example.omstugradebook.R;
 import com.example.omstugradebook.model.grade.Subject;
-
-import java.util.List;
+import com.example.omstugradebook.recyclerview.holder.HolderContent;
+import com.example.omstugradebook.recyclerview.holder.subject.content.SubjectHolderContent;
 
 public class SubjectViewHolder extends GradeViewHolder {
-    private CardView cardView;
-    private TextView subjectName;
-    private TextView subjectGrade;
-    private TextView subjectTeacher;
-    private TextView subjectDate;
-    private static List<Subject> subjects;
+    private final CardView cardView;
+    private final TextView subjectName;
+    private final TextView subjectGrade;
+    private final TextView subjectTeacher;
+    private final TextView subjectDate;
 
     public SubjectViewHolder(View itemView) {
         super(itemView);
@@ -28,36 +27,31 @@ public class SubjectViewHolder extends GradeViewHolder {
         subjectDate = itemView.findViewById(R.id.subject_date);
     }
 
-    public static void setSubjects(List<Subject> subjects) {
-        SubjectViewHolder.subjects = subjects;
-    }
 
     @Override
-    public void draw(int i) {
-        Subject subject = subjects.get(i);
+    public void bind(HolderContent holderContent) {
+        Subject subject = ((SubjectHolderContent) holderContent).getSubject();
         if (subject != null) {
             subjectName.setText(subject.getName());
             subjectGrade.setText(subject.getMark());
             subjectTeacher.setText(subject.getTeacher());
             subjectDate.setText(subject.getDate());
-            int color;
-            Resources resources = cardView.getContext().getResources();
-            switch (subject.getMark()) {
-                case "Зачтено":
-                case "Отлично":
-                    color = resources.getColor(R.color.colorGreen);
-                    break;
-                case "Хорошо":
-                    color = resources.getColor(R.color.colorBlue);
-                    break;
-                case "Удовлетворительно":
-                    color = resources.getColor(R.color.colorRed);
-                    break;
-                default:
-                    color = resources.getColor(R.color.colorWhite);
-                    break;
-            }
-            cardView.setCardBackgroundColor(color);
+            cardView.setCardBackgroundColor(getColor(subject));
+        }
+    }
+
+    private int getColor(Subject subject) {
+        Resources resources = cardView.getContext().getResources();
+        switch (subject.getMark()) {
+            case "Зачтено":
+            case "Отлично":
+                return resources.getColor(R.color.colorGreen);
+            case "Хорошо":
+                return resources.getColor(R.color.colorBlue);
+            case "Удовлетворительно":
+                return resources.getColor(R.color.colorRed);
+            default:
+                return resources.getColor(R.color.colorWhite);
         }
     }
 }

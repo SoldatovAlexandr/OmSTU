@@ -27,7 +27,7 @@ import java.util.List;
 
 public class ContactWorkFragment extends Fragment implements Updatable {
     private RecyclerView recyclerView;
-    private ContactWorkRVAdapter adapter = new ContactWorkRVAdapter(new ArrayList<ContactWork>(), getContext());
+    private ContactWorkRVAdapter adapter = new ContactWorkRVAdapter(new ArrayList<ContactWork>());
     private UserDao userDao = new UserDaoImpl();
     private TextView information;
     private ContactWorkDao contactWorkDao;
@@ -51,7 +51,7 @@ public class ContactWorkFragment extends Fragment implements Updatable {
         information = view.findViewById(R.id.contact_work_information);
         contactWorkDao = new ContactWorkDaoImpl();
         List<ContactWork> contactWorks = contactWorkDao.readAllToContactWork(getContext());
-        adapter.setContactWorks(contactWorks, getContext());
+        adapter.setContactWorks(contactWorks);
         if (userDao.getActiveUser(getContext()) == null) {
             information.setText("Чтобы пользоваться контактной работой, войдите в аккаунт.");
         } else {
@@ -92,7 +92,7 @@ public class ContactWorkFragment extends Fragment implements Updatable {
                 contactWorkDao.removeAllToContactWork(getContext());
                 contactWorkDao.insertAllToContactWork(contactWorks, getContext());
             }
-            adapter.setContactWorks(contactWorks, getContext());
+            adapter.setContactWorks(contactWorks);
             adapter.notifyDataSetChanged();
         }
     }

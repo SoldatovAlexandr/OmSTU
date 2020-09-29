@@ -8,73 +8,56 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.omstugradebook.R;
-import com.example.omstugradebook.model.schedule.Schedule;
+import com.example.omstugradebook.recyclerview.holder.HolderContent;
 import com.example.omstugradebook.recyclerview.holder.schedule.AbstractScheduleHolder;
+import com.example.omstugradebook.recyclerview.holder.schedule.ScheduleContentHolderConverter;
+import com.example.omstugradebook.recyclerview.holder.schedule.ScheduleHolderType;
 import com.example.omstugradebook.recyclerview.holder.schedule.ScheduleViewHolder;
 import com.example.omstugradebook.recyclerview.holder.schedule.TitleViewHolder;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ScheduleRVAdapter extends RecyclerView.Adapter<AbstractScheduleHolder> {
-    private Map<Integer, Schedule> scheduleByPosition = new HashMap<>();
-    private Map<Integer, String> titleTextByPosition = new HashMap<>();
+    private final Map<Integer, HolderContent> contentHolderByPosition;
 
-    public ScheduleRVAdapter(List<Schedule> scheduleList) {
-        setScheduleList(scheduleList);
+    public ScheduleRVAdapter() {
+        contentHolderByPosition = new HashMap<>();
     }
 
-    public void setScheduleList(List<Schedule> scheduleList) {
-        scheduleByPosition.clear();
-        titleTextByPosition.clear();
-        int position = 0;
-        int currentDay = 0;
-        for (Schedule schedule : scheduleList) {
-            if (schedule.getDayOfWeek() != currentDay) {
-                currentDay = schedule.getDayOfWeek();
-                titleTextByPosition.put(position, schedule.getDayOfWeekFullString() + ", " + schedule.getDate());
-                position++;
-            }
-            scheduleByPosition.put(position, schedule);
-            position++;
-        }
-        ScheduleViewHolder.setSchedules(scheduleByPosition);
-        TitleViewHolder.setTitleByPosition(titleTextByPosition);
-
+    public void setScheduleList(ScheduleContentHolderConverter scc) {
+        contentHolderByPosition.clear();
+        contentHolderByPosition.putAll(scc.getContent());
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (titleTextByPosition.containsKey(position)) {
-            return 0;
-        }
-        return 1;
+        return contentHolderByPosition.get(position).getType();
     }
 
     @NonNull
     @Override
-
     public AbstractScheduleHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
-        switch (viewType) {
-            case 0:
+        ScheduleHolderType scheduleHolderType = ScheduleHolderType.values()[viewType];
+        switch (scheduleHolderType) {
+            case TITLE:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.title_view, parent, false);
                 return new TitleViewHolder(view);
-            case 1:
+            default:
+                SCHEDULE:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.schedule_card_view, parent, false);
                 return new ScheduleViewHolder(view);
         }
-        return new AbstractScheduleHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.schedule_card_view, parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull AbstractScheduleHolder holder, int position) {
-        holder.draw(position);
+        holder.bind(contentHolderByPosition.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return scheduleByPosition.size() + titleTextByPosition.size();
+        return contentHolderByPosition.size();
     }
 }

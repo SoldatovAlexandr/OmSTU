@@ -5,11 +5,12 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class AbstractScheduleHolder extends RecyclerView.ViewHolder {
+import com.example.omstugradebook.recyclerview.holder.HolderContent;
+
+public abstract class AbstractScheduleHolder extends RecyclerView.ViewHolder {
     public AbstractScheduleHolder(@NonNull View itemView) {
         super(itemView);
     }
 
-    public void draw(int position) {
-    }
+    public abstract void bind(HolderContent holderContent);
 }

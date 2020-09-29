@@ -27,6 +27,7 @@ import com.example.omstugradebook.model.grade.GradeBook;
 import com.example.omstugradebook.model.grade.Subject;
 import com.example.omstugradebook.model.grade.Term;
 import com.example.omstugradebook.recyclerview.adapter.GradeRVAdapter;
+import com.example.omstugradebook.recyclerview.holder.subject.SubjectContentHolderConverter;
 import com.example.omstugradebook.service.AuthService;
 import com.example.omstugradebook.view.activity.MainActivity;
 
@@ -35,7 +36,7 @@ import java.util.List;
 
 public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, Updatable {
     private RecyclerView recyclerView;
-    private GradeRVAdapter adapter = new GradeRVAdapter(new ArrayList<Subject>());
+    private GradeRVAdapter adapter = new GradeRVAdapter();
     private SubjectDao subjectDao;
     private UserDao userDao;
     private static int activeTerm = 1;
@@ -77,7 +78,8 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         for (int i = 1; i <= countTerms; i++) {
             if (title.equals("Семестр " + i)) {
                 activeTerm = i;
-                adapter.setSubjects(subjectDao.readSubjectsByTerm(i, getContext()));
+                List<Subject> subjects = subjectDao.readSubjectsByTerm(i, getContext());
+                adapter.setSubjects(new SubjectContentHolderConverter(subjects));
                 adapter.notifyDataSetChanged();
                 requireActivity().setTitle("Семестр " + i);
                 Log.d(TAG, "Выбран семестр номер " + i);
@@ -104,7 +106,7 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         if (!subjectList.isEmpty()) {
             requireActivity().setTitle("Семестр " + activeTerm);
         }
-        adapter.setSubjects(subjectList);
+        adapter.setSubjects(new SubjectContentHolderConverter(subjectList));
         View view = inflater.inflate(R.layout.fragment_grade, container, false);
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -159,7 +161,8 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             if (MainActivity.getNavigation().getSelectedItemId() == R.id.bottom_navigation_item_grade) {
-                adapter.setSubjects(subjectDao.readSubjectsByTerm(activeTerm, getContext()));
+                List<Subject> subjects = subjectDao.readSubjectsByTerm(activeTerm, getContext());
+                adapter.setSubjects(new SubjectContentHolderConverter(subjects));
                 swipeRefreshLayout.setRefreshing(false);
                 adapter.notifyDataSetChanged();
                 if (gradeBook == null) {
