@@ -12,11 +12,18 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.omstugradebook.R;
+import com.example.omstugradebook.database.dao.SubjectDao;
 import com.example.omstugradebook.database.dao.UserDao;
+import com.example.omstugradebook.database.daoimpl.SubjectDaoImpl;
 import com.example.omstugradebook.database.daoimpl.UserDaoImpl;
 import com.example.omstugradebook.model.grade.GradeBook;
+import com.example.omstugradebook.model.grade.Subject;
+import com.example.omstugradebook.model.grade.Term;
 import com.example.omstugradebook.model.grade.User;
 import com.example.omstugradebook.service.AuthService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     private Button buttonOk;
@@ -102,6 +109,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     User user = userDao.getActiveUser(getContext());
                     user.setStudent(gradeBook.getStudent());
                     userDao.update(user, getContext());
+                    SubjectDao subjectDao = new SubjectDaoImpl();
+                    List<Subject> subjects = new ArrayList<>();
+                    for (Term term : gradeBook.getTerms()) {
+                        subjects.addAll(term.getSubjects());
+                    }
+                    subjectDao.insertAllSubjects(subjects, getContext());
                 }
                 return null;
             }

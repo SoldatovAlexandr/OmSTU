@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -12,6 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.omstugradebook.R;
+import com.example.omstugradebook.database.dao.UserDao;
+import com.example.omstugradebook.database.daoimpl.UserDaoImpl;
 import com.example.omstugradebook.model.contactwork.ContactWork;
 import com.example.omstugradebook.recyclerview.adapter.ContactWorkRVAdapter;
 import com.example.omstugradebook.service.ContactWorkService;
@@ -22,6 +25,8 @@ import java.util.List;
 public class ContactWorkFragment extends Fragment implements Updatable {
     private RecyclerView recyclerView;
     private ContactWorkRVAdapter adapter = new ContactWorkRVAdapter(new ArrayList<ContactWork>(), getContext());
+    private UserDao userDao = new UserDaoImpl();
+    private TextView information;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,6 +44,12 @@ public class ContactWorkFragment extends Fragment implements Updatable {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);
+        information = view.findViewById(R.id.contact_work_information);
+        if (userDao.getActiveUser(getContext()) == null) {
+            information.setText("Чтобы пользоваться контактной работой, войдите в аккаунт.");
+        } else {
+            information.setText("");
+        }
         return view;
     }
 
@@ -64,6 +75,7 @@ public class ContactWorkFragment extends Fragment implements Updatable {
             if (contactWorks == null) {
                 return;
             }
+            information.setText("");
             adapter.setContactWorks(contactWorks, getContext());
             adapter.notifyDataSetChanged();
         }

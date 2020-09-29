@@ -6,6 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".view.fragments.TimetableFragment">
 
+    <TextView
+        android:id="@+id/timetable_information"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:textSize="18sp" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv"
         android:layout_width="match_parent"

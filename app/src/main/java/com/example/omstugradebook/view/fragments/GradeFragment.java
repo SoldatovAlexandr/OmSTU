@@ -9,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -41,6 +42,7 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     private static final String TAG = "Grade Fragment Logs";
     private static int countTerms = 0;
     private static GradeFragment instance;
+    private TextView information;
 
     private SwipeRefreshLayout swipeRefreshLayout;
 
@@ -110,6 +112,12 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);
+        information = view.findViewById(R.id.grade_information);
+        if (userDao.getActiveUser(getContext()) == null) {
+            information.setText("Чтобы пользоваться зачетной книжкой, войдите в аккаунт.");
+        } else {
+            information.setText("");
+        }
         return view;
     }
 

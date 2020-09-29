@@ -18,8 +18,6 @@ import com.example.omstugradebook.model.grade.User;
 import com.example.omstugradebook.recyclerview.adapter.UserRVAdapter;
 import com.example.omstugradebook.service.AuthService;
 
-import java.util.Objects;
-
 public class AccountFragment extends Fragment implements Updatable {
     private UserDao userDao;
     private User activeUser;

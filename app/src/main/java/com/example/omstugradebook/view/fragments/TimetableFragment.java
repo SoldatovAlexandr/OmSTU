@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -34,6 +35,7 @@ public class TimetableFragment extends Fragment implements Updatable {
     private UserDao userDao;
     private String groupString = "";
     private ScheduleDao scheduleDao;
+    private TextView information;
 
 
     public TimetableFragment() {
@@ -58,13 +60,26 @@ public class TimetableFragment extends Fragment implements Updatable {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);
-        loadScheduleFromDB();
+        boolean dbIsEmpty = loadScheduleFromDB();
+        setInformationTextView(view, dbIsEmpty);
         return view;
     }
 
-    private void loadScheduleFromDB() {
+    private void setInformationTextView(View view, boolean dbIsEmpty) {
+        userDao = new UserDaoImpl();
+        information = view.findViewById(R.id.timetable_information);
+        if (dbIsEmpty && userDao.getActiveUser(getContext()) == null) {
+            information.setText("Вы можете использовать расписание без авторизации. Для этого просто нажмите на лупу!");
+        } else {
+            information.setText("");
+        }
+    }
+
+    private boolean loadScheduleFromDB() {
         scheduleDao = new ScheduleDaoImpl();
-        adapter.setScheduleList(scheduleDao.readAllSchedule(getContext()));
+        List<Schedule> schedules = scheduleDao.readAllSchedule(getContext());
+        adapter.setScheduleList(schedules);
+        return schedules.isEmpty();
     }
 
     public void setNewCalendar(Calendar calendar) {
@@ -134,7 +149,7 @@ public class TimetableFragment extends Fragment implements Updatable {
                 adapter.setScheduleList(schedules);
                 scheduleDao = new ScheduleDaoImpl();
                 scheduleDao.insertAllSchedule(schedules, getContext());
-                System.out.println(scheduleDao.readAllSchedule(getContext()));
+                information.setText("");
                 adapter.notifyDataSetChanged();
             }
         }
