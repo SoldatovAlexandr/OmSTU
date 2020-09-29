@@ -3,25 +3,20 @@ package com.example.omstugradebook.model.schedule;
 import java.util.Objects;
 
 public class Schedule {
-    private String auditorium;
-    private String beginLesson;
-    private String building;
-    private String date;
-    private int dayOfWeek;
-    private String detailInfo;
-    private String discipline;
-    private String endLesson;
-    private String kindOfWork;
-    private String lecturer;
-    private String stream;
-    private String group;
-    private String subGroup;
-    private String dayOfWeekString;
+    private final String auditorium;
+    private final String beginLesson;
+    private final String building;
+    private final String date;
+    private final int dayOfWeek;
+    private final String detailInfo;
+    private final String discipline;
+    private final String endLesson;
+    private final String kindOfWork;
+    private final String lecturer;
+    private final String streamType;
+    private final String dayOfWeekString;
 
-    public Schedule() {
-    }
-
-    public Schedule(String auditorium, String beginLesson, String building, String date, int dayOfWeek, String detailInfo, String discipline, String endLesson, String kindOfWork, String lecturer, String stream, String group, String subGroup, String dayOfWeekString) {
+    public Schedule(String auditorium, String beginLesson, String building, String date, int dayOfWeek, String detailInfo, String discipline, String endLesson, String kindOfWork, String lecturer, String streamType, String dayOfWeekString) {
         this.auditorium = auditorium;
         this.beginLesson = beginLesson;
         this.building = building;
@@ -32,18 +27,12 @@ public class Schedule {
         this.endLesson = endLesson;
         this.kindOfWork = kindOfWork;
         this.lecturer = lecturer;
-        this.stream = stream;
-        this.group = group;
-        this.subGroup = subGroup;
+        this.streamType = streamType;
         this.dayOfWeekString = dayOfWeekString;
     }
 
     public String getDayOfWeekString() {
         return dayOfWeekString;
-    }
-
-    public void setDayOfWeekString(String dayOfWeekString) {
-        this.dayOfWeekString = dayOfWeekString;
     }
 
     public String getDayOfWeekFullString() {
@@ -68,104 +57,62 @@ public class Schedule {
         return auditorium;
     }
 
-    public void setAuditorium(String auditorium) {
-        this.auditorium = auditorium;
-    }
-
     public String getBeginLesson() {
         return beginLesson;
-    }
-
-    public void setBeginLesson(String beginLesson) {
-        this.beginLesson = beginLesson;
     }
 
     public String getBuilding() {
         return building;
     }
 
-    public void setBuilding(String building) {
-        this.building = building;
-    }
-
     public String getDate() {
         return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
     }
 
     public int getDayOfWeek() {
         return dayOfWeek;
     }
 
-    public void setDayOfWeek(int dayOfWeek) {
-        this.dayOfWeek = dayOfWeek;
-    }
-
     public String getDetailInfo() {
         return detailInfo;
-    }
-
-    public void setDetailInfo(String detailInfo) {
-        this.detailInfo = detailInfo;
     }
 
     public String getDiscipline() {
         return discipline;
     }
 
-    public void setDiscipline(String discipline) {
-        this.discipline = discipline;
-    }
-
     public String getEndLesson() {
         return endLesson;
-    }
-
-    public void setEndLesson(String endLesson) {
-        this.endLesson = endLesson;
     }
 
     public String getKindOfWork() {
         return kindOfWork;
     }
 
-    public void setKindOfWork(String kindOfWork) {
-        this.kindOfWork = kindOfWork;
-    }
-
     public String getLecturer() {
         return lecturer;
     }
 
-    public void setLecturer(String lecturer) {
-        this.lecturer = lecturer;
+    public String getStreamType() {
+        return streamType;
     }
 
-    public String getStream() {
-        return stream;
-    }
-
-    public void setStream(String stream) {
-        this.stream = stream;
-    }
-
-    public String getGroup() {
-        return group;
-    }
-
-    public void setGroup(String group) {
-        this.group = group;
-    }
-
-    public String getSubGroup() {
-        return subGroup;
-    }
-
-    public void setSubGroup(String subGroup) {
-        this.subGroup = subGroup;
+    @Override
+    public String toString() {
+        return "Schedule{" +
+                "auditorium='" + auditorium + '\'' +
+                ", beginLesson='" + beginLesson + '\'' +
+                ", building='" + building + '\'' +
+                ", date='" + date + '\'' +
+                ", dayOfWeek=" + dayOfWeek +
+                ", detailInfo='" + detailInfo + '\'' +
+                ", discipline='" + discipline + '\'' +
+                ", endLesson='" + endLesson + '\'' +
+                ", kindOfWork='" + kindOfWork + '\'' +
+                ", lecturer='" + lecturer + '\'' +
+                ", streamType='" + streamType + '\'' +
+                ", dayOfWeekString='" + dayOfWeekString + '\'' +
+                '}';
     }
 
     @Override
@@ -183,32 +130,12 @@ public class Schedule {
                 Objects.equals(endLesson, schedule.endLesson) &&
                 Objects.equals(kindOfWork, schedule.kindOfWork) &&
                 Objects.equals(lecturer, schedule.lecturer) &&
-                Objects.equals(stream, schedule.stream) &&
-                Objects.equals(group, schedule.group) &&
-                Objects.equals(subGroup, schedule.subGroup);
+                Objects.equals(streamType, schedule.streamType) &&
+                Objects.equals(dayOfWeekString, schedule.dayOfWeekString);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(auditorium, beginLesson, building, date, dayOfWeek, detailInfo, discipline, endLesson, kindOfWork, lecturer, stream, group, subGroup);
-    }
-
-    @Override
-    public String toString() {
-        return "Schedule{" +
-                "auditorium='" + auditorium + '\'' +
-                ", beginLesson='" + beginLesson + '\'' +
-                ", building='" + building + '\'' +
-                ", date='" + date + '\'' +
-                ", dayOfWeek=" + dayOfWeek +
-                ", detailInfo='" + detailInfo + '\'' +
-                ", discipline='" + discipline + '\'' +
-                ", endLesson='" + endLesson + '\'' +
-                ", kindOfWork='" + kindOfWork + '\'' +
-                ", lecturer='" + lecturer + '\'' +
-                ", stream='" + stream + '\'' +
-                ", group='" + group + '\'' +
-                ", subGroup='" + subGroup + '\'' +
-                '}';
+        return Objects.hash(auditorium, beginLesson, building, date, dayOfWeek, detailInfo, discipline, endLesson, kindOfWork, lecturer, streamType, dayOfWeekString);
     }
 }

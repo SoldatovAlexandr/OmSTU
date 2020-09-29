@@ -58,9 +58,7 @@ public class ScheduleDaoImpl implements ScheduleDao {
                 contentValues.put("endLesson", schedule.getEndLesson());
                 contentValues.put("kindOfWork", schedule.getKindOfWork());
                 contentValues.put("lecturer", schedule.getLecturer());
-                contentValues.put("stream", schedule.getStream());
-                contentValues.put("groups", schedule.getGroup());
-                contentValues.put("subGroup", schedule.getSubGroup());
+                contentValues.put("streamType", schedule.getStreamType());
                 contentValues.put("dayOfWeekString", schedule.getDayOfWeekString());
                 database.insert("schedules", null, contentValues);
             }
@@ -89,9 +87,7 @@ public class ScheduleDaoImpl implements ScheduleDao {
             int endLessonColIndex = cursor.getColumnIndex("endLesson");
             int kindOfWorkColIndex = cursor.getColumnIndex("kindOfWork");
             int lecturerColIndex = cursor.getColumnIndex("lecturer");
-            int streamColIndex = cursor.getColumnIndex("stream");
-            int groupsColIndex = cursor.getColumnIndex("groups");
-            int subGroupsColIndex = cursor.getColumnIndex("subGroup");
+            int streamTypeColIndex = cursor.getColumnIndex("streamType");
             int dayOfWeekStringColIndex = cursor.getColumnIndex("dayOfWeekString");
             do {
                 String auditorium = cursor.getString(auditoriumColIndex);
@@ -102,9 +98,7 @@ public class ScheduleDaoImpl implements ScheduleDao {
                 String endLesson = cursor.getString(endLessonColIndex);
                 String kindOfWork = cursor.getString(kindOfWorkColIndex);
                 String lecturer = cursor.getString(lecturerColIndex);
-                String stream = cursor.getString(streamColIndex);
-                String group = cursor.getString(groupsColIndex);
-                String subGroup = cursor.getString(subGroupsColIndex);
+                String streamType = cursor.getString(streamTypeColIndex);
                 String dayOfWeekString = cursor.getString(dayOfWeekStringColIndex);
                 String date = cursor.getString(dateColIndex);
                 int dayOfWeek = cursor.getInt(dayOfWeekColIndex);
@@ -119,9 +113,7 @@ public class ScheduleDaoImpl implements ScheduleDao {
                         endLesson,
                         kindOfWork,
                         lecturer,
-                        stream,
-                        group,
-                        subGroup,
+                        streamType,
                         dayOfWeekString
                 ));
             } while (cursor.moveToNext());

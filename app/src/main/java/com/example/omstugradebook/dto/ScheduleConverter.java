@@ -2,8 +2,8 @@ package com.example.omstugradebook.dto;
 
 import com.example.omstugradebook.model.schedule.Schedule;
 
-public class ScheduleBuilder {
-    public Schedule build(ScheduleDtoResponse response) {
+public class ScheduleConverter {
+    public Schedule convert(ScheduleDtoResponse response) {
         return new Schedule(response.getAuditorium(),
                 response.getBeginLesson(),
                 response.getBuilding(),
@@ -14,9 +14,15 @@ public class ScheduleBuilder {
                 response.getEndLesson(),
                 response.getKindOfWork(),
                 response.getLecturer(),
-                response.getStream(),
-                response.getGroup(),
-                response.getSubGroup(),
+                getStreamType(response),
                 response.getDayOfWeekString());
+    }
+
+    private String getStreamType(ScheduleDtoResponse response) {
+        if (response.getGroup() != null) {
+            return response.getGroup();
+        } else if (response.getSubGroup() != null) {
+            return response.getSubGroup();
+        } else return response.getStream();
     }
 }

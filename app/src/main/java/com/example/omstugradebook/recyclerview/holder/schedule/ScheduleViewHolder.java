@@ -44,14 +44,6 @@ public class ScheduleViewHolder extends AbstractScheduleHolder {
         timeStart.setText(schedule.getBeginLesson());
         lecturer.setText(schedule.getLecturer());
         auditorium.setText(schedule.getAuditorium());
-        String groupString = "";
-        if (schedule.getGroup() != null) {
-            groupString = schedule.getGroup();
-        } else if (schedule.getSubGroup() != null) {
-            groupString = schedule.getSubGroup();
-        } else if (schedule.getStream() != null) {
-            groupString = schedule.getStream();
-        }
-        group.setText(groupString);
+        group.setText(schedule.getStreamType());
     }
 }

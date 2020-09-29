@@ -3,10 +3,10 @@ package com.example.omstugradebook.model.grade;
 import java.util.Objects;
 
 public class Student {
-    private String fullName;
-    private String numberGradeBook;
-    private String speciality;
-    private String educationForm;
+    private final String fullName;
+    private final String numberGradeBook;
+    private final String speciality;
+    private final String educationForm;
 
     public Student(String fullName, String numberGradeBook, String speciality, String educationForm) {
         this.fullName = fullName;
@@ -19,33 +19,19 @@ public class Student {
         return fullName;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
     public String getNumberGradeBook() {
         return numberGradeBook;
-    }
-
-    public void setNumberGradeBook(String numberGradeBook) {
-        this.numberGradeBook = numberGradeBook;
     }
 
     public String getSpeciality() {
         return speciality;
     }
 
-    public void setSpeciality(String speciality) {
-        this.speciality = speciality;
-    }
 
     public String getEducationForm() {
         return educationForm;
     }
 
-    public void setEducationForm(String educationForm) {
-        this.educationForm = educationForm;
-    }
 
     @Override
     public String toString() {

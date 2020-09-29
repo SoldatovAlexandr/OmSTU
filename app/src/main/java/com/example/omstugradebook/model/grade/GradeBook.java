@@ -6,11 +6,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class GradeBook {
-    private List<Term> terms;
-    private Student student;
-
-    public GradeBook() {
-    }
+    private final List<Term> terms;
+    private final Student student;
 
     public GradeBook(List<Term> terms, Student student) {
         this.terms = terms;
@@ -21,16 +18,8 @@ public class GradeBook {
         return student;
     }
 
-    public void setStudent(Student student) {
-        this.student = student;
-    }
-
     public List<Term> getTerms() {
         return terms;
-    }
-
-    public void setTerms(List<Term> terms) {
-        this.terms = terms;
     }
 
     @NonNull

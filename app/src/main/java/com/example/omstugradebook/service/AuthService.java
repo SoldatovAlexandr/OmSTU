@@ -142,4 +142,17 @@ public class AuthService {
         return new GradeParserImpl().getGradeBook(doc);
     }
 
+    public GradeBook getGradeBook(String studSesId) {
+        Document doc = null;
+        try {
+            doc = Jsoup.connect(URL).cookie(STUD_SES_ID, studSesId).get();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.d(TAG, "сделан запрос");
+        if (doc == null || !doc.baseUri().equals(URL)) {
+            return null;
+        }
+        return new GradeParserImpl().getGradeBook(doc);
+    }
 }

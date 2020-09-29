@@ -1,11 +1,13 @@
 package com.example.omstugradebook.model.contactwork;
 
+import java.util.Objects;
+
 public class ContactWork {
-    private String discipline;
-    private String teacher;
-    private String numberOfTasks;
-    private String taskLink;
-    private int userId;
+    private final String discipline;
+    private final String teacher;
+    private final String numberOfTasks;
+    private final String taskLink;
+    private final int userId;
 
     public ContactWork(String discipline, String teacher, String numberOfTasks, String taskLink, int userId) {
         this.discipline = discipline;
@@ -19,39 +21,47 @@ public class ContactWork {
         return userId;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
     public String getDiscipline() {
         return discipline;
-    }
-
-    public void setDiscipline(String discipline) {
-        this.discipline = discipline;
     }
 
     public String getTeacher() {
         return teacher;
     }
 
-    public void setTeacher(String teacher) {
-        this.teacher = teacher;
-    }
-
     public String getNumberOfTasks() {
         return numberOfTasks;
-    }
-
-    public void setNumberOfTasks(String numberOfTasks) {
-        this.numberOfTasks = numberOfTasks;
     }
 
     public String getTaskLink() {
         return taskLink;
     }
 
-    public void setTaskLink(String taskLink) {
-        this.taskLink = taskLink;
+    @Override
+    public String toString() {
+        return "ContactWork{" +
+                "discipline='" + discipline + '\'' +
+                ", teacher='" + teacher + '\'' +
+                ", numberOfTasks='" + numberOfTasks + '\'' +
+                ", taskLink='" + taskLink + '\'' +
+                ", userId=" + userId +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ContactWork that = (ContactWork) o;
+        return userId == that.userId &&
+                Objects.equals(discipline, that.discipline) &&
+                Objects.equals(teacher, that.teacher) &&
+                Objects.equals(numberOfTasks, that.numberOfTasks) &&
+                Objects.equals(taskLink, that.taskLink);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(discipline, teacher, numberOfTasks, taskLink, userId);
     }
 }

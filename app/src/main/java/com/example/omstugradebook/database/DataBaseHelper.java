@@ -59,9 +59,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 + "endLesson text,"
                 + "kindOfWork text,"
                 + "lecturer text,"
-                + "stream text,"
-                + "groups text,"
-                + "subGroup text,"
+                + "streamType text,"
                 + "dayOfWeekString text" + ");");
     }
 

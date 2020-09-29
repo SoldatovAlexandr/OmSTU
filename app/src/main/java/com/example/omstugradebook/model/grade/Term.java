@@ -6,10 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Term {
-    private List<Subject> subjects;
-
-    public Term() {
-    }
+    private final List<Subject> subjects;
 
     public Term(List<Subject> subjects) {
         this.subjects = subjects;
@@ -17,10 +14,6 @@ public class Term {
 
     public List<Subject> getSubjects() {
         return subjects;
-    }
-
-    public void setSubjects(List<Subject> subjects) {
-        this.subjects = subjects;
     }
 
     @NonNull

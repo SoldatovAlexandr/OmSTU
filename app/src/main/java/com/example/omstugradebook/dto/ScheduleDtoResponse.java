@@ -5,20 +5,20 @@ import java.util.Objects;
 
 public class ScheduleDtoResponse implements Serializable {
 
-    private String auditorium;
-    private String beginLesson;
-    private String building;
-    private String date;
-    private int dayOfWeek;
-    private String detailInfo;
-    private String discipline;
-    private String endLesson;
-    private String kindOfWork;
-    private String lecturer;
-    private String stream;
-    private String group;
-    private String subGroup;
-    private String dayOfWeekString;
+    private final String auditorium;
+    private final String beginLesson;
+    private final String building;
+    private final String date;
+    private final int dayOfWeek;
+    private final String detailInfo;
+    private final String discipline;
+    private final String endLesson;
+    private final String kindOfWork;
+    private final String lecturer;
+    private final String stream;
+    private final String group;
+    private final String subGroup;
+    private final String dayOfWeekString;
 
     public ScheduleDtoResponse(String auditorium, String beginLesson, String building, String date, int dayOfWeek, String detailInfo, String discipline, String endLesson, String kindOfWork, String lecturer, String stream, String group, String subGroup, String dayOfWeekString) {
         this.auditorium = auditorium;
@@ -41,112 +41,58 @@ public class ScheduleDtoResponse implements Serializable {
         return dayOfWeekString;
     }
 
-    public void setDayOfWeekString(String dayOfWeekString) {
-        this.dayOfWeekString = dayOfWeekString;
-    }
-
     public String getGroup() {
         return group;
-    }
-
-    public void setGroup(String group) {
-        this.group = group;
     }
 
     public String getSubGroup() {
         return subGroup;
     }
 
-    public void setSubGroup(String subGroup) {
-        this.subGroup = subGroup;
-    }
-
     public String getDiscipline() {
         return discipline;
-    }
-
-    public void setDiscipline(String discipline) {
-        this.discipline = discipline;
     }
 
     public String getAuditorium() {
         return auditorium;
     }
 
-    public void setAuditorium(String auditorium) {
-        this.auditorium = auditorium;
-    }
 
     public String getBeginLesson() {
         return beginLesson;
     }
 
-    public void setBeginLesson(String beginLesson) {
-        this.beginLesson = beginLesson;
-    }
 
     public String getBuilding() {
         return building;
-    }
-
-    public void setBuilding(String building) {
-        this.building = building;
     }
 
     public String getDate() {
         return date;
     }
 
-    public void setDate(String date) {
-        this.date = date;
-    }
-
     public int getDayOfWeek() {
         return dayOfWeek;
-    }
-
-    public void setDayOfWeek(int dayOfWeek) {
-        this.dayOfWeek = dayOfWeek;
     }
 
     public String getDetailInfo() {
         return detailInfo;
     }
 
-    public void setDetailInfo(String detailInfo) {
-        this.detailInfo = detailInfo;
-    }
-
     public String getEndLesson() {
         return endLesson;
-    }
-
-    public void setEndLesson(String endLesson) {
-        this.endLesson = endLesson;
     }
 
     public String getKindOfWork() {
         return kindOfWork;
     }
 
-    public void setKindOfWork(String kindOfWork) {
-        this.kindOfWork = kindOfWork;
-    }
-
     public String getLecturer() {
         return lecturer;
     }
 
-    public void setLecturer(String lecturer) {
-        this.lecturer = lecturer;
-    }
-
     public String getStream() {
         return stream;
-    }
-
-    public void setStream(String stream) {
-        this.stream = stream;
     }
 
     @Override

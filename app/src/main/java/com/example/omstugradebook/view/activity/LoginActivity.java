@@ -30,6 +30,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private EditText login;
     private EditText password;
     private UserDao userDao = new UserDaoImpl();
+    private final AuthService auth = new AuthService();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +73,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         @Override
         protected String doInBackground(String... strings) {
-            AuthService auth = new AuthService();
             String cookie = auth.getAuth(login.getText().toString(), password.getText().toString());
             studSesId = auth.getStudSessId(cookie);
             return null;
@@ -83,12 +83,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             if (studSesId != null) {
-                String loginString = login.getText().toString();
-                String passwordString = password.getText().toString();
                 Toast.makeText(getApplicationContext(), "Вы успешно авторизовались!\n Подождите пару секунд, почти все готово!", Toast.LENGTH_LONG).show();
-                User user = new User(loginString, passwordString, studSesId);
-                userDao.insert(user, getContext());
-                userDao.changeActiveUser(user, getContext());
                 UserDataRequestSender userDataRequestSender = new UserDataRequestSender();
                 userDataRequestSender.execute();
             } else {
@@ -100,16 +95,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         class UserDataRequestSender extends AsyncTask<String, String, String> {
             private GradeBook gradeBook;
 
-
             @Override
             protected String doInBackground(String... strings) {
-                AuthService auth = new AuthService();
-                gradeBook = auth.getGradeBook(getContext());
+                gradeBook = auth.getGradeBook(studSesId);
                 if (gradeBook != null) {
-                    User user = userDao.getActiveUser(getContext());
-                    user.setStudent(gradeBook.getStudent());
-                    userDao.update(user, getContext());
                     SubjectDao subjectDao = new SubjectDaoImpl();
+                    String loginString = login.getText().toString();
+                    String passwordString = password.getText().toString();
+                    User user = new User(loginString, passwordString, studSesId, gradeBook.getStudent());
+                    userDao.insert(user, getContext());
+                    userDao.changeActiveUser(user, getContext());
                     List<Subject> subjects = new ArrayList<>();
                     for (Term term : gradeBook.getTerms()) {
                         subjects.addAll(term.getSubjects());
@@ -128,9 +123,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 finish();
                 buttonOk.setEnabled(true);
             }
-
         }
-
     }
-
 }

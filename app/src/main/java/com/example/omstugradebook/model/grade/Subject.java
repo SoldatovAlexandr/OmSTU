@@ -7,30 +7,17 @@ import com.example.omstugradebook.SubjectType;
 import java.util.Objects;
 
 public class Subject {
-    private String name;
-    private String hours;
-    private String attendance;//не обязательно
-    private String tempRating;//не обязательно
-    private String mark;
-    private String date;
-    private String teacher;
-    private String toDiploma;
-    private int term;
-    private SubjectType type;
+    private final String name;
+    private final String hours;
+    private final String attendance;//не обязательно
+    private final String tempRating;//не обязательно
+    private final String mark;
+    private final String date;
+    private final String teacher;
+    private final String toDiploma;
+    private final int term;
+    private final SubjectType type;
     private int userId;
-
-    public Subject(String name, String hours, String attendance, String tempRating, String mark, String date, String teacher, String toDiploma, int term, SubjectType type) {
-        this.name = name;
-        this.hours = hours;
-        this.attendance = attendance;
-        this.tempRating = tempRating;
-        this.mark = mark;
-        this.date = date;
-        this.teacher = teacher;
-        this.toDiploma = toDiploma;
-        this.term = term;
-        this.type = type;
-    }
 
     public Subject(String name, String hours, String attendance, String tempRating, String mark, String date, String teacher, String toDiploma, int term, SubjectType type, int userId) {
         this.name = name;
@@ -46,6 +33,10 @@ public class Subject {
         this.userId = userId;
     }
 
+    public Subject(String name, String hours, String attendance, String tempRating, String mark, String date, String teacher, String toDiploma, int term, SubjectType type) {
+        this(name, hours, attendance, tempRating, mark, date, teacher, toDiploma, term, type, 0);
+    }
+
     public int getUserId() {
         return userId;
     }
@@ -58,80 +49,49 @@ public class Subject {
         return type;
     }
 
-    public void setType(SubjectType type) {
-        this.type = type;
-    }
 
     public int getTerm() {
         return term;
     }
 
-    public void setTerm(int term) {
-        this.term = term;
-    }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public String getHours() {
         return hours;
     }
 
-    public void setHours(String hours) {
-        this.hours = hours;
-    }
 
     public String getAttendance() {
         return attendance;
     }
 
-    public void setAttendance(String attendance) {
-        this.attendance = attendance;
-    }
 
     public String getTempRating() {
         return tempRating;
     }
 
-    public void setTempRating(String tempRating) {
-        this.tempRating = tempRating;
-    }
 
     public String getMark() {
         return mark;
     }
 
-    public void setMark(String mark) {
-        this.mark = mark;
-    }
 
     public String getDate() {
         return date;
     }
 
-    public void setDate(String date) {
-        this.date = date;
-    }
 
     public String getTeacher() {
         return teacher;
     }
 
-    public void setTeacher(String teacher) {
-        this.teacher = teacher;
-    }
 
     public String getToDiploma() {
         return toDiploma;
-    }
-
-    public void setToDiploma(String toDiploma) {
-        this.toDiploma = toDiploma;
     }
 
     @Override

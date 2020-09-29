@@ -3,12 +3,12 @@ package com.example.omstugradebook.model.contactwork;
 import java.util.Objects;
 
 public class ContactWorksTask {
-    private int number;
-    private String comment;
-    private String teacher;
-    private String file;
-    private String date;
-    private String link;
+    private final int number;
+    private final String comment;
+    private final String teacher;
+    private final String file;
+    private final String date;
+    private final String link;
 
     public ContactWorksTask(int number, String comment, String teacher, String file, String date, String link) {
         this.number = number;
@@ -23,48 +23,24 @@ public class ContactWorksTask {
         return link;
     }
 
-    public void setLink(String link) {
-        this.link = link;
-    }
-
     public int getNumber() {
         return number;
-    }
-
-    public void setNumber(int number) {
-        this.number = number;
     }
 
     public String getComment() {
         return comment;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
     public String getTeacher() {
         return teacher;
-    }
-
-    public void setTeacher(String teacher) {
-        this.teacher = teacher;
     }
 
     public String getFile() {
         return file;
     }
 
-    public void setFile(String file) {
-        this.file = file;
-    }
-
     public String getDate() {
         return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
     }
 
     @Override

@@ -267,9 +267,6 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
                 for (Subject subject : subjects) {
                     subject.setUserId((int) activeUser.getId());
                 }
-                User user = userDao.getActiveUser(getContext());
-                user.setStudent(gradeBook.getStudent());
-                userDao.update(user, getContext());
                 if (!subjectDao.equalsSubjects(subjects, getContext())) {
                     subjectDao.removeAllSubjects(getContext());
                     subjectDao.insertAllSubjects(subjects, getContext());

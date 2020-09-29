@@ -3,7 +3,7 @@ package com.example.omstugradebook.service;
 import android.annotation.SuppressLint;
 
 import com.example.omstugradebook.dto.GroupDtoResponse;
-import com.example.omstugradebook.dto.ScheduleBuilder;
+import com.example.omstugradebook.dto.ScheduleConverter;
 import com.example.omstugradebook.dto.ScheduleDtoResponse;
 import com.example.omstugradebook.model.schedule.Schedule;
 import com.google.gson.Gson;
@@ -18,7 +18,7 @@ import java.util.List;
 
 public class TimetableService {
     private final String API_URL = "https://rasp.omgtu.ru/api/schedule/group/";
-    private ScheduleBuilder builder = new ScheduleBuilder();
+    private ScheduleConverter builder = new ScheduleConverter();
     private int groupNumber = -1;
 
     public List<Schedule> getTimetable(String nameGroup, Calendar start, Calendar finish, int lang) {
@@ -29,7 +29,7 @@ public class TimetableService {
             Gson gson = new Gson();
             ScheduleDtoResponse[] dtoResponses = gson.fromJson(response, ScheduleDtoResponse[].class);
             for (ScheduleDtoResponse dtoResponse : dtoResponses) {
-                scheduleList.add(builder.build(dtoResponse));
+                scheduleList.add(builder.convert(dtoResponse));
             }
             System.out.println(scheduleList);
         } catch (IOException e) {

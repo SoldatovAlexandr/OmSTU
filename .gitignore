@@ -12,3 +12,9 @@
 /captures
 .externalNativeBuild
 .cxx
+/gradle
+OmSTUGradeBook.zip
+build.gradle
+gradlew
+/.idea
+

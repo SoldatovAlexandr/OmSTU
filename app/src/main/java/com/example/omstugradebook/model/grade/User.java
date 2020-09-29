@@ -4,16 +4,12 @@ import java.util.Objects;
 
 public class User {
     private long id;
-    private String login;
-    private String password;
+    private final String login;
+    private final String password;
     private String token;
-
-    private Student student;
+    private final Student student;
     private long isActive;
 
-    public User(String login, String password, String token) {
-        this(0, login, password, token, new Student("-", "-", "-", "-"), 0);
-    }
 
     public User(long id, String login, String password, String token, Student student, long isActive) {
         this.id = id;
@@ -23,6 +19,11 @@ public class User {
         this.student = student;
         this.isActive = isActive;
     }
+
+    public User(String login, String password, String token, Student student) {
+        this(0, login, password, token, student, 0);
+    }
+
 
     public long getIsActive() {
         return isActive;
@@ -36,24 +37,12 @@ public class User {
         return student;
     }
 
-    public void setStudent(Student student) {
-        this.student = student;
-    }
-
     public String getLogin() {
         return login;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
     public String getPassword() {
         return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getToken() {
