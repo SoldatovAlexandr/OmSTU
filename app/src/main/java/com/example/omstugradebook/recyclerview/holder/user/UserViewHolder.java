@@ -37,18 +37,15 @@ public class UserViewHolder extends AccountViewHolder {
         isActiveButton = itemView.findViewById(R.id.is_active_user_button);
         // установить слушателя на пользователя, так же сделать удаление элемента из view про свайпе в лево
         // cardView.setOnClickListener();
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                for (ImageButton button : UserRVAdapter.buttons) {
-                    if (v.getId() == button.getId()) {
-                        UserDao userDao = new UserDaoImpl();
-                        Context context = v.getContext();
-                        User user = userDao.getUserByLogin(login.getText().toString(), context);
-                        if (userDao.removeUser(user, context)) {
-                            //update
-                            //accountFragment.update();
-                        }
+        deleteButton.setOnClickListener(v -> {
+            for (ImageButton button : UserRVAdapter.buttons) {
+                if (v.getId() == button.getId()) {
+                    UserDao userDao = new UserDaoImpl();
+                    Context context = v.getContext();
+                    User user = userDao.getUserByLogin(login.getText().toString(), context);
+                    if (userDao.removeUser(user, context)) {
+                        //update
+                        //accountFragment.update();
                     }
                 }
             }

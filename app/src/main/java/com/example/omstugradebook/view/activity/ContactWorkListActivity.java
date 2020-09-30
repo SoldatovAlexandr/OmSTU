@@ -17,9 +17,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class ContactWorkListActivity extends AppCompatActivity {
-    private RecyclerView recyclerView;
-    private ContactWorkListRVAdapter adapter = new ContactWorkListRVAdapter();
+
+    private final ContactWorkListRVAdapter adapter = new ContactWorkListRVAdapter();
     private String path;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -15,12 +15,9 @@ public class InfoViewHolder extends AccountViewHolder {
     public InfoViewHolder(@NonNull View itemView) {
         super(itemView);
         final Button button = itemView.findViewById(R.id.add_new_user_button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), LoginActivity.class);
-                v.getContext().startActivity(intent);
-            }
+        button.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), LoginActivity.class);
+            v.getContext().startActivity(intent);
         });
     }
 

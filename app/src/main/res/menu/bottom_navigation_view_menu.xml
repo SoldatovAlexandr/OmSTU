@@ -2,14 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/bottom_navigation_item_timetable"
+        android:icon="@drawable/ic_calendar"
+        android:title="@string/activity_main_bottom_screen_progress" />
+    <item
         android:id="@+id/bottom_navigation_item_grade"
         android:icon="@drawable/ic_logs"
         android:title="@string/activity_main_bottom_screen_logs" />
 
-    <item
-        android:id="@+id/bottom_navigation_item_timetable"
-        android:icon="@drawable/ic_calendar"
-        android:title="@string/activity_main_bottom_screen_progress" />
     <item
         android:id="@+id/bottom_navigation_item_contactwork"
         android:icon="@drawable/ic_contactwork"

@@ -33,12 +33,10 @@ public class ContactWorkListViewHolder extends RecyclerView.ViewHolder {
         teacher.setText(contactWorksTask.getTeacher());
         file.setText(contactWorksTask.getFile());
         date.setText(contactWorksTask.getDate());
-        file.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ContactWorkService contactWorkService = new ContactWorkService();
-                contactWorkService.downloadFile(contactWorksTask.getLink(), contactWorksTask.getFile(), v.getContext());
-            }
-        });
+        file.setOnClickListener((v) -> {
+                    ContactWorkService contactWorkService = new ContactWorkService();
+                    contactWorkService.downloadFile(contactWorksTask.getLink(), contactWorksTask.getFile(), v.getContext());
+                }
+        );
     }
 }

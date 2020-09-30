@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -25,43 +24,41 @@ import com.example.omstugradebook.service.AuthService;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivity extends AppCompatActivity {
+    private final UserDao userDao = new UserDaoImpl();
+    private final AuthService auth = new AuthService();
     private Button buttonOk;
     private EditText login;
     private EditText password;
-    private UserDao userDao = new UserDaoImpl();
-    private final AuthService auth = new AuthService();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         setTitle("Вход");
-        buttonOk = findViewById(R.id.login_button_ok);
-        buttonOk.setOnClickListener(this);
         login = findViewById(R.id.login_edit_text);
         password = findViewById(R.id.password_edit_text);
         buttonOk.setEnabled(true);
-    }
-
-    @Override
-    public void onClick(View v) {
-        buttonOk.setEnabled(false);
-        String loginString = login.getText().toString();
-        String passwordString = password.getText().toString();
-        if (loginString.isEmpty() || passwordString.isEmpty()) {
-            Toast.makeText(this, "Не оставляйте поля пустыми", Toast.LENGTH_SHORT).show();
-            buttonOk.setEnabled(true);
-            return;
-        }
-        for (User user : userDao.readAllUsers(this)) {
-            if (user.getLogin().equals(loginString)) {
-                Toast.makeText(this, "Пользователь " + loginString + " уже авторизован", Toast.LENGTH_SHORT).show();
+        buttonOk = findViewById(R.id.login_button_ok);
+        buttonOk.setOnClickListener(v -> {
+            buttonOk.setEnabled(false);
+            String loginString = login.getText().toString();
+            String passwordString = password.getText().toString();
+            if (loginString.isEmpty() || passwordString.isEmpty()) {
+                Toast.makeText(getContext(), "Не оставляйте поля пустыми", Toast.LENGTH_SHORT).show();
                 buttonOk.setEnabled(true);
                 return;
             }
-        }
-        new LoginSender().execute();
+            for (User user : userDao.readAllUsers(getContext())) {
+                if (user.getLogin().equals(loginString)) {
+                    Toast.makeText(getContext(), "Пользователь " + loginString + " уже авторизован", Toast.LENGTH_SHORT).show();
+                    buttonOk.setEnabled(true);
+                    return;
+                }
+            }
+            new LoginSender().execute();
+        });
     }
 
     private Context getContext() {

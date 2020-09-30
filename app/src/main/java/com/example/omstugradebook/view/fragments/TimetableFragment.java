@@ -28,15 +28,17 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 public class TimetableFragment extends Fragment implements Updatable {
+
+    private final ScheduleRVAdapter adapter = new ScheduleRVAdapter();
+    private final UserDao userDao = new UserDaoImpl();
+    private final ScheduleDao scheduleDao = new ScheduleDaoImpl();
+
+    private RecyclerView recyclerView;
+    private TextView information;
+    private String groupString = "";
+
     private Calendar start;
     private Calendar finish;
-    private RecyclerView recyclerView;
-    private ScheduleRVAdapter adapter = new ScheduleRVAdapter();
-    private UserDao userDao;
-    private String groupString = "";
-    private ScheduleDao scheduleDao;
-    private TextView information;
-
 
     public TimetableFragment() {
     }
@@ -66,7 +68,6 @@ public class TimetableFragment extends Fragment implements Updatable {
     }
 
     private void setInformationTextView(View view, boolean dbIsEmpty) {
-        userDao = new UserDaoImpl();
         information = view.findViewById(R.id.timetable_information);
         if (dbIsEmpty && userDao.getActiveUser(getContext()) == null) {
             information.setText("Вы можете использовать расписание без авторизации. Для этого просто нажмите на лупу!");
@@ -76,7 +77,6 @@ public class TimetableFragment extends Fragment implements Updatable {
     }
 
     private boolean loadScheduleFromDB() {
-        scheduleDao = new ScheduleDaoImpl();
         List<Schedule> schedules = scheduleDao.readAllSchedule(getContext());
         adapter.setScheduleList(new ScheduleContentHolderConverter(schedules));
         return schedules.isEmpty();
@@ -126,7 +126,6 @@ public class TimetableFragment extends Fragment implements Updatable {
 
         @Override
         protected String doInBackground(String... strings) {
-            userDao = new UserDaoImpl();
             TimetableService timetableService = new TimetableService();
             String group;
             if (groupString.isEmpty()) {
@@ -147,7 +146,6 @@ public class TimetableFragment extends Fragment implements Updatable {
             super.onPostExecute(s);
             if (schedules != null) {
                 adapter.setScheduleList(new ScheduleContentHolderConverter(schedules));
-                scheduleDao = new ScheduleDaoImpl();
                 scheduleDao.insertAllSchedule(schedules, getContext());
                 information.setText("");
                 adapter.notifyDataSetChanged();

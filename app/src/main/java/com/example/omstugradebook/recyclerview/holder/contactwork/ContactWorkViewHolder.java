@@ -29,14 +29,11 @@ public class ContactWorkViewHolder extends RecyclerView.ViewHolder {
         discipline.setText(contactWork.getDiscipline());
         teacher.setText(contactWork.getTeacher());
         numberOfTasks.setText(contactWork.getNumberOfTasks());
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), ContactWorkListActivity.class);
-                intent.putExtra("path", contactWork.getTaskLink());
-                intent.putExtra("discipline", contactWork.getDiscipline());
-                v.getContext().startActivity(intent);
-            }
+        imageView.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), ContactWorkListActivity.class);
+            intent.putExtra("path", contactWork.getTaskLink());
+            intent.putExtra("discipline", contactWork.getDiscipline());
+            v.getContext().startActivity(intent);
         });
     }
 

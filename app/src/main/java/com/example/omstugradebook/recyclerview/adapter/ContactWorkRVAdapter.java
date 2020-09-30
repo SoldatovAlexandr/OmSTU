@@ -11,13 +11,14 @@ import com.example.omstugradebook.R;
 import com.example.omstugradebook.model.contactwork.ContactWork;
 import com.example.omstugradebook.recyclerview.holder.contactwork.ContactWorkViewHolder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ContactWorkRVAdapter extends RecyclerView.Adapter<ContactWorkViewHolder> {
     private final List<ContactWork> contactWorks;
 
-    public ContactWorkRVAdapter(List<ContactWork> contactWorks) {
-        this.contactWorks = contactWorks;
+    public ContactWorkRVAdapter() {
+        this.contactWorks = new ArrayList<>();
     }
 
     public void setContactWorks(List<ContactWork> contactWorks) {

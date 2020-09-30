@@ -22,13 +22,14 @@ import com.example.omstugradebook.model.grade.User;
 import com.example.omstugradebook.recyclerview.adapter.ContactWorkRVAdapter;
 import com.example.omstugradebook.service.ContactWorkService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ContactWorkFragment extends Fragment implements Updatable {
+
+    private final ContactWorkRVAdapter adapter = new ContactWorkRVAdapter();
+    private final UserDao userDao = new UserDaoImpl();
+
     private RecyclerView recyclerView;
-    private ContactWorkRVAdapter adapter = new ContactWorkRVAdapter(new ArrayList<ContactWork>());
-    private UserDao userDao = new UserDaoImpl();
     private TextView information;
     private ContactWorkDao contactWorkDao;
 

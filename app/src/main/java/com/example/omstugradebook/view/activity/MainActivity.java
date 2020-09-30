@@ -45,27 +45,30 @@ import java.util.List;
 import java.util.Map;
 
 
-public class MainActivity extends AppCompatActivity implements View.OnLongClickListener, View.OnClickListener, CalendarView.OnDateChangeListener {
+public class MainActivity extends AppCompatActivity {
 
-    private AccountFragment accountFragment = new AccountFragment();
-    private GradeFragment gradeFragment = new GradeFragment();
-    private TimetableFragment timetableFragment = new TimetableFragment();
-    private ContactWorkFragment contactWorkFragment = new ContactWorkFragment();
+    private final AccountFragment accountFragment = new AccountFragment();
+    private final GradeFragment gradeFragment = new GradeFragment();
+    private final TimetableFragment timetableFragment = new TimetableFragment();
+    private final ContactWorkFragment contactWorkFragment = new ContactWorkFragment();
+    private final UserDao userDao = new UserDaoImpl();
+    private final Map<String, Button> userButtons = new HashMap<>();
+
+    private BottomSheetBehavior calendarBottomSheetBehavior;
+    private BottomSheetBehavior userBottomSheetBehavior;
+
+    private static BottomNavigationView navigation;
     private View buttonProfile;
     private View buttonCalendar;
     private LinearLayout llAccounts;
-    private UserDao userDao = new UserDaoImpl();
     private LinearLayout userLLBottomSheet;
-    private BottomSheetBehavior userBottomSheetBehavior;
     private LinearLayout calendarLLBottomSheet;
-    private BottomSheetBehavior calendarBottomSheetBehavior;
-    private Map<String, Button> userButtons;
     private User activeUser;
-    private static BottomNavigationView navigation;
     private CalendarView calendarView;
     private EditText searchEditText;
     private ImageButton searchButton;
     private FloatingActionButton fab;
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
@@ -97,13 +100,6 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         ft.commit();
     }
 
-    @Override
-    public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
-        timetableFragment.setNewCalendar(new GregorianCalendar(year, month, dayOfMonth));
-        calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-        fab.show();
-    }
-
     private void setCalendarBottomShit() {
         calendarLLBottomSheet = findViewById(R.id.calendar_bottom_sheet);
         calendarBottomSheetBehavior = BottomSheetBehavior.from(calendarLLBottomSheet);
@@ -113,16 +109,17 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
             searchEditText.setText(activeUser.getStudent().getSpeciality());
         }
         calendarView = findViewById(R.id.calendar_view);
-        calendarView.setOnDateChangeListener(this);
+        calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
+            timetableFragment.setNewCalendar(new GregorianCalendar(year, month, dayOfMonth));
+            calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+            fab.show();
+        });
         searchButton = findViewById(R.id.search_button_calendar);
-        searchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String selectString = searchEditText.getText().toString();
-                timetableFragment.setGroupString(selectString);
-                fab.show();
-                calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-            }
+        searchButton.setOnClickListener(v -> {
+            String selectString = searchEditText.getText().toString();
+            timetableFragment.setGroupString(selectString);
+            fab.show();
+            calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         });
     }
 
@@ -132,7 +129,6 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         userBottomSheetBehavior = BottomSheetBehavior.from(userLLBottomSheet);
         userBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         llAccounts = findViewById(R.id.accounts_change_layout);
-        userButtons = new HashMap<>();
         if (activeUser == null && userDao.readAllUsers(this).isEmpty()) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivityForResult(intent, 1);
@@ -150,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
             omSTUSender.execute();
         }
         setNavigationMenu();
-        loadFragment(GradeFragment.getInstance());
+        loadFragment(timetableFragment);
         setCalendarBottomShit();
         setUserLLBottomSheet();
         setFloatingActionBar();
@@ -160,13 +156,10 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setBackgroundColor(Color.BLUE);
         fab.hide();
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (navigation.getSelectedItemId() == R.id.bottom_navigation_item_timetable) {
-                    calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                    fab.hide();
-                }
+        fab.setOnClickListener(view -> {
+            if (navigation.getSelectedItemId() == R.id.bottom_navigation_item_timetable) {
+                calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                fab.hide();
             }
         });
     }
@@ -175,27 +168,11 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         navigation = findViewById(R.id.bottom_navigation_view);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         buttonProfile = findViewById(R.id.bottom_navigation_item_profile);
-        buttonProfile.setOnLongClickListener(this);
-        buttonCalendar = findViewById(R.id.bottom_navigation_item_timetable);
-        buttonCalendar.setOnLongClickListener(this);
-    }
-
-    public static BottomNavigationView getNavigation() {
-        return navigation;
-    }
-
-    @Override
-    public boolean onLongClick(View v) {
-        if (v.getId() == R.id.bottom_navigation_item_timetable) {
-            if (navigation.getSelectedItemId() == R.id.bottom_navigation_item_timetable) {
-                calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                fab.hide();
-            }
-        } else {
+        buttonProfile.setOnLongClickListener(v -> {
             llAccounts.removeAllViews();
             userButtons.clear();
-            for (User user : userDao.readAllUsers(this)) {
-                Button userButton = new Button(this);
+            for (User user : userDao.readAllUsers(getContext())) {
+                Button userButton = new Button(getContext());
                 userButtons.put(user.getLogin(), userButton);
                 userButton.setText(user.getLogin());
                 if (user.getIsActive() == 1) {
@@ -204,31 +181,42 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
                     userButton.setTextColor(Color.BLACK);
                 }
                 userButton.setBackgroundColor(Color.WHITE);
-                userButton.setOnClickListener(this);
+                userButton.setOnClickListener(v1 -> {
+                    try {
+                        String loginOnView = ((Button) v1).getText().toString();
+                        if (!userDao.getActiveUser(getContext()).getLogin().equals(loginOnView)) {
+                            userDao.changeActiveUser(userDao.getUserByLogin(loginOnView, getContext()), getContext());
+                            userBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                            updateCurrentFragment();
+                        }
+                    } catch (ClassCastException ex) {
+                        ex.printStackTrace();
+                    }
+                });
                 llAccounts.addView(userButton);
             }
             userBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-        }
-        return true;
+            return true;
+        });
+        buttonCalendar = findViewById(R.id.bottom_navigation_item_timetable);
+        buttonCalendar.setOnLongClickListener(v -> {
+            if (navigation.getSelectedItemId() == R.id.bottom_navigation_item_timetable) {
+                calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                fab.hide();
+                return true;
+            }
+            return false;
+        });
+    }
+
+    public static BottomNavigationView getNavigation() {
+        return navigation;
     }
 
     public Context getContext() {
         return this;
     }
 
-    @Override
-    public void onClick(View v) {
-        try {
-            String loginOnView = ((Button) v).getText().toString();
-            if (!userDao.getActiveUser(this).getLogin().equals(loginOnView)) {
-                userDao.changeActiveUser(userDao.getUserByLogin(loginOnView, this), this);
-                userBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-                updateCurrentFragment();
-            }
-        } catch (ClassCastException ex) {
-            ex.printStackTrace();
-        }
-    }
 
     private void updateCurrentFragment() {
         getCurrentUpdatableFragment().update();

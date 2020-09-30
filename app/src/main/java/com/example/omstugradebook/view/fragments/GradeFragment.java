@@ -35,33 +35,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, Updatable {
-    private RecyclerView recyclerView;
-    private GradeRVAdapter adapter = new GradeRVAdapter();
-    private SubjectDao subjectDao;
-    private UserDao userDao;
+    private final GradeRVAdapter adapter = new GradeRVAdapter();
+    private final SubjectDao subjectDao = new SubjectDaoImpl();
+    private final UserDao userDao = new UserDaoImpl();
     private static int activeTerm = 1;
-    private static final String TAG = "Grade Fragment Logs";
     private static int countTerms = 0;
-    private static GradeFragment instance;
-    private TextView information;
+    private static final String TAG = "Grade Fragment Logs";
 
+    private RecyclerView recyclerView;
+    private TextView information;
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    public GradeFragment() {
-
-    }
 
     @Override
     public void onStart() {
         super.onStart();
         swipeRefreshLayout.setRefreshing(false);
-    }
-
-    public static GradeFragment getInstance() {
-        if (instance == null) {
-            instance = new GradeFragment();
-        }
-        return instance;
     }
 
     @Override
@@ -98,8 +87,6 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         requireActivity().setTitle("Зачетная книжка");
-        subjectDao = new SubjectDaoImpl();
-        userDao = new UserDaoImpl();
         countTerms = subjectDao.getCountTerm(getContext());
         setHasOptionsMenu(true);
         List<Subject> subjectList = subjectDao.readSubjectsByTerm(activeTerm, getContext());
@@ -125,7 +112,6 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
     @Override
     public void onRefresh() {
-        userDao = new UserDaoImpl();
         if (userDao.getActiveUser(getContext()) != null) {
             OmSTUSender omSTUSender = new OmSTUSender();
             omSTUSender.execute();
