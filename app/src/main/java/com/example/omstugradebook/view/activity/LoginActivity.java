@@ -39,8 +39,8 @@ public class LoginActivity extends AppCompatActivity {
         setTitle("Вход");
         login = findViewById(R.id.login_edit_text);
         password = findViewById(R.id.password_edit_text);
-        buttonOk.setEnabled(true);
         buttonOk = findViewById(R.id.login_button_ok);
+        buttonOk.setEnabled(true);
         buttonOk.setOnClickListener(v -> {
             buttonOk.setEnabled(false);
             String loginString = login.getText().toString();

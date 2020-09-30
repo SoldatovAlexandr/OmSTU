@@ -21,9 +21,9 @@ import com.example.omstugradebook.service.AuthService;
 public class AccountFragment extends Fragment implements Updatable {
     private static final String TAG = "User Fragment Logs";
     private final UserDao userDao = new UserDaoImpl();
-    private final UserRVAdapter adapter = new UserRVAdapter();
-    private User activeUser;
+    private final UserRVAdapter adapter = new UserRVAdapter(this);
     private RecyclerView recyclerView;
+    private User activeUser;
 
 
     @Override
