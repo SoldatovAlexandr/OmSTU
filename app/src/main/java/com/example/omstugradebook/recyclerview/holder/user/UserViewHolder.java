@@ -7,6 +7,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 
 import com.example.omstugradebook.R;
 import com.example.omstugradebook.database.dao.UserDao;
@@ -16,7 +17,7 @@ import com.example.omstugradebook.model.grade.User;
 import com.example.omstugradebook.view.fragments.Updatable;
 
 public class UserViewHolder extends AccountViewHolder {
-
+    private final CardView cardView;
     private final TextView fullName;
     private final TextView numberGradeBook;
     private final TextView speciality;
@@ -27,6 +28,7 @@ public class UserViewHolder extends AccountViewHolder {
 
     public UserViewHolder(@NonNull View itemView, final Updatable updatable) {
         super(itemView);
+        cardView = itemView.findViewById(R.id.user_card_view);
         fullName = itemView.findViewById(R.id.fullName);
         numberGradeBook = itemView.findViewById(R.id.numberGradeBook);
         speciality = itemView.findViewById(R.id.speciality);
@@ -34,8 +36,15 @@ public class UserViewHolder extends AccountViewHolder {
         login = itemView.findViewById(R.id.login_user_card_view);
         deleteButton = itemView.findViewById(R.id.delete_user_button);
         isActiveButton = itemView.findViewById(R.id.is_active_user_button);
-        // установить слушателя на пользователя, так же сделать удаление элемента из view про свайпе в лево
-        // cardView.setOnClickListener();
+        cardView.setOnClickListener((v) -> {
+            UserDao userDao = new UserDaoImpl();
+            Context context = itemView.getContext();
+            User user = userDao.getUserByLogin(login.getText().toString(), context);
+            if (user != null) {
+                userDao.changeActiveUser(user, context);
+                updatable.update();
+            }
+        });
         deleteButton.setOnClickListener((v) -> {
             UserDao userDao = new UserDaoImpl();
             Context context = itemView.getContext();
@@ -46,6 +55,7 @@ public class UserViewHolder extends AccountViewHolder {
             }
         });
     }
+
 
     @Override
     public void bind(int position, User user) {
@@ -58,4 +68,5 @@ public class UserViewHolder extends AccountViewHolder {
         this.login.setText(user.getLogin());
         this.deleteButton.setId(position);
     }
+
 }
