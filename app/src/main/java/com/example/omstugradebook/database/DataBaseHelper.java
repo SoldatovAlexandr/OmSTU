@@ -1,14 +1,13 @@
 package com.example.omstugradebook.database;
 
-import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import androidx.annotation.Nullable;
+import com.example.omstugradebook.OmSTUApplication;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
-    public DataBaseHelper(@Nullable Context context) {
-        super(context, "OmSTU_DB", null, 1);
+    public DataBaseHelper() {
+        super(OmSTUApplication.getContext(), "OmSTU_DB", null, 1);
     }
 
 

@@ -1,0 +1,57 @@
+package com.example.omstugradebook.view.fragments.view;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.omstugradebook.R;
+import com.example.omstugradebook.model.contactwork.ContactWork;
+import com.example.omstugradebook.recyclerview.adapter.ContactWorkRVAdapter;
+import com.example.omstugradebook.view.fragments.Updatable;
+import com.example.omstugradebook.view.fragments.viewmodel.ContactWorkViewModel;
+
+import java.util.List;
+
+public class ContactWorkFragment extends Fragment implements Updatable {
+
+    private final ContactWorkRVAdapter adapter = new ContactWorkRVAdapter();
+    private ContactWorkViewModel contactWorkViewModel;
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_contact_work, container, false);
+        requireActivity().setTitle(getString(R.string.contactWork));
+        initRecyclerView(view);
+        TextView information = view.findViewById(R.id.contact_work_information);
+        contactWorkViewModel = new ViewModelProvider(this).get(ContactWorkViewModel.class);
+        contactWorkViewModel.getContactWorkLiveData().observe(getViewLifecycleOwner(), contactWorkModel -> {
+            update(contactWorkModel.getContactWorks());
+        });
+        contactWorkViewModel.getInformationLiveData().observe(getViewLifecycleOwner(), information::setText);
+        contactWorkViewModel.getContactWorks();
+        return view;
+    }
+
+    @Override
+    public void update() {
+        contactWorkViewModel.getContactWorks();
+    }
+
+    private void update(List<ContactWork> contactWorks) {
+        adapter.setContactWorks(contactWorks);
+        adapter.notifyDataSetChanged();
+    }
+
+    private void initRecyclerView(View view) {
+        RecyclerView recyclerView = view.findViewById(R.id.contact_work_recycler_view);
+        recyclerView.setAdapter(adapter);
+    }
+}

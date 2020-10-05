@@ -1,29 +1,27 @@
 package com.example.omstugradebook.database.dao;
 
-import android.content.Context;
-
 import com.example.omstugradebook.model.grade.User;
 
 import java.util.List;
 
 public interface UserDao {
-    long insert(User user, Context context);
+    long insert(User user);
 
-    User getUserByLogin(String login, Context context);
+    User getUserByLogin(String login);
 
-    User getUserByToken(String token, Context context);
+    User getUserByToken(String token);
 
-    User getUserById(long id, Context context);
+    User getUserById(long id);
 
-    User getActiveUser(Context context);
+    User getActiveUser();
 
-    int removeAllUsers(Context context);
+    int removeAllUsers();
 
-    long update(User user, Context context);
+    long update(User user);
 
-    List<User> readAllUsers(Context context);
+    List<User> readAllUsers();
 
-    void changeActiveUser(User newUser, Context context);
+    void changeActiveUser(User newUser);
 
-    boolean removeUser(User user, Context context);
+    boolean removeUser(User user);
 }

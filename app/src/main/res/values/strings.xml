@@ -4,6 +4,18 @@
     <string name="activity_main_bottom_screen_progress">Расписание</string>
     <string name="activity_main_bottom_screen_profile">Профиль</string>
     <string name="activity_main_bottom_screen_contact_work">Контактная работа</string>
+    <string name="signIn">Вход</string>
+    <string name="emptyFields">Не оставляйте поля пустыми</string>
+    <string name="login">login</string>
+    <string name="user">Пользователь</string>
+    <string name="alreadyLogin">уже авторизован</string>
+    <string name="loginSuccsessfullyString">Вы успешно авторизовались!\n Подождите, почти все готово!</string>
+    <string name="wrongLoginOrPasswordString">Указан неверный логин или пароль</string>
+    <string name="path">path</string>
+    <string name="discipline">discipline</string>
+    <string name="accountManagement">Управление аккаунтами</string>
+    <string name="contactWork">Контактная работа</string>
+    <string name="thisUserIsAlreadyLoggedIn">Этот пользователь уже авторизован!</string>
     <string-array name="spinnerStrings">
         <item>Группа</item>
         <item>Преподаватель</item>

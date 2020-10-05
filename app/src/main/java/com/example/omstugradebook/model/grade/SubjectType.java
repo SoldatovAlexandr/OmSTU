@@ -1,4 +1,4 @@
-package com.example.omstugradebook;
+package com.example.omstugradebook.model.grade;
 
 public enum SubjectType {
     EXAM("Экзамены"),

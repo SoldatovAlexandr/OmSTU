@@ -1,7 +1,6 @@
 package com.example.omstugradebook.database.daoimpl;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -19,8 +18,8 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public long insert(User user, Context context) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+    public long insert(User user) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
             ContentValues contentValues = new ContentValues();
             contentValues.put("login", user.getLogin());
             contentValues.put("password", user.getPassword());
@@ -41,24 +40,24 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public User getUserByLogin(String login, Context context) {
-        return getUser("login = '" + login + "'", context);
+    public User getUserByLogin(String login) {
+        return getUser("login = '" + login + "'");
     }
 
     @Override
-    public User getUserByToken(String token, Context context) {
-        return getUser("token = '" + token + "'", context);
+    public User getUserByToken(String token) {
+        return getUser("token = '" + token + "'");
     }
 
     @Override
-    public User getUserById(long id, Context context) {
-        return getUser("id = " + id, context);
+    public User getUserById(long id) {
+        return getUser("id = " + id);
     }
 
 
     @Override
-    public User getActiveUser(Context context) {
-        for (User user : readAllUsers(context)) {
+    public User getActiveUser() {
+        for (User user : readAllUsers()) {
             if (user.getIsActive() == 1) {
                 return user;
             }
@@ -67,8 +66,8 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public int removeAllUsers(Context context) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+    public int removeAllUsers() {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
             return database.delete("users", null, null);
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -77,8 +76,8 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public long update(User user, Context context) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+    public long update(User user) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
             ContentValues contentValues = new ContentValues();
             contentValues.put("login", user.getLogin());
             contentValues.put("password", user.getPassword());
@@ -102,8 +101,8 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public List<User> readAllUsers(Context context) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+    public List<User> readAllUsers() {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
             Cursor cursor = database.query("users",
                     null,
                     null,
@@ -119,23 +118,23 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void changeActiveUser(User newUser, Context context) {
-        User user = getActiveUser(context);
+    public void changeActiveUser(User newUser) {
+        User user = getActiveUser();
         if (user != null) {
             user.setIsActive(0);
-            update(user, context);
+            update(user);
         }
         newUser.setIsActive(1);
-        update(newUser, context);
+        update(newUser);
     }
 
     @Override
-    public boolean removeUser(User user, Context context) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+    public boolean removeUser(User user) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
             if (user.getIsActive() == 1) {
-                List<User> users = readAllUsers(context);
+                List<User> users = readAllUsers();
                 if (users != null) {
-                    changeActiveUser(users.get(0), context);
+                    changeActiveUser(users.get(0));
                 }
             }
             int result = database.delete("users", "id =" + user.getId(), null);
@@ -146,8 +145,8 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
-    private User getUser(String selection, Context context) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+    private User getUser(String selection) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
             return getUser(database.query("users",
                     null,
                     selection,

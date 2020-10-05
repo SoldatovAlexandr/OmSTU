@@ -1,14 +1,13 @@
 package com.example.omstugradebook.database.daoimpl;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.example.omstugradebook.SubjectType;
 import com.example.omstugradebook.database.DataBaseHelper;
 import com.example.omstugradebook.database.dao.SubjectDao;
 import com.example.omstugradebook.model.grade.Subject;
+import com.example.omstugradebook.model.grade.SubjectType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +18,8 @@ public class SubjectDaoImpl implements SubjectDao {
     }
 
     @Override
-    public int removeAllSubjects(Context context) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+    public int removeAllSubjects() {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
             return database.delete("subjects", null, null);
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -29,8 +28,8 @@ public class SubjectDaoImpl implements SubjectDao {
     }
 
     @Override
-    public List<Subject> readSubjectsByTerm(int termFilter, Context context) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+    public List<Subject> readSubjectsByTerm(int termFilter) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
             Cursor cursor = database.query("subjects", null, "term = " + termFilter, null, null, null, null);
             return getSubjects(cursor);
         } catch (NullPointerException e) {
@@ -40,8 +39,8 @@ public class SubjectDaoImpl implements SubjectDao {
     }
 
     @Override
-    public List<Subject> readAllSubjects(Context context) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+    public List<Subject> readAllSubjects() {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
             Cursor cursor = database.query("subjects", null, null, null, null, null, null);
             return getSubjects(cursor);
         } catch (NullPointerException e) {
@@ -51,8 +50,8 @@ public class SubjectDaoImpl implements SubjectDao {
     }
 
     @Override
-    public boolean insertAllSubjects(List<Subject> subjects, Context context) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+    public boolean insertAllSubjects(List<Subject> subjects) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
             for (Subject subject : subjects) {
                 ContentValues contentValues = new ContentValues();
                 contentValues.put("name", subject.getName());
@@ -76,14 +75,14 @@ public class SubjectDaoImpl implements SubjectDao {
     }
 
     @Override
-    public boolean equalsSubjects(List<Subject> subjects, Context context) {
-        List<Subject> dataBaseSubjects = readAllSubjects(context);
+    public boolean equalsSubjects(List<Subject> subjects) {
+        List<Subject> dataBaseSubjects = readAllSubjects();
         return dataBaseSubjects.equals(subjects);
     }
 
     @Override
-    public int getCountTerm(Context context) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+    public int getCountTerm() {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
             String selectQuery = "SELECT max(term) as term FROM subjects";
             Cursor cursor = database.rawQuery(selectQuery, null);
             cursor.moveToFirst();
@@ -95,14 +94,15 @@ public class SubjectDaoImpl implements SubjectDao {
     }
 
     @Override
-    public long getCount(Context context) {
-        return readAllSubjects(context).size();
+    public long getCount() {
+        return readAllSubjects().size();
     }//TODO
 
+    //TODO метод не работает
     @Override
-    public List<Subject> getSubjectsByUser(int userId, int termFilter, Context context) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            Cursor cursor = database.query("subjects", null, "term = " + termFilter + ", user_id =" + userId, null, null, null, null);
+    public List<Subject> readSubjectsByUser(long userId) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            Cursor cursor = database.query("subjects", null, "user_id = " + userId, null, null, null, null);
             return getSubjects(cursor);
         } catch (NullPointerException e) {
             e.printStackTrace();

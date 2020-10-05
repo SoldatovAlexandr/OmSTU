@@ -1,7 +1,6 @@
 package com.example.omstugradebook.database.daoimpl;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -15,8 +14,8 @@ import java.util.List;
 public class ContactWorkDaoImpl implements ContactWorkDao {
 
     @Override
-    public int removeAllToContactWork(Context context) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+    public int removeAllToContactWork() {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
             return database.delete("contact_work", null, null);
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -26,13 +25,19 @@ public class ContactWorkDaoImpl implements ContactWorkDao {
 
     //TODO
     @Override
-    public List<ContactWork> readContactWorkByUserId(int userId, Context context) {
-        return null;
+    public List<ContactWork> readContactWorkByUserId(long userId) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            Cursor cursor = database.query("contact_work", null, "user_id = " + userId, null, null, null, null);
+            return getContactWorks(cursor);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
     }
 
     @Override
-    public List<ContactWork> readAllToContactWork(Context context) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+    public List<ContactWork> readAllToContactWork() {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
             Cursor cursor = database.query("contact_work", null, null, null, null, null, null);
             return getContactWorks(cursor);
         } catch (NullPointerException e) {
@@ -64,8 +69,8 @@ public class ContactWorkDaoImpl implements ContactWorkDao {
 
 
     @Override
-    public boolean insertAllToContactWork(List<ContactWork> contactWorks, Context context) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+    public boolean insertAllToContactWork(List<ContactWork> contactWorks) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
             for (ContactWork contactWork : contactWorks) {
                 ContentValues contentValues = new ContentValues();
                 contentValues.put("discipline", contactWork.getDiscipline());
@@ -84,7 +89,7 @@ public class ContactWorkDaoImpl implements ContactWorkDao {
 
     //TODO
     @Override
-    public boolean equalsContactWorks(List<ContactWork> contactWorks, Context context) {
+    public boolean equalsContactWorks(List<ContactWork> contactWorks) {
         return false;
     }
 }

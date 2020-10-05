@@ -1,6 +1,5 @@
 package com.example.omstugradebook.recyclerview.holder.user;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
 import android.widget.ImageButton;
@@ -17,7 +16,6 @@ import com.example.omstugradebook.model.grade.User;
 import com.example.omstugradebook.view.fragments.Updatable;
 
 public class UserViewHolder extends AccountViewHolder {
-    private final CardView cardView;
     private final TextView fullName;
     private final TextView numberGradeBook;
     private final TextView speciality;
@@ -28,7 +26,7 @@ public class UserViewHolder extends AccountViewHolder {
 
     public UserViewHolder(@NonNull View itemView, final Updatable updatable) {
         super(itemView);
-        cardView = itemView.findViewById(R.id.user_card_view);
+        CardView cardView = itemView.findViewById(R.id.user_card_view);
         fullName = itemView.findViewById(R.id.fullName);
         numberGradeBook = itemView.findViewById(R.id.numberGradeBook);
         speciality = itemView.findViewById(R.id.speciality);
@@ -38,19 +36,17 @@ public class UserViewHolder extends AccountViewHolder {
         isActiveButton = itemView.findViewById(R.id.is_active_user_button);
         cardView.setOnClickListener((v) -> {
             UserDao userDao = new UserDaoImpl();
-            Context context = itemView.getContext();
-            User user = userDao.getUserByLogin(login.getText().toString(), context);
+            User user = userDao.getUserByLogin(login.getText().toString());
             if (user != null) {
-                userDao.changeActiveUser(user, context);
+                userDao.changeActiveUser(user);
                 updatable.update();
             }
         });
         deleteButton.setOnClickListener((v) -> {
             UserDao userDao = new UserDaoImpl();
-            Context context = itemView.getContext();
-            User user = userDao.getUserByLogin(login.getText().toString(), context);
+            User user = userDao.getUserByLogin(login.getText().toString());
             if (user != null) {
-                userDao.removeUser(user, context);
+                userDao.removeUser(user);
                 updatable.update();
             }
         });

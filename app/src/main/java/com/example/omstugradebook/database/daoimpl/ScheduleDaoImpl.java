@@ -1,7 +1,6 @@
 package com.example.omstugradebook.database.daoimpl;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -19,8 +18,8 @@ public class ScheduleDaoImpl implements ScheduleDao {
     }
 
     @Override
-    public int removeAllSchedule(Context context) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+    public int removeAllSchedule() {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
             return database.delete("schedules", null, null);
         } catch (NullPointerException e) {
             return -1;
@@ -28,13 +27,19 @@ public class ScheduleDaoImpl implements ScheduleDao {
     }
 
     @Override
-    public List<Schedule> readScheduleByGroup(String group, Context context) {
-        return null;
+    public List<Schedule> readScheduleByGroup(String group) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            Cursor cursor = database.query("schedules", null, "streamType = '" + group + "'", null, null, null, null);
+            return getSchedules(cursor);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
     }
 
     @Override
-    public List<Schedule> readAllSchedule(Context context) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+    public List<Schedule> readAllSchedule() {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
             Cursor cursor = database.query("schedules", null, null, null, null, null, null);
             return getSchedules(cursor);
         } catch (NullPointerException e) {
@@ -44,8 +49,8 @@ public class ScheduleDaoImpl implements ScheduleDao {
     }
 
     @Override
-    public boolean insertAllSchedule(List<Schedule> schedules, Context context) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(context); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+    public boolean insertAllSchedule(List<Schedule> schedules) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
             for (Schedule schedule : schedules) {
                 ContentValues contentValues = new ContentValues();
                 contentValues.put("auditorium", schedule.getAuditorium());
@@ -70,7 +75,7 @@ public class ScheduleDaoImpl implements ScheduleDao {
     }
 
     @Override
-    public boolean equalsSchedule(List<Schedule> schedules, Context context) {
+    public boolean equalsSchedule(List<Schedule> schedules) {
         return false;
     }
 

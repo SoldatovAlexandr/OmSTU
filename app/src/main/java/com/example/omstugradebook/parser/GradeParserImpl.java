@@ -1,11 +1,10 @@
-package com.example.omstugradebook.parser.impl;
+package com.example.omstugradebook.parser;
 
-import com.example.omstugradebook.SubjectType;
 import com.example.omstugradebook.model.grade.GradeBook;
 import com.example.omstugradebook.model.grade.Student;
 import com.example.omstugradebook.model.grade.Subject;
+import com.example.omstugradebook.model.grade.SubjectType;
 import com.example.omstugradebook.model.grade.Term;
-import com.example.omstugradebook.parser.iface.GradeParser;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -14,8 +13,7 @@ import org.jsoup.select.Elements;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GradeParserImpl implements GradeParser {
-    @Override
+public class GradeParserImpl {
     public GradeBook getGradeBook(final Document document) {
         Student user = getUser(document.selectFirst("div.jumbotron.bs-example-bg-classes"));
         List<Term> terms = getTerms(document.select("div.row.tab-pane"));

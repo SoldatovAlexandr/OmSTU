@@ -2,8 +2,6 @@ package com.example.omstugradebook.model.grade;
 
 import androidx.annotation.NonNull;
 
-import com.example.omstugradebook.SubjectType;
-
 import java.util.Objects;
 
 public class Subject {

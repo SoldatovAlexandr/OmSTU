@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:name=".OmSTUApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -15,10 +16,10 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-        <activity android:name=".view.activity.ContactWorkListActivity"></activity>
-        <activity android:name=".view.activity.LoginActivity" />
+        <activity android:name=".view.activity.view.ContactWorkTasksActivity"></activity>
+        <activity android:name=".view.activity.view.LoginActivity" />
         <activity
-            android:name=".view.activity.MainActivity"
+            android:name=".view.activity.view.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

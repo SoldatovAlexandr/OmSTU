@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.omstugradebook.R;
 import com.example.omstugradebook.model.contactwork.ContactWork;
-import com.example.omstugradebook.view.activity.ContactWorkListActivity;
+import com.example.omstugradebook.view.activity.view.ContactWorkTasksActivity;
 
 public class ContactWorkViewHolder extends RecyclerView.ViewHolder {
     private TextView discipline;
@@ -30,7 +30,7 @@ public class ContactWorkViewHolder extends RecyclerView.ViewHolder {
         teacher.setText(contactWork.getTeacher());
         numberOfTasks.setText(contactWork.getNumberOfTasks());
         imageView.setOnClickListener(v -> {
-            Intent intent = new Intent(v.getContext(), ContactWorkListActivity.class);
+            Intent intent = new Intent(v.getContext(), ContactWorkTasksActivity.class);
             intent.putExtra("path", contactWork.getTaskLink());
             intent.putExtra("discipline", contactWork.getDiscipline());
             v.getContext().startActivity(intent);

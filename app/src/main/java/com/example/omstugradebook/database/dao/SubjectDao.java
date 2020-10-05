@@ -1,25 +1,23 @@
 package com.example.omstugradebook.database.dao;
 
-import android.content.Context;
-
 import com.example.omstugradebook.model.grade.Subject;
 
 import java.util.List;
 
 public interface SubjectDao {
-    int removeAllSubjects(Context context);
+    int removeAllSubjects();
 
-    List<Subject> readSubjectsByTerm(int termFilter, Context context);
+    List<Subject> readSubjectsByTerm(int termFilter);
 
-    List<Subject> readAllSubjects(Context context);
+    List<Subject> readAllSubjects();
 
-    boolean insertAllSubjects(List<Subject> subjects, Context context);
+    boolean insertAllSubjects(List<Subject> subjects);
 
-    boolean equalsSubjects(List<Subject> subjects, Context context);
+    boolean equalsSubjects(List<Subject> subjects);
 
-    int getCountTerm(Context context);
+    int getCountTerm();
 
-    long getCount(Context context);
+    long getCount();
 
-    List<Subject> getSubjectsByUser(int userId, int termFilter, Context context);
+    List<Subject> readSubjectsByUser(long userId);
 }

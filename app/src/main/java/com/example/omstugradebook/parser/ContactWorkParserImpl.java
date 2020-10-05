@@ -1,8 +1,7 @@
-package com.example.omstugradebook.parser.impl;
+package com.example.omstugradebook.parser;
 
 import com.example.omstugradebook.model.contactwork.ContactWork;
 import com.example.omstugradebook.model.contactwork.ContactWorksTask;
-import com.example.omstugradebook.parser.iface.ContactWorkParser;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -11,14 +10,12 @@ import org.jsoup.select.Elements;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContactWorkParserImpl implements ContactWorkParser {
+public class ContactWorkParserImpl {
 
-    @Override
     public List<ContactWork> getContactWorks(Document document, int userId) {
         return shareContactWorks(document.selectFirst("tbody"), userId);
     }
 
-    @Override
     public List<ContactWorksTask> getTasks(Document doc) {
         Element element = doc.selectFirst("div.container");
         Elements elements = element.select("tr");

@@ -1,7 +1,7 @@
 package com.example.omstugradebook.recyclerview.holder.subject;
 
-import com.example.omstugradebook.SubjectType;
 import com.example.omstugradebook.model.grade.Subject;
+import com.example.omstugradebook.model.grade.SubjectType;
 import com.example.omstugradebook.recyclerview.holder.HolderContent;
 import com.example.omstugradebook.recyclerview.holder.subject.content.SubjectHolderContent;
 import com.example.omstugradebook.recyclerview.holder.subject.content.TitleHolderContent;

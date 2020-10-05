@@ -10,7 +10,7 @@ import com.example.omstugradebook.database.daoimpl.UserDaoImpl;
 import com.example.omstugradebook.model.contactwork.ContactWork;
 import com.example.omstugradebook.model.contactwork.ContactWorksTask;
 import com.example.omstugradebook.model.grade.User;
-import com.example.omstugradebook.parser.impl.ContactWorkParserImpl;
+import com.example.omstugradebook.parser.ContactWorkParserImpl;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -24,26 +24,26 @@ public class ContactWorkService {
     private static final String TAG = "Auth Logs";
     private static final String UP_OMGTU = "http://up.omgtu.ru/";
 
-    public List<ContactWork> getContactWork(Context context, int userId) {
-        Document doc = tryToGetConnection(context, REMOTE_URL);
+    public List<ContactWork> getContactWork(int userId) {
+        Document doc = tryToGetConnection(REMOTE_URL);
         if (doc == null) {
             return null;
         }
         return new ContactWorkParserImpl().getContactWorks(doc, userId);
     }
 
-    public List<ContactWorksTask> getTaskContactWork(String path, Context context) {
-        Document doc = tryToGetConnection(context, path);
+    public List<ContactWorksTask> getTaskContactWork(String path) {
+        Document doc = tryToGetConnection(path);
         if (doc == null) {
             return null;
         }
         return new ContactWorkParserImpl().getTasks(doc);
     }
 
-    private Document tryToGetConnection(Context context, String path) {
+    private Document tryToGetConnection(String path) {
         Document doc = null;
         UserDaoImpl userTable = new UserDaoImpl();
-        User activeUser = userTable.getActiveUser(context);
+        User activeUser = userTable.getActiveUser();
         try {
             if (activeUser == null) {
                 return null;
@@ -58,7 +58,7 @@ public class ContactWorkService {
                 String cookie = authService.getAuth(activeUser.getLogin(), activeUser.getPassword());
                 String studSesId = authService.getStudSessId(cookie);
                 activeUser.setToken(studSesId);
-                userTable.update(activeUser, context);
+                userTable.update(activeUser);
                 doc = Jsoup.connect(url).cookie(STUD_SES_ID, token).get();
                 if (doc == null || !doc.baseUri().equals(url)) {
                     return null;
@@ -69,7 +69,6 @@ public class ContactWorkService {
         }
         return doc;
     }
-
 
     public boolean downloadFile(String path, String fileName, Context context) {
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(UP_OMGTU + path));

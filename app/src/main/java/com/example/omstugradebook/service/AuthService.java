@@ -1,12 +1,11 @@
 package com.example.omstugradebook.service;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.example.omstugradebook.database.daoimpl.UserDaoImpl;
 import com.example.omstugradebook.model.grade.GradeBook;
 import com.example.omstugradebook.model.grade.User;
-import com.example.omstugradebook.parser.impl.GradeParserImpl;
+import com.example.omstugradebook.parser.GradeParserImpl;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -33,8 +32,6 @@ public class AuthService {
     static final String STUD_SES_ID = "STUDSESSID";
     private static final String TAG = "Auth Logs";
 
-    public AuthService() {
-    }
 
     private String getStudSessionString(String redirectURL) throws IOException {
         URL url = new URL(redirectURL);
@@ -64,7 +61,8 @@ public class AuthService {
         }
     }
 
-    private String getQuery(List<AbstractMap.SimpleEntry<String, String>> params) throws UnsupportedEncodingException {
+    private String getQuery(List<AbstractMap.SimpleEntry<String, String>> params)
+            throws UnsupportedEncodingException {
         StringBuilder result = new StringBuilder();
         boolean first = true;
         for (AbstractMap.SimpleEntry<String, String> pair : params) {
@@ -114,11 +112,11 @@ public class AuthService {
         }
     }
 
-    public GradeBook getGradeBook(Context context) {
+    public GradeBook getGradeBook() {
         Document doc = null;
         UserDaoImpl userTable = new UserDaoImpl();
         try {
-            User activeUser = userTable.getActiveUser(context);
+            User activeUser = userTable.getActiveUser();
             String token = activeUser.getToken();
             doc = Jsoup.connect(URL).cookie(STUD_SES_ID, token).get();
             Log.d(TAG, "сделан запрос");
@@ -127,7 +125,7 @@ public class AuthService {
                 String cookie = getAuth(activeUser.getLogin(), activeUser.getPassword());
                 String studSesId = getStudSessId(cookie);
                 activeUser.setToken(studSesId);
-                userTable.update(activeUser, context);
+                userTable.update(activeUser);
                 doc = Jsoup.connect(URL).cookie(STUD_SES_ID, token).get();
                 if (doc == null || !doc.baseUri().equals(URL)) {
                     return null;

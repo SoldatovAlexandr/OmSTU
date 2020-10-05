@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 
 import com.example.omstugradebook.R;
 import com.example.omstugradebook.model.grade.User;
-import com.example.omstugradebook.view.activity.LoginActivity;
+import com.example.omstugradebook.view.activity.view.LoginActivity;
 
 public class InfoViewHolder extends AccountViewHolder {
 
