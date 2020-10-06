@@ -77,6 +77,9 @@ public class LoginViewModel extends ViewModel {
                     for (Term term : gradeBook.getTerms()) {
                         subjects.addAll(term.getSubjects());
                     }
+                    for (Subject subject : subjects) {
+                        subject.setUserId(user.getId());
+                    }
                     userLiveData.postValue(user);
                     SubjectDao subjectDao = DataBaseManager.getSubjectDao();
                     UserDao userDao = DataBaseManager.getUserDao();

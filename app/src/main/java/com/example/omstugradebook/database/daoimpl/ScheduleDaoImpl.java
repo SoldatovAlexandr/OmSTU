@@ -12,15 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScheduleDaoImpl implements ScheduleDao {
-
-    public ScheduleDaoImpl() {
-
-    }
+    private final static String SCHEDULES = "schedules";
 
     @Override
     public int removeAllSchedule() {
         try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            return database.delete("schedules", null, null);
+            return database.delete(SCHEDULES, null, null);
         } catch (NullPointerException e) {
             return -1;
         }
@@ -29,7 +26,7 @@ public class ScheduleDaoImpl implements ScheduleDao {
     @Override
     public List<Schedule> readScheduleByGroup(String group) {
         try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            Cursor cursor = database.query("schedules", null, "streamType = '" + group + "'", null, null, null, null);
+            Cursor cursor = database.query(SCHEDULES, null, "streamType = '" + group + "'", null, null, null, null);
             return getSchedules(cursor);
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -40,7 +37,7 @@ public class ScheduleDaoImpl implements ScheduleDao {
     @Override
     public List<Schedule> readAllSchedule() {
         try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            Cursor cursor = database.query("schedules", null, null, null, null, null, null);
+            Cursor cursor = database.query(SCHEDULES, null, null, null, null, null, null);
             return getSchedules(cursor);
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -65,7 +62,7 @@ public class ScheduleDaoImpl implements ScheduleDao {
                 contentValues.put("lecturer", schedule.getLecturer());
                 contentValues.put("streamType", schedule.getStreamType());
                 contentValues.put("dayOfWeekString", schedule.getDayOfWeekString());
-                database.insert("schedules", null, contentValues);
+                database.insert(SCHEDULES, null, contentValues);
             }
             return true;
         } catch (NullPointerException e) {

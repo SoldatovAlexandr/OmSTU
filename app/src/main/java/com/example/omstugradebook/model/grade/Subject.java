@@ -15,7 +15,7 @@ public class Subject {
     private final String toDiploma;
     private final int term;
     private final SubjectType type;
-    private int userId;
+    private long userId;
 
     public Subject(String name, String hours, String attendance, String tempRating, String mark, String date, String teacher, String toDiploma, int term, SubjectType type, int userId) {
         this.name = name;
@@ -35,11 +35,11 @@ public class Subject {
         this(name, hours, attendance, tempRating, mark, date, teacher, toDiploma, term, type, 0);
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 

@@ -48,7 +48,6 @@ public class GradeViewModel extends ViewModel {
             SubjectDao subjectDao = DataBaseManager.getSubjectDao();
             long id = activeUser.getId();
             List<Subject> subjectsFromDB = subjectDao.readSubjectsByUser(id);
-            System.out.println(subjectDao.readAllSubjects());
             postValues(makeGradeModel(subjectsFromDB, Integer.parseInt(selectTerm), subjectDao.getCountTerm()));
             new OmSTUSender().execute(selectTerm, String.valueOf(id));
         }
@@ -95,6 +94,9 @@ public class GradeViewModel extends ViewModel {
                 SubjectDao subjectDao = DataBaseManager.getSubjectDao();
                 List<Subject> subjectsFromDB = subjectDao.readSubjectsByUser(id);
                 List<Subject> subjects = getSubjects(gradeBook.getTerms());
+                for (Subject subject : subjects) {
+                    subject.setUserId(id);
+                }
                 if (!subjects.equals(subjectsFromDB)) {
                     subjectDao.removeAllSubjects();
                     subjectDao.insertAllSubjects(subjects);

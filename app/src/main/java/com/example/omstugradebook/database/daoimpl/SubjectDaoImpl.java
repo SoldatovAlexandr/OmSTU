@@ -102,7 +102,9 @@ public class SubjectDaoImpl implements SubjectDao {
     @Override
     public List<Subject> readSubjectsByUser(long userId) {
         try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            Cursor cursor = database.query("subjects", null, "user_id = " + userId, null, null, null, null);
+            String selection = "user_id = ?";
+            String[] selectionArgs = new String[]{String.valueOf(userId)};
+            Cursor cursor = database.query("subjects", null, selection, selectionArgs, null, null, null);
             return getSubjects(cursor);
         } catch (NullPointerException e) {
             e.printStackTrace();

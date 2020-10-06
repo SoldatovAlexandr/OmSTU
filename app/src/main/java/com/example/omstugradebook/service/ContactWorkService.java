@@ -78,6 +78,5 @@ public class ContactWorkService {
         DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
         manager.enqueue(request);
         return true;
-        //todo
     }
 }
