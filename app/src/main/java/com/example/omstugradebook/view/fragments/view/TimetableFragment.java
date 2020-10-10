@@ -39,7 +39,7 @@ public class TimetableFragment extends Fragment implements Updatable, CalendarPr
         timeTableViewModel.getTimetablesLiveData().observe(getViewLifecycleOwner(),
                 timetableModel -> update(timetableModel.getSchedules()));
         timeTableViewModel.getInfoLiveData()
-                .observe(getViewLifecycleOwner(), this::setInformationTextView);
+                .observe(getViewLifecycleOwner(), info -> setInformationTextView(getString(info)));
         timeTableViewModel.getTitleLiveData().observe(getViewLifecycleOwner(), this::setTitle);
         timeTableViewModel.getSchedules(Calendar.getInstance());
 
@@ -51,10 +51,13 @@ public class TimetableFragment extends Fragment implements Updatable, CalendarPr
         timeTableViewModel.getSchedules(Calendar.getInstance());
     }
 
+    @Override
+    public void sendRequest(Calendar calendar, String param) {
+        timeTableViewModel.getSchedules(calendar);
+    }
 
     private void setInformationTextView(String informationString) {
         information.setText(informationString);
-        //"Вы можете использовать расписание без авторизации. Для этого просто нажмите на лупу!"
     }
 
     private void setTitle(String title) {
@@ -64,11 +67,5 @@ public class TimetableFragment extends Fragment implements Updatable, CalendarPr
     private void update(List<Schedule> schedules) {
         adapter.setScheduleList(new ScheduleContentHolderConverter(schedules));
         adapter.notifyDataSetChanged();
-    }
-
-
-    @Override
-    public void sendRequest(Calendar calendar, String param) {
-        timeTableViewModel.getSchedules(calendar);
     }
 }

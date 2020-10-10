@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.omstugradebook.R;
 import com.example.omstugradebook.database.DataBaseManager;
 import com.example.omstugradebook.database.dao.ScheduleDao;
 import com.example.omstugradebook.model.grade.User;
@@ -22,7 +23,7 @@ import java.util.List;
 public class TimeTableViewModel extends ViewModel {
 
     private MutableLiveData<TimetableModel> timetableLiveData = new MutableLiveData<>();
-    private MutableLiveData<String> infoLiveData = new MutableLiveData<>();
+    private MutableLiveData<Integer> infoLiveData = new MutableLiveData<>();
     private MutableLiveData<String> titleLiveData = new MutableLiveData<>();
 
 
@@ -30,7 +31,7 @@ public class TimeTableViewModel extends ViewModel {
         return timetableLiveData;
     }
 
-    public LiveData<String> getInfoLiveData() {
+    public LiveData<Integer> getInfoLiveData() {
         return infoLiveData;
     }
 
@@ -96,7 +97,7 @@ public class TimeTableViewModel extends ViewModel {
             TimetableService timetableService = new TimetableService();
             User user = DataBaseManager.getUserDao().getActiveUser();
             if (user == null) {
-                infoLiveData.postValue("Вы можете использовать расписание без авторизации. Для этого просто нажмите на лупу!");
+                infoLiveData.postValue(R.string.timetable_information_string);
             } else {
                 String group = user.getStudent().getSpeciality().trim();
                 List<Schedule> schedules = timetableService.getTimetable(group, start, finish, 1);
@@ -107,6 +108,5 @@ public class TimeTableViewModel extends ViewModel {
             }
             return null;
         }
-
     }
 }

@@ -17,6 +17,7 @@
     <string name="contactWork">Контактная работа</string>
     <string name="thisUserIsAlreadyLoggedIn">Этот пользователь уже авторизован!</string>
     <string name="serverException">К сожалению,\n сервер сейчас недоступен.\n Попробуйте позже.</string>
+    <string name="timetable_information_string">Вы можете использовать расписание без авторизации. Для этого просто нажмите на лупу!</string>
     <string-array name="spinnerStrings">
         <item>Группа</item>
         <item>Преподаватель</item>
