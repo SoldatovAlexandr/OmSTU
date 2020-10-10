@@ -13,24 +13,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoImpl implements UserDao {
-
-    public UserDaoImpl() {
-    }
+    private static final String USERS = "users";
+    private static final String LOGIN = "login";
+    private static final String PASSWORD = "password";
+    private static final String TOKEN = "token";
+    private static final String FULL_NAME = "fullName";
+    private static final String NUMBER_GRADE_BOOK = "numberGradeBook";
+    private static final String SPECIALITY = "speciality";
+    private static final String EDUCATION_FORM = "educationForm";
+    private static final String IS_ACTIVE = "isActive";
+    private static final String ID = "id";
 
     @Override
     public long insert(User user) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
             ContentValues contentValues = new ContentValues();
-            contentValues.put("login", user.getLogin());
-            contentValues.put("password", user.getPassword());
-            contentValues.put("token", user.getToken());
+            contentValues.put(LOGIN, user.getLogin());
+            contentValues.put(PASSWORD, user.getPassword());
+            contentValues.put(TOKEN, user.getToken());
             Student student = user.getStudent();
-            contentValues.put("fullName", student.getFullName());
-            contentValues.put("numberGradeBook", student.getNumberGradeBook());
-            contentValues.put("speciality", student.getSpeciality());
-            contentValues.put("educationForm", student.getEducationForm());
-            contentValues.put("isActive", user.getIsActive());
-            long id = database.insert("users", null, contentValues);
+            contentValues.put(FULL_NAME, student.getFullName());
+            contentValues.put(NUMBER_GRADE_BOOK, student.getNumberGradeBook());
+            contentValues.put(SPECIALITY, student.getSpeciality());
+            contentValues.put(EDUCATION_FORM, student.getEducationForm());
+            contentValues.put(IS_ACTIVE, user.getIsActive());
+            long id = database.insert(USERS, null, contentValues);
             user.setId(id);
             return id;
         } catch (NullPointerException e) {
@@ -41,17 +49,23 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User getUserByLogin(String login) {
-        return getUser("login = '" + login + "'");
+        String selection = "login = ?";
+        String[] selectionArgs = new String[]{String.valueOf(login)};
+        return getUser(selection, selectionArgs);
     }
 
     @Override
     public User getUserByToken(String token) {
-        return getUser("token = '" + token + "'");
+        String selection = "token = ?";
+        String[] selectionArgs = new String[]{String.valueOf(token)};
+        return getUser(selection, selectionArgs);
     }
 
     @Override
     public User getUserById(long id) {
-        return getUser("id = " + id);
+        String selection = "id = ?";
+        String[] selectionArgs = new String[]{String.valueOf(id)};
+        return getUser(selection, selectionArgs);
     }
 
 
@@ -67,8 +81,9 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public int removeAllUsers() {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            return database.delete("users", null, null);
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            return database.delete(USERS, null, null);
         } catch (NullPointerException e) {
             e.printStackTrace();
             return -1;
@@ -77,18 +92,19 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public long update(User user) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
             ContentValues contentValues = new ContentValues();
-            contentValues.put("login", user.getLogin());
-            contentValues.put("password", user.getPassword());
-            contentValues.put("token", user.getToken());
+            contentValues.put(LOGIN, user.getLogin());
+            contentValues.put(PASSWORD, user.getPassword());
+            contentValues.put(TOKEN, user.getToken());
             Student student = user.getStudent();
-            contentValues.put("fullName", student.getFullName());
-            contentValues.put("numberGradeBook", student.getNumberGradeBook());
-            contentValues.put("speciality", student.getSpeciality());
-            contentValues.put("educationForm", student.getEducationForm());
-            contentValues.put("isActive", user.getIsActive());
-            long id = database.update("users",
+            contentValues.put(FULL_NAME, student.getFullName());
+            contentValues.put(NUMBER_GRADE_BOOK, student.getNumberGradeBook());
+            contentValues.put(SPECIALITY, student.getSpeciality());
+            contentValues.put(EDUCATION_FORM, student.getEducationForm());
+            contentValues.put(IS_ACTIVE, user.getIsActive());
+            long id = database.update(USERS,
                     contentValues,
                     "id =" + user.getId(),
                     null);
@@ -102,8 +118,9 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public List<User> readAllUsers() {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            Cursor cursor = database.query("users",
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            Cursor cursor = database.query(USERS,
                     null,
                     null,
                     null,
@@ -130,14 +147,17 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public boolean removeUser(User user) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
             if (user.getIsActive() == 1) {
                 List<User> users = readAllUsers();
                 if (users != null) {
                     changeActiveUser(users.get(0));
                 }
             }
-            int result = database.delete("users", "id =" + user.getId(), null);
+            String whereClause = "id = ? ";
+            String[] whereArgs = new String[]{String.valueOf(user.getId())};
+            int result = database.delete(USERS, whereClause, whereArgs);
             return result > 0;
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -145,12 +165,13 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
-    private User getUser(String selection) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            return getUser(database.query("users",
+    private User getUser(String selection, String[] selectionArgs) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            return getUser(database.query(USERS,
                     null,
                     selection,
-                    null,
+                    selectionArgs,
                     null,
                     null,
                     null));
@@ -163,15 +184,15 @@ public class UserDaoImpl implements UserDao {
 
     private User getUser(Cursor cursor) {
         if (cursor.moveToFirst()) {
-            int idColIndex = cursor.getColumnIndex("id");
-            int loginColIndex = cursor.getColumnIndex("login");
-            int passwordColIndex = cursor.getColumnIndex("password");
-            int tokenColIndex = cursor.getColumnIndex("token");
-            int fullNameColIndex = cursor.getColumnIndex("fullName");
-            int numberGBColIndex = cursor.getColumnIndex("numberGradeBook");
-            int specialityColIndex = cursor.getColumnIndex("speciality");
-            int educationFormColIndex = cursor.getColumnIndex("educationForm");
-            int isActiveColIndex = cursor.getColumnIndex("isActive");
+            int idColIndex = cursor.getColumnIndex(ID);
+            int loginColIndex = cursor.getColumnIndex(LOGIN);
+            int passwordColIndex = cursor.getColumnIndex(PASSWORD);
+            int tokenColIndex = cursor.getColumnIndex(TOKEN);
+            int fullNameColIndex = cursor.getColumnIndex(FULL_NAME);
+            int numberGBColIndex = cursor.getColumnIndex(NUMBER_GRADE_BOOK);
+            int specialityColIndex = cursor.getColumnIndex(SPECIALITY);
+            int educationFormColIndex = cursor.getColumnIndex(EDUCATION_FORM);
+            int isActiveColIndex = cursor.getColumnIndex(IS_ACTIVE);
             long id = cursor.getLong(idColIndex);
             long isActive = cursor.getLong(isActiveColIndex);
             String login = cursor.getString(loginColIndex);
@@ -190,15 +211,15 @@ public class UserDaoImpl implements UserDao {
     private List<User> getUsers(Cursor cursor) {
         List<User> users = new ArrayList<>();
         if (cursor.moveToFirst()) {
-            int idColIndex = cursor.getColumnIndex("id");
-            int loginColIndex = cursor.getColumnIndex("login");
-            int passwordColIndex = cursor.getColumnIndex("password");
-            int tokenColIndex = cursor.getColumnIndex("token");
-            int fullNameColIndex = cursor.getColumnIndex("fullName");
-            int numberGBColIndex = cursor.getColumnIndex("numberGradeBook");
-            int specialityColIndex = cursor.getColumnIndex("speciality");
-            int educationFormColIndex = cursor.getColumnIndex("educationForm");
-            int isActiveColIndex = cursor.getColumnIndex("isActive");
+            int idColIndex = cursor.getColumnIndex(ID);
+            int loginColIndex = cursor.getColumnIndex(LOGIN);
+            int passwordColIndex = cursor.getColumnIndex(PASSWORD);
+            int tokenColIndex = cursor.getColumnIndex(TOKEN);
+            int fullNameColIndex = cursor.getColumnIndex(FULL_NAME);
+            int numberGBColIndex = cursor.getColumnIndex(NUMBER_GRADE_BOOK);
+            int specialityColIndex = cursor.getColumnIndex(SPECIALITY);
+            int educationFormColIndex = cursor.getColumnIndex(EDUCATION_FORM);
+            int isActiveColIndex = cursor.getColumnIndex(IS_ACTIVE);
             do {
                 String login = cursor.getString(loginColIndex);
                 String password = cursor.getString(passwordColIndex);
@@ -216,5 +237,4 @@ public class UserDaoImpl implements UserDao {
         cursor.close();
         return users;
     }
-
 }

@@ -1,5 +1,6 @@
 package com.example.omstugradebook.database.daoimpl;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -13,14 +14,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SubjectDaoImpl implements SubjectDao {
-
-    public SubjectDaoImpl() {
-    }
+    private final static String SUBJECTS = "subjects";
+    private final static String NAME = "name";
+    private final static String HOURS = "hours";
+    private final static String ATTENDANCE = "attendance";
+    private final static String TEMP_RATING = "tempRating";
+    private final static String MARK = "mark";
+    private final static String DATE = "date";
+    private final static String TEACHER = "teacher";
+    private final static String TO_DIPLOMA = "toDiploma";
+    private final static String TERM = "term";
+    private final static String TYPE = "type";
+    private final static String USER_ID = "user_id";
 
     @Override
     public int removeAllSubjects() {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            return database.delete("subjects", null, null);
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            return database.delete(SUBJECTS, null, null);
         } catch (NullPointerException e) {
             e.printStackTrace();
             return -1;
@@ -29,8 +40,17 @@ public class SubjectDaoImpl implements SubjectDao {
 
     @Override
     public List<Subject> readSubjectsByTerm(int termFilter) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            Cursor cursor = database.query("subjects", null, "term = " + termFilter, null, null, null, null);
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            String selection = "term = ?";
+            String[] selectionArgs = new String[]{String.valueOf(termFilter)};
+            Cursor cursor = database.query(SUBJECTS,
+                    null,
+                    selection,
+                    selectionArgs,
+                    null,
+                    null,
+                    null);
             return getSubjects(cursor);
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -40,8 +60,15 @@ public class SubjectDaoImpl implements SubjectDao {
 
     @Override
     public List<Subject> readAllSubjects() {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            Cursor cursor = database.query("subjects", null, null, null, null, null, null);
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            Cursor cursor = database.query(SUBJECTS,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null);
             return getSubjects(cursor);
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -51,21 +78,22 @@ public class SubjectDaoImpl implements SubjectDao {
 
     @Override
     public boolean insertAllSubjects(List<Subject> subjects) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
             for (Subject subject : subjects) {
                 ContentValues contentValues = new ContentValues();
-                contentValues.put("name", subject.getName());
-                contentValues.put("hours", subject.getHours());
-                contentValues.put("attendance", subject.getAttendance());
-                contentValues.put("tempRating", subject.getTempRating());
-                contentValues.put("mark", subject.getMark());
-                contentValues.put("date", subject.getDate());
-                contentValues.put("teacher", subject.getTeacher());
-                contentValues.put("toDiploma", subject.getToDiploma());
-                contentValues.put("term", subject.getTerm());
-                contentValues.put("type", subject.getType().ordinal());
-                contentValues.put("user_id", subject.getUserId());
-                database.insert("subjects", null, contentValues);
+                contentValues.put(NAME, subject.getName());
+                contentValues.put(HOURS, subject.getHours());
+                contentValues.put(ATTENDANCE, subject.getAttendance());
+                contentValues.put(TEMP_RATING, subject.getTempRating());
+                contentValues.put(MARK, subject.getMark());
+                contentValues.put(DATE, subject.getDate());
+                contentValues.put(TEACHER, subject.getTeacher());
+                contentValues.put(TO_DIPLOMA, subject.getToDiploma());
+                contentValues.put(TERM, subject.getTerm());
+                contentValues.put(TYPE, subject.getType().ordinal());
+                contentValues.put(USER_ID, subject.getUserId());
+                database.insert(SUBJECTS, null, contentValues);
             }
             return true;
         } catch (NullPointerException e) {
@@ -82,11 +110,12 @@ public class SubjectDaoImpl implements SubjectDao {
 
     @Override
     public int getCountTerm() {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
             String selectQuery = "SELECT max(term) as term FROM subjects";
-            Cursor cursor = database.rawQuery(selectQuery, null);
+            @SuppressLint("Recycle") Cursor cursor = database.rawQuery(selectQuery, null);
             cursor.moveToFirst();
-            return cursor.getInt(cursor.getColumnIndex("term"));
+            return cursor.getInt(cursor.getColumnIndex(TERM));
         } catch (NullPointerException e) {
             e.printStackTrace();
             return -1;
@@ -98,13 +127,19 @@ public class SubjectDaoImpl implements SubjectDao {
         return readAllSubjects().size();
     }//TODO
 
-    //TODO метод не работает
     @Override
     public List<Subject> readSubjectsByUser(long userId) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
             String selection = "user_id = ?";
             String[] selectionArgs = new String[]{String.valueOf(userId)};
-            Cursor cursor = database.query("subjects", null, selection, selectionArgs, null, null, null);
+            Cursor cursor = database.query(SUBJECTS,
+                    null,
+                    selection,
+                    selectionArgs,
+                    null,
+                    null,
+                    null);
             return getSubjects(cursor);
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -115,17 +150,17 @@ public class SubjectDaoImpl implements SubjectDao {
     private List<Subject> getSubjects(Cursor cursor) {
         List<Subject> subjects = new ArrayList<>();
         if (cursor.moveToFirst()) {
-            int nameColIndex = cursor.getColumnIndex("name");
-            int hoursColIndex = cursor.getColumnIndex("hours");
-            int attendanceColIndex = cursor.getColumnIndex("attendance");
-            int tempRatingColIndex = cursor.getColumnIndex("tempRating");
-            int markColIndex = cursor.getColumnIndex("mark");
-            int dateColIndex = cursor.getColumnIndex("date");
-            int teacherColIndex = cursor.getColumnIndex("teacher");
-            int toDiplomaColIndex = cursor.getColumnIndex("toDiploma");
-            int termColIndex = cursor.getColumnIndex("term");
-            int typeColIndex = cursor.getColumnIndex("type");
-            int userIdColIndex = cursor.getColumnIndex("user_id");
+            int nameColIndex = cursor.getColumnIndex(NAME);
+            int hoursColIndex = cursor.getColumnIndex(HOURS);
+            int attendanceColIndex = cursor.getColumnIndex(ATTENDANCE);
+            int tempRatingColIndex = cursor.getColumnIndex(TEMP_RATING);
+            int markColIndex = cursor.getColumnIndex(MARK);
+            int dateColIndex = cursor.getColumnIndex(DATE);
+            int teacherColIndex = cursor.getColumnIndex(TEACHER);
+            int toDiplomaColIndex = cursor.getColumnIndex(TO_DIPLOMA);
+            int termColIndex = cursor.getColumnIndex(TERM);
+            int typeColIndex = cursor.getColumnIndex(TYPE);
+            int userIdColIndex = cursor.getColumnIndex(USER_ID);
             do {
                 String name = cursor.getString(nameColIndex);
                 String hours = cursor.getString(hoursColIndex);
@@ -138,7 +173,8 @@ public class SubjectDaoImpl implements SubjectDao {
                 int term = cursor.getInt(termColIndex);
                 int type = cursor.getInt(typeColIndex);
                 int userId = cursor.getInt(userIdColIndex);
-                subjects.add(new Subject(name, hours, attendance, tempRating, mark, date, teacher, toDiploma, term, SubjectType.values()[type], userId));
+                subjects.add(new Subject(name, hours, attendance, tempRating, mark, date, teacher,
+                        toDiploma, term, SubjectType.values()[type], userId));
             } while (cursor.moveToNext());
         }
         cursor.close();

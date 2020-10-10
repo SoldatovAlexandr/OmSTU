@@ -12,22 +12,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContactWorkDaoImpl implements ContactWorkDao {
+    private static final String CONTACT_WORK = "contact_work";
+    private static final String DISCIPLINE = "discipline";
+    private static final String TEACHER = "teacher";
+    private static final String NUMBER_OF_TASKS = "number_of_tasks";
+    private static final String TASK_LINK = "task_link";
+    private static final String USER_ID = "user_id";
 
     @Override
     public int removeAllToContactWork() {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            return database.delete("contact_work", null, null);
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            return database.delete(CONTACT_WORK, null, null);
         } catch (NullPointerException e) {
             e.printStackTrace();
             return -1;
         }
     }
 
-    //TODO
     @Override
     public List<ContactWork> readContactWorkByUserId(long userId) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            Cursor cursor = database.query("contact_work", null, "user_id = " + userId, null, null, null, null);
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            String selection = "user_id = ?";
+            String[] selectionArgs = new String[]{String.valueOf(userId)};
+            Cursor cursor = database.query(CONTACT_WORK,
+                    null,
+                    selection,
+                    selectionArgs,
+                    null,
+                    null,
+                    null);
             return getContactWorks(cursor);
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -37,8 +52,15 @@ public class ContactWorkDaoImpl implements ContactWorkDao {
 
     @Override
     public List<ContactWork> readAllToContactWork() {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            Cursor cursor = database.query("contact_work", null, null, null, null, null, null);
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            Cursor cursor = database.query(CONTACT_WORK,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null);
             return getContactWorks(cursor);
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -49,11 +71,11 @@ public class ContactWorkDaoImpl implements ContactWorkDao {
     private List<ContactWork> getContactWorks(Cursor cursor) {
         List<ContactWork> contactWorks = new ArrayList<>();
         if (cursor.moveToFirst()) {
-            int disciplineColIndex = cursor.getColumnIndex("discipline");
-            int teacherColIndex = cursor.getColumnIndex("teacher");
-            int numberOfTasksColIndex = cursor.getColumnIndex("number_of_tasks");
-            int taskLinkColIndex = cursor.getColumnIndex("task_link");
-            int userIdColIndex = cursor.getColumnIndex("user_id");
+            int disciplineColIndex = cursor.getColumnIndex(DISCIPLINE);
+            int teacherColIndex = cursor.getColumnIndex(TEACHER);
+            int numberOfTasksColIndex = cursor.getColumnIndex(NUMBER_OF_TASKS);
+            int taskLinkColIndex = cursor.getColumnIndex(TASK_LINK);
+            int userIdColIndex = cursor.getColumnIndex(USER_ID);
             do {
                 String discipline = cursor.getString(disciplineColIndex);
                 String teacher = cursor.getString(teacherColIndex);
@@ -70,15 +92,16 @@ public class ContactWorkDaoImpl implements ContactWorkDao {
 
     @Override
     public boolean insertAllToContactWork(List<ContactWork> contactWorks) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
             for (ContactWork contactWork : contactWorks) {
                 ContentValues contentValues = new ContentValues();
-                contentValues.put("discipline", contactWork.getDiscipline());
-                contentValues.put("teacher", contactWork.getTeacher());
-                contentValues.put("number_of_tasks", contactWork.getNumberOfTasks());
-                contentValues.put("task_link", contactWork.getTaskLink());
-                contentValues.put("user_id", contactWork.getUserId());
-                database.insert("contact_work", null, contentValues);
+                contentValues.put(DISCIPLINE, contactWork.getDiscipline());
+                contentValues.put(TEACHER, contactWork.getTeacher());
+                contentValues.put(NUMBER_OF_TASKS, contactWork.getNumberOfTasks());
+                contentValues.put(TASK_LINK, contactWork.getTaskLink());
+                contentValues.put(USER_ID, contactWork.getUserId());
+                database.insert(CONTACT_WORK, null, contentValues);
             }
             return true;
         } catch (NullPointerException e) {

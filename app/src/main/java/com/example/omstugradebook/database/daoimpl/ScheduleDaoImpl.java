@@ -12,11 +12,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScheduleDaoImpl implements ScheduleDao {
+
     private final static String SCHEDULES = "schedules";
+    private final static String AUDITORIUM = "auditorium";
+    private final static String BEGIN_LESSON = "beginLesson";
+    private final static String BUILDING = "building";
+    private final static String DATE = "date";
+    private final static String DAY_OF_WEEK = "dayOfWeek";
+    private final static String DETAIL_INFO = "detailInfo";
+    private final static String DISCIPLINE = "discipline";
+    private final static String END_LESSON = "endLesson";
+    private final static String KIND_OF_WORK = "kindOfWork";
+    private final static String LECTURER = "lecturer";
+    private final static String STREAM_TYPE = "streamType";
+    private final static String DAY_OF_WEEK_STRING = "dayOfWeekString";
 
     @Override
     public int removeAllSchedule() {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
             return database.delete(SCHEDULES, null, null);
         } catch (NullPointerException e) {
             return -1;
@@ -25,8 +39,17 @@ public class ScheduleDaoImpl implements ScheduleDao {
 
     @Override
     public List<Schedule> readScheduleByGroup(String group) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            Cursor cursor = database.query(SCHEDULES, null, "streamType = '" + group + "'", null, null, null, null);
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            String selection = "streamType = ?";
+            String[] selectionArgs = new String[]{String.valueOf(group)};
+            Cursor cursor = database.query(SCHEDULES,
+                    null,
+                    selection,
+                    selectionArgs,
+                    null,
+                    null,
+                    null);
             return getSchedules(cursor);
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -36,8 +59,15 @@ public class ScheduleDaoImpl implements ScheduleDao {
 
     @Override
     public List<Schedule> readAllSchedule() {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            Cursor cursor = database.query(SCHEDULES, null, null, null, null, null, null);
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            Cursor cursor = database.query(SCHEDULES,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null);
             return getSchedules(cursor);
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -47,21 +77,22 @@ public class ScheduleDaoImpl implements ScheduleDao {
 
     @Override
     public boolean insertAllSchedule(List<Schedule> schedules) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper(); SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
             for (Schedule schedule : schedules) {
                 ContentValues contentValues = new ContentValues();
-                contentValues.put("auditorium", schedule.getAuditorium());
-                contentValues.put("beginLesson", schedule.getBeginLesson());
-                contentValues.put("building", schedule.getBuilding());
-                contentValues.put("date", schedule.getDate());
-                contentValues.put("dayOfWeek", schedule.getDayOfWeek());
-                contentValues.put("detailInfo", schedule.getDetailInfo());
-                contentValues.put("discipline", schedule.getDiscipline());
-                contentValues.put("endLesson", schedule.getEndLesson());
-                contentValues.put("kindOfWork", schedule.getKindOfWork());
-                contentValues.put("lecturer", schedule.getLecturer());
-                contentValues.put("streamType", schedule.getStreamType());
-                contentValues.put("dayOfWeekString", schedule.getDayOfWeekString());
+                contentValues.put(AUDITORIUM, schedule.getAuditorium());
+                contentValues.put(BEGIN_LESSON, schedule.getBeginLesson());
+                contentValues.put(BUILDING, schedule.getBuilding());
+                contentValues.put(DATE, schedule.getDate());
+                contentValues.put(DAY_OF_WEEK, schedule.getDayOfWeek());
+                contentValues.put(DETAIL_INFO, schedule.getDetailInfo());
+                contentValues.put(DISCIPLINE, schedule.getDiscipline());
+                contentValues.put(END_LESSON, schedule.getEndLesson());
+                contentValues.put(KIND_OF_WORK, schedule.getKindOfWork());
+                contentValues.put(LECTURER, schedule.getLecturer());
+                contentValues.put(STREAM_TYPE, schedule.getStreamType());
+                contentValues.put(DAY_OF_WEEK_STRING, schedule.getDayOfWeekString());
                 database.insert(SCHEDULES, null, contentValues);
             }
             return true;
@@ -79,18 +110,18 @@ public class ScheduleDaoImpl implements ScheduleDao {
     private List<Schedule> getSchedules(Cursor cursor) {
         List<Schedule> schedules = new ArrayList<>();
         if (cursor.moveToFirst()) {
-            int auditoriumColIndex = cursor.getColumnIndex("auditorium");
-            int beginLessonColIndex = cursor.getColumnIndex("beginLesson");
-            int buildingColIndex = cursor.getColumnIndex("building");
-            int dateColIndex = cursor.getColumnIndex("date");
-            int dayOfWeekColIndex = cursor.getColumnIndex("dayOfWeek");
-            int detailInfoColIndex = cursor.getColumnIndex("detailInfo");
-            int disciplineColIndex = cursor.getColumnIndex("discipline");
-            int endLessonColIndex = cursor.getColumnIndex("endLesson");
-            int kindOfWorkColIndex = cursor.getColumnIndex("kindOfWork");
-            int lecturerColIndex = cursor.getColumnIndex("lecturer");
-            int streamTypeColIndex = cursor.getColumnIndex("streamType");
-            int dayOfWeekStringColIndex = cursor.getColumnIndex("dayOfWeekString");
+            int auditoriumColIndex = cursor.getColumnIndex(AUDITORIUM);
+            int beginLessonColIndex = cursor.getColumnIndex(BEGIN_LESSON);
+            int buildingColIndex = cursor.getColumnIndex(BUILDING);
+            int dateColIndex = cursor.getColumnIndex(DATE);
+            int dayOfWeekColIndex = cursor.getColumnIndex(DAY_OF_WEEK);
+            int detailInfoColIndex = cursor.getColumnIndex(DETAIL_INFO);
+            int disciplineColIndex = cursor.getColumnIndex(DISCIPLINE);
+            int endLessonColIndex = cursor.getColumnIndex(END_LESSON);
+            int kindOfWorkColIndex = cursor.getColumnIndex(KIND_OF_WORK);
+            int lecturerColIndex = cursor.getColumnIndex(LECTURER);
+            int streamTypeColIndex = cursor.getColumnIndex(STREAM_TYPE);
+            int dayOfWeekStringColIndex = cursor.getColumnIndex(DAY_OF_WEEK_STRING);
             do {
                 String auditorium = cursor.getString(auditoriumColIndex);
                 String beginLesson = cursor.getString(beginLessonColIndex);
