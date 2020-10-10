@@ -22,6 +22,7 @@ import java.util.List;
 public class LoginViewModel extends ViewModel {
     private MutableLiveData<User> userLiveData = new MutableLiveData<>();
     private MutableLiveData<Integer> errorLiveData = new MutableLiveData<>();
+    private MutableLiveData<Integer> infoLiveData = new MutableLiveData<>();
 
     public LiveData<User> getUserLiveData() {
         return userLiveData;
@@ -29,6 +30,10 @@ public class LoginViewModel extends ViewModel {
 
     public LiveData<Integer> getErrorLiveData() {
         return errorLiveData;
+    }
+
+    public LiveData<Integer> getInfoLiveData() {
+        return infoLiveData;
     }
 
     public void signIn(String login, String password) {
@@ -58,7 +63,7 @@ public class LoginViewModel extends ViewModel {
         protected void onPostExecute(List<String> strings) {
             super.onPostExecute(strings);
             if (!strings.isEmpty()) {
-                errorLiveData.postValue((R.string.loginSuccsessfullyString));
+                infoLiveData.postValue((R.string.loginSuccsessfullyString));
                 new UserDataRequestSender().execute(strings.get(0), strings.get(1), strings.get(2));
             } else {
                 errorLiveData.postValue((R.string.wrongLoginOrPasswordString));
@@ -86,6 +91,8 @@ public class LoginViewModel extends ViewModel {
                     userDao.insert(user);
                     userDao.changeActiveUser(user);
                     subjectDao.insertAllSubjects(subjects);
+                } else {
+                    errorLiveData.postValue(R.string.serverException);
                 }
                 return null;
             }

@@ -37,6 +37,10 @@ public class LoginActivity extends AppCompatActivity {
             buttonOk.setEnabled(true);
         });
 
+        loginViewModel.getInfoLiveData().observe(this, info -> {
+            Toast.makeText(getApplicationContext(), getString(info), Toast.LENGTH_LONG).show();
+        });
+
         buttonOk.setOnClickListener(v -> {
             buttonOk.setEnabled(false);
             String login = loginEditText.getText().toString();

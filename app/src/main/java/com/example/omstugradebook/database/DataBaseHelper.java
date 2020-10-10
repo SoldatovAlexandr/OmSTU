@@ -10,16 +10,30 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         super(OmSTUApplication.getContext(), "OmSTU_DB", null, 1);
     }
 
-
     @Override
     public void onCreate(SQLiteDatabase db) {
+
+        db.execSQL("PRAGMA foreign_keys=ON;");
+
+        db.execSQL("create table users ("
+                + "id integer primary key autoincrement,"
+                + "login text,"
+                + "token text,"
+                + "fullName text,"
+                + "numberGradeBook text,"
+                + "speciality text,"
+                + "educationForm text,"
+                + "isActive integer,"
+                + "password text" + ");");
+
         db.execSQL("create table contact_work ("
                 + "id integer primary key autoincrement,"
                 + "discipline text,"
                 + "teacher text,"
                 + "number_of_tasks text,"
                 + "task_link text,"
-                + "user_id integet" + ");");
+                + "user_id integer," +
+                "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE" + ");");
 
         db.execSQL("create table subjects ("
                 + "id integer primary key autoincrement,"
@@ -33,18 +47,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 + "toDiploma text,"
                 + "term integer,"
                 + "user_id integer,"
-                + "type integer" + ");");
+                + "type integer,"
+                + "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE" + ");");
 
-        db.execSQL("create table users ("
-                + "id integer primary key autoincrement,"
-                + "login text,"
-                + "token text,"
-                + "fullName text,"
-                + "numberGradeBook text,"
-                + "speciality text,"
-                + "educationForm text,"
-                + "isActive integer,"
-                + "password text" + ");");
 
         db.execSQL("create table schedules ("
                 + "id integer primary key autoincrement,"
@@ -60,7 +65,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 + "lecturer text,"
                 + "streamType text,"
                 + "user_id integer,"
-                + "dayOfWeekString text" + ");");
+                + "dayOfWeekString text,"
+                + "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE" + ");");
     }
 
     @Override

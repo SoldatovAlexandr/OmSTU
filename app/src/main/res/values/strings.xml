@@ -16,6 +16,7 @@
     <string name="accountManagement">Управление аккаунтами</string>
     <string name="contactWork">Контактная работа</string>
     <string name="thisUserIsAlreadyLoggedIn">Этот пользователь уже авторизован!</string>
+    <string name="serverException">К сожалению,\n сервер сейчас недоступен.\n Попробуйте позже.</string>
     <string-array name="spinnerStrings">
         <item>Группа</item>
         <item>Преподаватель</item>
