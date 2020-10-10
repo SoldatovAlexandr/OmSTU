@@ -27,11 +27,16 @@ public class ContactWorkParserImpl {
     }
 
     private ContactWorksTask getContactWorksTask(Element element) {
+        System.out.println(element);
         List<Element> elementList = new ArrayList<>(element.select("td"));
         int number = Integer.parseInt(elementList.get(0).text());
         String comment = elementList.get(1).text();
         String file = elementList.get(2).text();
-        String link = elementList.get(2).selectFirst("a").attr("href");
+        Element linkElement = elementList.get(2).selectFirst("a");
+        String link = "";
+        if (linkElement != null) {
+            link = linkElement.attr("href");
+        }
         String date = elementList.get(3).text();
         String teacher = elementList.get(4).text();
         return new ContactWorksTask(number, comment, teacher, file, date, link);

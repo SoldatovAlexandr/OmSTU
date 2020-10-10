@@ -30,7 +30,8 @@ public class AccountFragment extends Fragment implements Updatable {
         initRecyclerView(view);
         accountViewModel = new ViewModelProvider(this).get(AccountViewModel.class);
         accountViewModel.getUsersLiveData().observe(getViewLifecycleOwner(), this::update);
-        accountViewModel.getErrorLiveData().observe(getViewLifecycleOwner(), error -> Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show());
+        accountViewModel.getErrorLiveData().observe(getViewLifecycleOwner(),
+                error -> Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show());
         accountViewModel.getUsers();
         accountViewModel.checkAuthActiveUser();
         return view;

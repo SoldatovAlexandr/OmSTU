@@ -1,13 +1,9 @@
 package com.example.omstugradebook.view.activity.view;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,8 +18,6 @@ import com.example.omstugradebook.model.contactwork.ContactWorksTask;
 import com.example.omstugradebook.recyclerview.adapter.ContactWorkListRVAdapter;
 import com.example.omstugradebook.service.ContactWorkService;
 import com.example.omstugradebook.view.activity.viewmodel.ContactWorkTasksViewModel;
-
-import java.io.File;
 
 public class ContactWorkTasksActivity extends AppCompatActivity {
 
@@ -95,21 +89,7 @@ public class ContactWorkTasksActivity extends AppCompatActivity {
         String fileName = task.getFile().trim().replaceAll(" ", "_");
         if (task != null) {
             String message = new ContactWorkService().downloadFile(task.getLink(), fileName, this);
-            if (message.equals("Неудалось загрузить файл...")) {
-                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-            } else {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(
-                        message)
-                        .setPositiveButton("Открыть файл", (dialog, id) -> {
-                            dialog.cancel();
-                            //будет доступно, когда я разберусь с этой красотой
-                            // openFile(fileName);
-                        })
-                        .setNegativeButton("Закрыть", (dialog, id) -> dialog.cancel());
-                builder.setCancelable(false);
-                builder.create().show();
-            }
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -124,14 +104,4 @@ public class ContactWorkTasksActivity extends AppCompatActivity {
         }
     }
 
-    private void openFile(String fileName) {
-        Uri fileUri = Uri.fromFile(new File(Environment
-                .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) +
-                "/" + fileName));
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.setDataAndType(fileUri, "file/*");
-        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        startActivity(intent);
-    }
 }

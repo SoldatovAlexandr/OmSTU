@@ -74,17 +74,19 @@ public class ContactWorkService {
 
     public String downloadFile(String path, String fileName, Context context) {
         if (checkExistsFile(fileName)) {
+            //тут потом можно будет и открыть его
             return "Файл уже был загружен...";
         } else {
             String url = UP_OMGTU + path.trim();
             DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
             request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI |
                     DownloadManager.Request.NETWORK_MOBILE);
-            request.setTitle("Download");
+            request.setTitle(fileName);
             request.setDescription("Downloading file");
             request.allowScanningByMediaScanner();
             String cookie = STUD_SES_ID + "=" + DataBaseManager.getUserDao().getActiveUser().getToken() + "; Path=/; Domain=.up.omgtu.ru;";
             request.addRequestHeader("Cookie", cookie);
+            request.setMimeType(gitMimeType(fileName));
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
             request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
             DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
@@ -97,9 +99,32 @@ public class ContactWorkService {
         }
     }
 
+    private String gitMimeType(String fileName) {
+        switch (getExtensionsByFileName(fileName)) {
+            case "pdf":
+                return "application/pdf";
+            case "docx":
+                return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+            case "doc":
+                return "application/msword";
+            case "ppt":
+                return "application/vnd.ms-powerpoint";
+            case "pptx":
+                return "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+            default:
+                return "text/plain";
+        }
+    }
+
     private boolean checkExistsFile(String fileName) {
-        String filePath = Environment.getExternalStorageDirectory() + "/" + Environment.DIRECTORY_DOWNLOADS + "/" + fileName;
+        String filePath = Environment.getExternalStorageDirectory()
+                + "/" + Environment.DIRECTORY_DOWNLOADS + "/" + fileName;
         File file = new File(filePath);
         return file.exists();
+    }
+
+    private String getExtensionsByFileName(String fileName) {
+        String[] strings = fileName.split("\\.");
+        return strings[strings.length - 1];
     }
 }

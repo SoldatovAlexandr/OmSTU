@@ -40,8 +40,8 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity implements NavigationProvider {
 
     private final Map<String, Button> userButtons = new HashMap<>();
-    private BottomSheetBehavior calendarBottomSheetBehavior;
-    private BottomSheetBehavior userBottomSheetBehavior;
+    private BottomSheetBehavior<LinearLayout> calendarBottomSheetBehavior;
+    private BottomSheetBehavior<LinearLayout> userBottomSheetBehavior;
 
     private static BottomNavigationView navigation;
     private LinearLayout llAccounts;
