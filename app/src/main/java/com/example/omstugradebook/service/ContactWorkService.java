@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
+import com.example.omstugradebook.database.DataBaseManager;
 import com.example.omstugradebook.database.daoimpl.UserDaoImpl;
 import com.example.omstugradebook.model.contactwork.ContactWork;
 import com.example.omstugradebook.model.contactwork.ContactWorksTask;
@@ -15,6 +16,7 @@ import com.example.omstugradebook.parser.ContactWorkParserImpl;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -70,13 +72,34 @@ public class ContactWorkService {
         return doc;
     }
 
-    public boolean downloadFile(String path, String fileName, Context context) {
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(UP_OMGTU + path));
-        request.allowScanningByMediaScanner();
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
-        DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-        manager.enqueue(request);
-        return true;
+    public String downloadFile(String path, String fileName, Context context) {
+        if (checkExistsFile(fileName)) {
+            return "Файл уже был загружен...";
+        } else {
+            String url = UP_OMGTU + path.trim();
+            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+            request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI |
+                    DownloadManager.Request.NETWORK_MOBILE);
+            request.setTitle("Download");
+            request.setDescription("Downloading file");
+            request.allowScanningByMediaScanner();
+            String cookie = STUD_SES_ID + "=" + DataBaseManager.getUserDao().getActiveUser().getToken() + "; Path=/; Domain=.up.omgtu.ru;";
+            request.addRequestHeader("Cookie", cookie);
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+            DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+            manager.enqueue(request);
+            if (checkExistsFile(fileName)) {
+                return "Неудалось загрузить файл...";
+            } else {
+                return fileName + " успешно загружен!";
+            }
+        }
+    }
+
+    private boolean checkExistsFile(String fileName) {
+        String filePath = Environment.getExternalStorageDirectory() + "/" + Environment.DIRECTORY_DOWNLOADS + "/" + fileName;
+        File file = new File(filePath);
+        return file.exists();
     }
 }

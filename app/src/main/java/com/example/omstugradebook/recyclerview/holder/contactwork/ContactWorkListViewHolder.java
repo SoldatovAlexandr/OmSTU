@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.omstugradebook.R;
 import com.example.omstugradebook.model.contactwork.ContactWorksTask;
-import com.example.omstugradebook.service.ContactWorkService;
 
 public class ContactWorkListViewHolder extends RecyclerView.ViewHolder {
     private final TextView comment;
@@ -27,16 +26,12 @@ public class ContactWorkListViewHolder extends RecyclerView.ViewHolder {
         date = itemView.findViewById(R.id.contact_work_list_date);
     }
 
-    public void bind(final ContactWorksTask contactWorksTask) {
+    public void bind(final ContactWorksTask contactWorksTask, final View.OnClickListener listener) {
         number.setText(String.valueOf(contactWorksTask.getNumber()));
         comment.setText(contactWorksTask.getComment());
         teacher.setText(contactWorksTask.getTeacher());
         file.setText(contactWorksTask.getFile());
         date.setText(contactWorksTask.getDate());
-        file.setOnClickListener((v) -> {
-                    ContactWorkService contactWorkService = new ContactWorkService();
-                    contactWorkService.downloadFile(contactWorksTask.getLink(), contactWorksTask.getFile(), v.getContext());
-                }
-        );
+        file.setOnClickListener(listener);
     }
 }
