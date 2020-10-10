@@ -5,9 +5,11 @@ import com.example.omstugradebook.model.schedule.Schedule;
 import java.util.List;
 
 public interface ScheduleDao {
-    int removeAllSchedule();
+    int removeAllSchedules();
 
-    List<Schedule> readScheduleByGroup(String group);
+    int removeSchedulesById(long id);
+
+    List<Schedule> readScheduleByUserId(long userId);
 
     List<Schedule> readAllSchedule();
 

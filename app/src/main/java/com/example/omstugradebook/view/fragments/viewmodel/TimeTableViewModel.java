@@ -41,8 +41,7 @@ public class TimeTableViewModel extends ViewModel {
     public void getSchedules(Calendar calendar) {
         User user = DataBaseManager.getUserDao().getActiveUser();
         if (user != null) {
-            String group = user.getStudent().getSpeciality();
-            List<Schedule> schedules = DataBaseManager.getScheduleDao().readAllSchedule();
+            List<Schedule> schedules = DataBaseManager.getScheduleDao().readScheduleByUserId(user.getId());
             timetableLiveData.postValue(new TimetableModel(schedules));
             titleLiveData.postValue("Расписание");
         }
@@ -78,9 +77,10 @@ public class TimeTableViewModel extends ViewModel {
 
     private boolean updateDataBase(List<Schedule> schedules) {
         ScheduleDao scheduleDao = DataBaseManager.getScheduleDao();
-        List<Schedule> schedulesFromDB = scheduleDao.readAllSchedule();
+        List<Schedule> schedulesFromDB = scheduleDao.readScheduleByUserId(DataBaseManager
+                .getUserDao().getActiveUser().getId());
         if (!schedules.equals(schedulesFromDB)) {
-            scheduleDao.removeAllSchedule();
+            scheduleDao.removeSchedulesById(DataBaseManager.getUserDao().getActiveUser().getId());
             scheduleDao.insertAllSchedule(schedules);
             return true;
         }

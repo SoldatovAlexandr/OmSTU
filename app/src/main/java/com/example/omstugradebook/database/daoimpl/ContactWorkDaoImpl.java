@@ -31,6 +31,19 @@ public class ContactWorkDaoImpl implements ContactWorkDao {
     }
 
     @Override
+    public int removeAllToContactWorkById(long id) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            String whereClause = "user_id = ?";
+            String[] whereArgs = new String[]{String.valueOf(id)};
+            return database.delete(CONTACT_WORK, whereClause, whereArgs);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    @Override
     public List<ContactWork> readContactWorkByUserId(long userId) {
         try (DataBaseHelper dbHelper = new DataBaseHelper();
              SQLiteDatabase database = dbHelper.getWritableDatabase()) {

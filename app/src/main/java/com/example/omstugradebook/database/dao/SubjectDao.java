@@ -7,6 +7,8 @@ import java.util.List;
 public interface SubjectDao {
     int removeAllSubjects();
 
+    int removeSubjectsById(long id);
+
     List<Subject> readSubjectsByTerm(int termFilter);
 
     List<Subject> readAllSubjects();

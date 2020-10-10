@@ -7,9 +7,9 @@ public class ContactWork {
     private final String teacher;
     private final String numberOfTasks;
     private final String taskLink;
-    private final int userId;
+    private final long userId;
 
-    public ContactWork(String discipline, String teacher, String numberOfTasks, String taskLink, int userId) {
+    public ContactWork(String discipline, String teacher, String numberOfTasks, String taskLink, long userId) {
         this.discipline = discipline;
         this.teacher = teacher;
         this.numberOfTasks = numberOfTasks;
@@ -17,7 +17,7 @@ public class ContactWork {
         this.userId = userId;
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 

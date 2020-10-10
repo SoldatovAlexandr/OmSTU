@@ -1,5 +1,6 @@
 package com.example.omstugradebook.service;
 
+import com.example.omstugradebook.database.DataBaseManager;
 import com.example.omstugradebook.dto.GroupDtoResponse;
 import com.example.omstugradebook.dto.ScheduleConverter;
 import com.example.omstugradebook.dto.ScheduleDtoResponse;
@@ -26,7 +27,8 @@ public class TimetableService {
             Gson gson = new Gson();
             ScheduleDtoResponse[] dtoResponses = gson.fromJson(response, ScheduleDtoResponse[].class);
             for (ScheduleDtoResponse dtoResponse : dtoResponses) {
-                scheduleList.add(builder.convert(dtoResponse));
+                scheduleList.add(builder.convert(dtoResponse,
+                        DataBaseManager.getUserDao().getActiveUser().getId()));
             }
             System.out.println(scheduleList);
         } catch (IOException e) {

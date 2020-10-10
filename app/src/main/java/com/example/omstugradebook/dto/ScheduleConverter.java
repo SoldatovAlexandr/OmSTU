@@ -3,7 +3,7 @@ package com.example.omstugradebook.dto;
 import com.example.omstugradebook.model.schedule.Schedule;
 
 public class ScheduleConverter {
-    public Schedule convert(ScheduleDtoResponse response) {
+    public Schedule convert(ScheduleDtoResponse response, long userId) {
         return new Schedule(response.getAuditorium(),
                 response.getBeginLesson(),
                 response.getBuilding(),
@@ -15,7 +15,8 @@ public class ScheduleConverter {
                 response.getKindOfWork(),
                 response.getLecturer(),
                 getStreamType(response),
-                response.getDayOfWeekString());
+                response.getDayOfWeekString(),
+                userId);
     }
 
     private String getStreamType(ScheduleDtoResponse response) {

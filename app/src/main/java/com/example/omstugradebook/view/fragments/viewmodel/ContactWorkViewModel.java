@@ -53,9 +53,9 @@ public class ContactWorkViewModel extends ViewModel {
             ContactWorkService contactWorkService = new ContactWorkService();
             ContactWorkDao contactWorkDao = DataBaseManager.getContactWorkDao();
             List<ContactWork> contactWorksFromDB = contactWorkDao.readContactWorkByUserId(id);
-            List<ContactWork> contactWorks = contactWorkService.getContactWork((int) id);
+            List<ContactWork> contactWorks = contactWorkService.getContactWork(id);
             if (!contactWorksFromDB.equals(contactWorks)) {
-                contactWorkDao.removeAllToContactWork();
+                contactWorkDao.removeAllToContactWorkById(id);
                 contactWorkDao.insertAllToContactWork(contactWorks);
                 postActualValues(contactWorks);
             }

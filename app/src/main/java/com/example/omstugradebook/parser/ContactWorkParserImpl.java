@@ -12,7 +12,7 @@ import java.util.List;
 
 public class ContactWorkParserImpl {
 
-    public List<ContactWork> getContactWorks(Document document, int userId) {
+    public List<ContactWork> getContactWorks(Document document, long userId) {
         return shareContactWorks(document.selectFirst("tbody"), userId);
     }
 
@@ -42,7 +42,7 @@ public class ContactWorkParserImpl {
         return new ContactWorksTask(number, comment, teacher, file, date, link);
     }
 
-    private List<ContactWork> shareContactWorks(Element element, int userId) {
+    private List<ContactWork> shareContactWorks(Element element, long userId) {
         Elements elements = element.select("tr");
         List<ContactWork> contactWorks = new ArrayList<>();
         for (int i = 1; i < elements.size(); i++) {
@@ -51,7 +51,7 @@ public class ContactWorkParserImpl {
         return contactWorks;
     }
 
-    private ContactWork getContactWork(Element element, int userId) {
+    private ContactWork getContactWork(Element element, long userId) {
         List<Element> elementList = new ArrayList<>(element.select("td"));
         String discipline = elementList.get(0).text();
         String teacher = elementList.get(1).text();

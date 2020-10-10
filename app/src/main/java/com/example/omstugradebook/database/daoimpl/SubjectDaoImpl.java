@@ -39,6 +39,19 @@ public class SubjectDaoImpl implements SubjectDao {
     }
 
     @Override
+    public int removeSubjectsById(long id) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            String whereClause = "user_id = ?";
+            String[] whereArgs = new String[]{String.valueOf(id)};
+            return database.delete(SUBJECTS, whereClause, whereArgs);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    @Override
     public List<Subject> readSubjectsByTerm(int termFilter) {
         try (DataBaseHelper dbHelper = new DataBaseHelper();
              SQLiteDatabase database = dbHelper.getWritableDatabase()) {

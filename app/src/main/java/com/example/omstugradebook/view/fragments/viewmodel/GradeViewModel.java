@@ -98,7 +98,7 @@ public class GradeViewModel extends ViewModel {
                     subject.setUserId(id);
                 }
                 if (!subjects.equals(subjectsFromDB)) {
-                    subjectDao.removeAllSubjects();
+                    subjectDao.removeSubjectsById(id);
                     subjectDao.insertAllSubjects(subjects);
                     postValues(makeGradeModel(subjects, selectTerm, subjectDao.getCountTerm()));
                 }

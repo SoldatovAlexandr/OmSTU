@@ -7,6 +7,8 @@ import java.util.List;
 public interface ContactWorkDao {
     int removeAllToContactWork();
 
+    int removeAllToContactWorkById(long id);
+
     List<ContactWork> readContactWorkByUserId(long userId);
 
     List<ContactWork> readAllToContactWork();
