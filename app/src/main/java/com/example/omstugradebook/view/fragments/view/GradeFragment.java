@@ -58,10 +58,10 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         return view;
     }
 
-    //не думаю, что это будет работать
+
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        for (int i = 1; i <= countTerms; i++) {
+        for (int i = 1; i <= 10; i++) {
             menu.add("Семестр " + i);
         }
         inflater.inflate(R.menu.term_menu, menu);
