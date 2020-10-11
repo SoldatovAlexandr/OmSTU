@@ -45,6 +45,9 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
             fab.hide();
+            if (item.getItemId() == navigation.getSelectedItemId()) {
+                return false;
+            }
             calendarProvider = null;
             switch (item.getItemId()) {
                 case R.id.bottom_navigation_item_grade:
