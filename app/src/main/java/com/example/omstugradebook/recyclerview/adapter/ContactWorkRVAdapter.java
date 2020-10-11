@@ -15,15 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContactWorkRVAdapter extends RecyclerView.Adapter<ContactWorkViewHolder> {
-    private final List<ContactWork> contactWorks;
-
-    public ContactWorkRVAdapter() {
-        this.contactWorks = new ArrayList<>();
-    }
+    private final List<ContactWork> contactWorks = new ArrayList<>();
 
     public void setContactWorks(List<ContactWork> contactWorks) {
-        this.contactWorks.clear();
-        this.contactWorks.addAll(contactWorks);
+        if (contactWorks != null) {
+            this.contactWorks.clear();
+            this.contactWorks.addAll(contactWorks);
+        }
     }
 
     @NonNull

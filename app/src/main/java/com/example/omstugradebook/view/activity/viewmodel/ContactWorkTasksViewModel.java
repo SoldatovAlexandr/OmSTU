@@ -1,5 +1,6 @@
 package com.example.omstugradebook.view.activity.viewmodel;
 
+import android.content.Context;
 import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
@@ -14,9 +15,21 @@ import java.util.List;
 
 public class ContactWorkTasksViewModel extends ViewModel {
     private MutableLiveData<ContactWorkTasksModel> contactWorkModelLiveData = new MutableLiveData<>();
+    private MutableLiveData<String> fileStatusLiveData = new MutableLiveData<>();
+
 
     public LiveData<ContactWorkTasksModel> getContactWorkModelLiveData() {
         return contactWorkModelLiveData;
+    }
+
+    public LiveData<String> getFileStatusLiveData() {
+        return fileStatusLiveData;
+    }
+
+    public void startDownloading(ContactWorksTask task, Context context) {
+        String fileName = task.getFile().trim().replaceAll(" ", "_");
+        fileStatusLiveData.postValue(new ContactWorkService()
+                .downloadFile(task.getLink(), fileName, context));
     }
 
     public void sendRequestToGetContactWorkTasks(String path) {
