@@ -1,5 +1,6 @@
 package com.example.omstugradebook.dto;
 
+import com.example.omstugradebook.model.schedule.DayOfWeek;
 import com.example.omstugradebook.model.schedule.Schedule;
 
 public class ScheduleConverter {
@@ -28,20 +29,6 @@ public class ScheduleConverter {
     }
 
     public String getDayOfWeekFullString(int dayOfWeek) {
-        switch (dayOfWeek) {
-            case 1:
-                return "Понедельник";
-            case 2:
-                return "Вторник";
-            case 3:
-                return "Среда";
-            case 4:
-                return "Четверг";
-            case 5:
-                return "Пятница";
-            case 6:
-                return "Суббота";
-        }
-        return "Воскресенье";
+        return DayOfWeek.values()[dayOfWeek - 1].getName();
     }
 }
