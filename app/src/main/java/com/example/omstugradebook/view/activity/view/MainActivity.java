@@ -1,11 +1,9 @@
 package com.example.omstugradebook.view.activity.view;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -17,11 +15,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.omstugradebook.R;
-import com.example.omstugradebook.model.grade.User;
 import com.example.omstugradebook.view.activity.CalendarProvider;
-import com.example.omstugradebook.view.activity.NavigationProvider;
 import com.example.omstugradebook.view.activity.viewmodel.MainViewModel;
-import com.example.omstugradebook.view.fragments.Updatable;
 import com.example.omstugradebook.view.fragments.view.AccountFragment;
 import com.example.omstugradebook.view.fragments.view.ContactWorkFragment;
 import com.example.omstugradebook.view.fragments.view.GradeFragment;
@@ -32,19 +27,13 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
-public class MainActivity extends AppCompatActivity implements NavigationProvider {
+public class MainActivity extends AppCompatActivity {
 
-    private final Map<String, Button> userButtons = new HashMap<>();
     private BottomSheetBehavior<LinearLayout> calendarBottomSheetBehavior;
-    private BottomSheetBehavior<LinearLayout> userBottomSheetBehavior;
 
     private static BottomNavigationView navigation;
-    private LinearLayout llAccounts;
     private EditText searchEditText;
     private FloatingActionButton fab;
     private CalendarProvider calendarProvider;
@@ -82,16 +71,10 @@ public class MainActivity extends AppCompatActivity implements NavigationProvide
 
         MainViewModel mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
-        initNavigationMenu(mainViewModel);
+        initNavigationMenu();
         initCalendarBottomShit(mainViewModel);
-        initUserLLBottomSheet(mainViewModel);
         initFloatingActionBar();
         loadTimetableFragment(new TimetableFragment());
-    }
-
-    @Override
-    public BottomNavigationView getNavigation() {
-        return navigation;
     }
 
     private void loadFragment(Fragment fragment) {
@@ -126,21 +109,6 @@ public class MainActivity extends AppCompatActivity implements NavigationProvide
         fab.show();
     }
 
-    private void initUserLLBottomSheet(MainViewModel mainViewModel) {
-        LinearLayout userLLBottomSheet = findViewById(R.id.bottom_sheet);
-        userBottomSheetBehavior = BottomSheetBehavior.from(userLLBottomSheet);
-        userBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-        llAccounts = findViewById(R.id.accounts_change_layout);
-        mainViewModel.getLoadLoginLiveData().observe(this, v -> loadLoginActivity());
-        mainViewModel.checkHasAUser();
-    }
-
-    private void loadLoginActivity() {
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivityForResult(intent, 1);
-    }
-
-
     private void initFloatingActionBar() {
         fab = findViewById(R.id.fab);
         fab.setBackgroundColor(Color.BLUE);
@@ -153,19 +121,9 @@ public class MainActivity extends AppCompatActivity implements NavigationProvide
         });
     }
 
-    private void initNavigationMenu(MainViewModel mainViewModel) {
+    private void initNavigationMenu() {
         navigation = findViewById(R.id.bottom_navigation_view);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        View buttonProfile = findViewById(R.id.bottom_navigation_item_profile);
-        buttonProfile.setOnLongClickListener(v -> {
-            llAccounts.removeAllViews();
-            userButtons.clear();
-            mainViewModel.getUsersLiveData().observe(this, users ->
-                    initUserButtonsOnNavigationMenu(users, mainViewModel));
-            mainViewModel.getUsers();
-            userBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-            return true;
-        });
         View buttonCalendar = findViewById(R.id.bottom_navigation_item_timetable);
         buttonCalendar.setOnLongClickListener(v -> {
             if (navigation.getSelectedItemId() == R.id.bottom_navigation_item_timetable) {
@@ -175,44 +133,6 @@ public class MainActivity extends AppCompatActivity implements NavigationProvide
             }
             return false;
         });
-    }
-
-    //тут можно сделать проще и лучше намного.
-    private void initUserButtonsOnNavigationMenu(List<User> users, MainViewModel mainViewModel) {
-        for (User user : users) {
-            Button userButton = new Button(this);
-            userButtons.put(user.getLogin(), userButton);
-            userButton.setText(user.getLogin());
-            if (user.getIsActive() == 1) {
-                userButton.setTextColor(Color.BLUE);
-            } else {
-                userButton.setTextColor(Color.BLACK);
-            }
-            userButton.setBackgroundColor(Color.WHITE);
-            userButton.setOnClickListener(v1 -> {
-                if (v1 instanceof Button) {
-                    String loginOnView = ((Button) v1).getText().toString();
-                    if (mainViewModel.changeActiveUser(loginOnView)) {
-                        userBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-                        updateCurrentFragment();
-                    }
-                }
-            });
-            llAccounts.addView(userButton);
-        }
-    }
-
-    private void updateCurrentFragment() {
-        Updatable updatable = getCurrentUpdatableFragment();
-        if (updatable != null) {
-            updatable.update();
-        }
-    }
-
-
-    private Updatable getCurrentUpdatableFragment() {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.frameLayout_content);
-        return fragment instanceof Updatable ? ((Updatable) fragment) : null;
     }
 
     private void loadTimetableFragment(TimetableFragment timetableFragment) {
