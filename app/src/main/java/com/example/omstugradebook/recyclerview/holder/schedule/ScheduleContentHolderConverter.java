@@ -23,7 +23,7 @@ public class ScheduleContentHolderConverter {
         for (Schedule schedule : scheduleList) {
             if (schedule.getDayOfWeek() != currentDay) {
                 currentDay = schedule.getDayOfWeek();
-                String title = schedule.getDayOfWeekFullString() + ", " + schedule.getDate();
+                String title = schedule.getDayOfWeekString() + ", " + schedule.getDate();
                 contentHolderByPosition.put(position, new TitleHolderContent(title));
                 position++;
             }

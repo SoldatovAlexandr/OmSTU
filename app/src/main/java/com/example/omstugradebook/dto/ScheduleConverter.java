@@ -15,7 +15,7 @@ public class ScheduleConverter {
                 response.getKindOfWork(),
                 response.getLecturer(),
                 getStreamType(response),
-                response.getDayOfWeekString(),
+                getDayOfWeekFullString(response.getDayOfWeek()),
                 userId);
     }
 
@@ -25,5 +25,23 @@ public class ScheduleConverter {
         } else if (response.getSubGroup() != null) {
             return response.getSubGroup();
         } else return response.getStream();
+    }
+
+    public String getDayOfWeekFullString(int dayOfWeek) {
+        switch (dayOfWeek) {
+            case 1:
+                return "Понедельник";
+            case 2:
+                return "Вторник";
+            case 3:
+                return "Среда";
+            case 4:
+                return "Четверг";
+            case 5:
+                return "Пятница";
+            case 6:
+                return "Суббота";
+        }
+        return "Воскресенье";
     }
 }
