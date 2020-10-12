@@ -17,19 +17,15 @@ import java.util.List;
 
 public class ContactWorkViewModel extends ViewModel {
     private MutableLiveData<ContactWorkModel> contactWorkModelLiveData = new MutableLiveData<>();
-    private MutableLiveData<String> informationLiveData = new MutableLiveData<>();
+    private MutableLiveData<String> errorLiveData = new MutableLiveData<>();
 
     public MutableLiveData<ContactWorkModel> getContactWorkLiveData() {
         return contactWorkModelLiveData;
     }
 
-    public MutableLiveData<String> getInformationLiveData() {
-        return informationLiveData;
-    }
 
-    public void postActualValues(List<ContactWork> contactWorks) {
-        contactWorkModelLiveData.postValue(new ContactWorkModel(contactWorks));
-        informationLiveData.postValue("");
+    public MutableLiveData<String> getErrorLiveData() {
+        return errorLiveData;
     }
 
 
@@ -38,10 +34,13 @@ public class ContactWorkViewModel extends ViewModel {
         User activeUser = userDao.getActiveUser();
         if (activeUser != null) {
             ContactWorkDao contactWorkDao = DataBaseManager.getContactWorkDao();
-            postActualValues(contactWorkDao.readContactWorkByUserId(activeUser.getId()));
+            List<ContactWork> contactWorks = contactWorkDao.readContactWorkByUserId(activeUser.getId());
+            if (contactWorks != null) {
+                contactWorkModelLiveData.postValue(new ContactWorkModel(contactWorks));
+            }
             new OmSTUSender().execute(String.valueOf(activeUser.getId()));
         } else {
-            informationLiveData.postValue("Чтобы пользоваться контактной работой, войдите в аккаунт.");
+            errorLiveData.postValue("Чтобы пользоваться контактной работой, войдите в аккаунт.");
         }
     }
 
@@ -54,10 +53,14 @@ public class ContactWorkViewModel extends ViewModel {
             ContactWorkDao contactWorkDao = DataBaseManager.getContactWorkDao();
             List<ContactWork> contactWorksFromDB = contactWorkDao.readContactWorkByUserId(id);
             List<ContactWork> contactWorks = contactWorkService.getContactWork(id);
-            if (!contactWorksFromDB.equals(contactWorks)) {
-                contactWorkDao.removeAllToContactWorkById(id);
-                contactWorkDao.insertAllToContactWork(contactWorks);
-                postActualValues(contactWorks);
+            if (contactWorks == null) {
+                errorLiveData.postValue("Возникли проблемы на сервере");
+            } else {
+                if (!contactWorksFromDB.equals(contactWorks)) {
+                    contactWorkModelLiveData.postValue(new ContactWorkModel(contactWorks));
+                    contactWorkDao.removeAllToContactWorkById(id);
+                    contactWorkDao.insertAllToContactWork(contactWorks);
+                }
             }
             return null;
         }

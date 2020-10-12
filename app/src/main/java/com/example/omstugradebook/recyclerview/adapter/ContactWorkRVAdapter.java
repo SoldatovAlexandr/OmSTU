@@ -18,10 +18,8 @@ public class ContactWorkRVAdapter extends RecyclerView.Adapter<ContactWorkViewHo
     private final List<ContactWork> contactWorks = new ArrayList<>();
 
     public void setContactWorks(List<ContactWork> contactWorks) {
-        if (contactWorks != null) {
-            this.contactWorks.clear();
-            this.contactWorks.addAll(contactWorks);
-        }
+        this.contactWorks.clear();
+        this.contactWorks.addAll(contactWorks);
     }
 
     @NonNull

@@ -1,6 +1,5 @@
 package com.example.omstugradebook.view.activity.view;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,7 +22,6 @@ import com.example.omstugradebook.view.fragments.view.GradeFragment;
 import com.example.omstugradebook.view.fragments.view.TimetableFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -35,16 +33,16 @@ public class MainActivity extends AppCompatActivity {
 
     private static BottomNavigationView navigation;
     private EditText searchEditText;
-    private FloatingActionButton fab;
     private CalendarProvider calendarProvider;
     private Calendar calendar = Calendar.getInstance();
+    private final View.OnClickListener fabListener = v ->
+            calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-            fab.hide();
             if (item.getItemId() == navigation.getSelectedItemId()) {
                 return false;
             }
@@ -54,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
                     loadFragment(new GradeFragment());
                     return true;
                 case R.id.bottom_navigation_item_timetable:
-                    loadTimetableFragment(new TimetableFragment());
+                    loadTimetableFragment(new TimetableFragment(fabListener));
                     return true;
                 case R.id.bottom_navigation_item_profile:
                     loadFragment(new AccountFragment());
@@ -76,8 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
         initNavigationMenu();
         initCalendarBottomShit(mainViewModel);
-        initFloatingActionBar();
-        loadTimetableFragment(new TimetableFragment());
+        loadTimetableFragment(new TimetableFragment(fabListener));
     }
 
     private void loadFragment(Fragment fragment) {
@@ -109,20 +106,8 @@ public class MainActivity extends AppCompatActivity {
         String selectString = searchEditText.getText().toString();
         calendarProvider.sendRequest(calendar, selectString);
         calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-        fab.show();
     }
 
-    private void initFloatingActionBar() {
-        fab = findViewById(R.id.fab);
-        fab.setBackgroundColor(Color.BLUE);
-        fab.hide();
-        fab.setOnClickListener(view -> {
-            if (navigation.getSelectedItemId() == R.id.bottom_navigation_item_timetable) {
-                calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                fab.hide();
-            }
-        });
-    }
 
     private void initNavigationMenu() {
         navigation = findViewById(R.id.bottom_navigation_view);
@@ -131,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
         buttonCalendar.setOnLongClickListener(v -> {
             if (navigation.getSelectedItemId() == R.id.bottom_navigation_item_timetable) {
                 calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                fab.hide();
                 return true;
             }
             return false;
@@ -141,6 +125,5 @@ public class MainActivity extends AppCompatActivity {
     private void loadTimetableFragment(TimetableFragment timetableFragment) {
         calendarProvider = timetableFragment;
         loadFragment(timetableFragment);
-        fab.show();
     }
 }

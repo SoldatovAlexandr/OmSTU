@@ -36,14 +36,4 @@
 
     <include layout="@layout/calendar_bottom_sheet" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="66dp"
-        app:srcCompat="@android:drawable/ic_search_category_default"
-        tools:ignore="MissingConstraints" />
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
