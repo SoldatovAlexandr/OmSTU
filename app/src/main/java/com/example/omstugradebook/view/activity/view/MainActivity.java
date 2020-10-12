@@ -3,10 +3,12 @@ package com.example.omstugradebook.view.activity.view;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,6 +37,19 @@ public class MainActivity extends AppCompatActivity {
     private EditText searchEditText;
     private CalendarProvider calendarProvider;
     private Calendar calendar = Calendar.getInstance();
+    private String requestType = "";
+    private AdapterView.OnItemSelectedListener selectedListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            String[] choose = getResources().getStringArray(R.array.spinnerStrings);
+            requestType = choose[position];
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
+    };
+
     private final View.OnClickListener fabListener = v ->
             calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 
@@ -89,6 +104,9 @@ public class MainActivity extends AppCompatActivity {
         searchEditText = findViewById(R.id.search_edit_text);
         mainViewModel.getUserGroupLiveData().observe(this, this::setUserGroup);
         mainViewModel.getUserGroup();
+        Spinner spinner = findViewById(R.id.spinner);
+        spinner.setOnItemSelectedListener(selectedListener);
+
         CalendarView calendarView = findViewById(R.id.calendar_view);
         calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
             calendar = new GregorianCalendar(year, month, dayOfMonth);
@@ -104,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void sendRequest() {
         String selectString = searchEditText.getText().toString();
-        calendarProvider.sendRequest(calendar, selectString);
+        calendarProvider.sendRequest(requestType, calendar, selectString);
         calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
     }
 

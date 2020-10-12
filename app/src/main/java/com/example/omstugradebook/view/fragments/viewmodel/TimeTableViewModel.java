@@ -40,6 +40,17 @@ public class TimeTableViewModel extends ViewModel {
     }
 
     public void getSchedules(Calendar calendar) {
+        User activeUser = DataBaseManager.getUserDao().getActiveUser();
+        String group;
+        if (activeUser != null) {
+            group = activeUser.getStudent().getSpeciality();
+        } else {
+            group = "ПИН-181";
+        }
+        getSchedules("Группа", calendar, group);
+    }
+
+    public void getSchedules(String requestType, Calendar calendar, String param) {
         User user = DataBaseManager.getUserDao().getActiveUser();
         if (user != null) {
             List<Schedule> schedules = DataBaseManager.getScheduleDao().readScheduleByUserId(user.getId());
@@ -48,7 +59,7 @@ public class TimeTableViewModel extends ViewModel {
         }
         Calendar start = getStartCalendar(calendar);
         Calendar finish = getFinishCalendar(start);
-        new OmSTUSender().execute(getDateString(start), getDateString(finish));
+        new OmSTUSender().execute(getDateString(start), getDateString(finish), requestType, param);
     }
 
     private Calendar getStartCalendar(Calendar calendar) {
@@ -88,19 +99,32 @@ public class TimeTableViewModel extends ViewModel {
         return false;
     }
 
+    private String getTypeByString(String stringType) {
+        switch (stringType) {
+            case "Группа":
+                return "group";
+            case "Преподаватель":
+                return "lecturer";
+            default:
+                return "auditorium";
+        }
+    }
+
     class OmSTUSender extends AsyncTask<String, String, String> {
 
         @Override
         protected String doInBackground(String... strings) {
             String start = strings[0];
             String finish = strings[1];
+            String requestType = strings[2];
+            String param = strings[3];
             TimetableService timetableService = new TimetableService();
             User user = DataBaseManager.getUserDao().getActiveUser();
             if (user == null) {
                 infoLiveData.postValue(R.string.timetable_information_string);
             } else {
-                String group = user.getStudent().getSpeciality().trim();
-                List<Schedule> schedules = timetableService.getTimetable(group, start, finish, 1);
+                String type = getTypeByString(requestType);
+                List<Schedule> schedules = timetableService.getTimetable(type, param, start, finish, 1);
                 if (updateDataBase(schedules)) {
                     TimetableModel timetableModel = new TimetableModel(schedules);
                     timetableLiveData.postValue(timetableModel);

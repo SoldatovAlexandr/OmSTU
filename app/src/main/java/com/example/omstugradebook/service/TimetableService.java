@@ -1,7 +1,7 @@
 package com.example.omstugradebook.service;
 
 import com.example.omstugradebook.database.DataBaseManager;
-import com.example.omstugradebook.dto.GroupDtoResponse;
+import com.example.omstugradebook.dto.GetIdForTypeDtoResponse;
 import com.example.omstugradebook.dto.ScheduleConverter;
 import com.example.omstugradebook.dto.ScheduleDtoResponse;
 import com.example.omstugradebook.model.schedule.Schedule;
@@ -15,13 +15,12 @@ import java.util.List;
 
 public class TimetableService {
     private ScheduleConverter builder = new ScheduleConverter();
-    private int groupNumber = -1;
 
-    public List<Schedule> getTimetable(String nameGroup, String start, String finish, int lang) {
-        String requestParam = getRequestParam(nameGroup, start, finish, lang);
+    public List<Schedule> getTimetable(String type, String param, String start, String finish, int lang) {
+        String requestParam = getRequestParam(param, start, finish, lang);
         List<Schedule> scheduleList = new ArrayList<>();
         try {
-            String API_URL = "https://rasp.omgtu.ru/api/schedule/group/";
+            String API_URL = "https://rasp.omgtu.ru/api/schedule/" + type + "/";
             String response = Jsoup.connect(API_URL + requestParam)
                     .ignoreContentType(true).get().text();
             Gson gson = new Gson();
@@ -30,38 +29,29 @@ public class TimetableService {
                 scheduleList.add(builder.convert(dtoResponse,
                         DataBaseManager.getUserDao().getActiveUser().getId()));
             }
-            System.out.println(scheduleList);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return scheduleList;
     }
 
-    private String getRequestParam(String nameGroup, String start, String finish, int lang) {
-        return getGroupNumber(nameGroup) + "?start=" + start + "&finish=" + finish + "&lng=" + lang;
+    private String getRequestParam(String param, String start, String finish, int lang) {
+        return getIdByParam(param) + "?start=" + start + "&finish=" + finish + "&lng=" + lang;
     }
 
-    private int getGroupNumber(String nameGroup) {
-        if (groupNumber != -1) {
-            return groupNumber;
-        }
-        return updateGroupNumber(nameGroup);
-    }
-
-    public int updateGroupNumber(String nameGroup) {
+    public int getIdByParam(String param) {
         try {
-            String response = Jsoup.connect("https://rasp.omgtu.ru/api/search?term="
-                    + nameGroup + "&type=group").ignoreContentType(true).get().text();
+            String response = Jsoup.connect("https://rasp.omgtu.ru/api/search?term=" + param.trim())
+                    .ignoreContentType(true).get().text();
             Gson gson = new Gson();
-            GroupDtoResponse[] dtoResponses = gson.fromJson(response, GroupDtoResponse[].class);
+            GetIdForTypeDtoResponse[] dtoResponses = gson.fromJson(response, GetIdForTypeDtoResponse[].class);
             if (dtoResponses.length > 0) {
-                GroupDtoResponse groupDtoResponse = dtoResponses[0];
-                groupNumber = groupDtoResponse.getId();
-                return groupNumber;
+                GetIdForTypeDtoResponse groupDtoResponse = dtoResponses[0];
+                return groupDtoResponse.getId();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return -1;
+        return 0;
     }
 }

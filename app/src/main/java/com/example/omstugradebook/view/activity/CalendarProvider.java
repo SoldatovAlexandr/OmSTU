@@ -4,5 +4,5 @@ package com.example.omstugradebook.view.activity;
 import java.util.Calendar;
 
 public interface CalendarProvider {
-    void sendRequest(Calendar calendar, String param);
+    void sendRequest(String requestType, Calendar calendar, String param);
 }

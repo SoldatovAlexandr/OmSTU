@@ -2,13 +2,13 @@ package com.example.omstugradebook.dto;
 
 import java.io.Serializable;
 
-public class GroupDtoResponse implements Serializable {
+public class GetIdForTypeDtoResponse implements Serializable {
     private int id;
     private final String label;
     private final String description;
     private final String type;
 
-    public GroupDtoResponse(int id, String label, String description, String type) {
+    public GetIdForTypeDtoResponse(int id, String label, String description, String type) {
         this.id = id;
         this.label = label;
         this.description = description;
