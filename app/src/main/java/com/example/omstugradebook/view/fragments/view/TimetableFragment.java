@@ -16,7 +16,7 @@ import com.example.omstugradebook.recyclerview.adapter.ScheduleRVAdapter;
 import com.example.omstugradebook.recyclerview.holder.schedule.ScheduleContentHolderConverter;
 import com.example.omstugradebook.view.activity.CalendarProvider;
 import com.example.omstugradebook.view.fragments.Updatable;
-import com.example.omstugradebook.view.fragments.viewmodel.TimeTableViewModel;
+import com.example.omstugradebook.view.fragments.viewmodel.ScheduleViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Calendar;
@@ -26,7 +26,7 @@ public class TimetableFragment extends Fragment implements Updatable, CalendarPr
 
     private final ScheduleRVAdapter adapter = new ScheduleRVAdapter();
     private TextView information;
-    private TimeTableViewModel timeTableViewModel;
+    private ScheduleViewModel timeTableViewModel;
     private FloatingActionButton fab;
     private View.OnClickListener fabListener;
 
@@ -42,32 +42,29 @@ public class TimetableFragment extends Fragment implements Updatable, CalendarPr
         initRecyclerView(view);
         information = view.findViewById(R.id.timetable_information);
 
-        timeTableViewModel = new ViewModelProvider(this).get(TimeTableViewModel.class);
+        timeTableViewModel = new ViewModelProvider(this).get(ScheduleViewModel.class);
         timeTableViewModel.getTimetablesLiveData().observe(getViewLifecycleOwner(),
                 timetableModel -> update(timetableModel.getSchedules()));
         timeTableViewModel.getInfoLiveData()
                 .observe(getViewLifecycleOwner(), info -> initInformationTextView(getString(info)));
         timeTableViewModel.getTitleLiveData().observe(getViewLifecycleOwner(), this::setTitle);
-        timeTableViewModel.getSchedules(Calendar.getInstance());
-
+        timeTableViewModel.getSchedules();
         return view;
     }
 
     @Override
     public void update() {
-        timeTableViewModel.getSchedules(Calendar.getInstance());
     }
 
     @Override
-    public void sendRequest(Calendar calendar, String param) {
-        timeTableViewModel.getSchedules(calendar, param);
+    public void sendRequest(Calendar calendar, String id, String type) {
+        timeTableViewModel.getSchedules(calendar, id, type);
     }
 
     private void initRecyclerView(View view) {
         RecyclerView recyclerView = view.findViewById(R.id.rv);
         recyclerView.setAdapter(adapter);
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 if (dy > 0 && fab.isShown()) {

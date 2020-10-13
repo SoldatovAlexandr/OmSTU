@@ -3,9 +3,8 @@ package com.example.omstugradebook.view.activity.view;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.CalendarView;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
@@ -14,6 +13,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.omstugradebook.R;
+import com.example.omstugradebook.ScheduleTypeAutoComponentAdapter;
+import com.example.omstugradebook.model.schedule.ScheduleOwner;
 import com.example.omstugradebook.view.activity.CalendarProvider;
 import com.example.omstugradebook.view.activity.viewmodel.MainViewModel;
 import com.example.omstugradebook.view.fragments.view.AccountFragment;
@@ -32,9 +33,11 @@ public class MainActivity extends AppCompatActivity {
     private BottomSheetBehavior<LinearLayout> calendarBottomSheetBehavior;
 
     private static BottomNavigationView navigation;
-    private EditText searchEditText;
     private CalendarProvider calendarProvider;
+    private AutoCompleteTextView autoCompleteTextView;
     private Calendar calendar = Calendar.getInstance();
+    private static final String GROUP = "group";
+    private ScheduleOwner scheduleOwner = new ScheduleOwner(351, "", GROUP);
 
     private final View.OnClickListener fabListener = v ->
             calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
@@ -87,26 +90,33 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout calendarLLBottomSheet = findViewById(R.id.calendar_bottom_sheet);
         calendarBottomSheetBehavior = BottomSheetBehavior.from(calendarLLBottomSheet);
         calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-        searchEditText = findViewById(R.id.search_edit_text);
+
+
+        autoCompleteTextView = findViewById(R.id.actv);
+        autoCompleteTextView.setThreshold(3);
+        autoCompleteTextView.setAdapter(new ScheduleTypeAutoComponentAdapter(this));
+        autoCompleteTextView.setOnItemClickListener((parent, view, position, id) -> {
+            scheduleOwner = (ScheduleOwner) parent.getItemAtPosition(position);
+            autoCompleteTextView.setText(scheduleOwner.getName());
+            sendRequest(String.valueOf(scheduleOwner.getId()), scheduleOwner.getType());
+        });
+
         mainViewModel.getUserGroupLiveData().observe(this, this::setUserGroup);
         mainViewModel.getUserGroup();
 
         CalendarView calendarView = findViewById(R.id.calendar_view);
         calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
             calendar = new GregorianCalendar(year, month, dayOfMonth);
-            sendRequest();
+            sendRequest(String.valueOf(scheduleOwner.getId()), scheduleOwner.getType());
         });
-        ImageButton searchButton = findViewById(R.id.search_button_calendar);
-        searchButton.setOnClickListener(v -> sendRequest());
     }
 
-    private void setUserGroup(String group) {
-        searchEditText.setText(group);
+    private void setUserGroup(String param) {
+        autoCompleteTextView.setText(param);
     }
 
-    private void sendRequest() {
-        String selectString = searchEditText.getText().toString();
-        calendarProvider.sendRequest(calendar, selectString);
+    private void sendRequest(String id, String type) {
+        calendarProvider.sendRequest(calendar, id, type);
         calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
     }
 

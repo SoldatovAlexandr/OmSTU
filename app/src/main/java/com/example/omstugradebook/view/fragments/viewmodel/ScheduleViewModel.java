@@ -12,7 +12,8 @@ import com.example.omstugradebook.database.DataBaseManager;
 import com.example.omstugradebook.database.dao.ScheduleDao;
 import com.example.omstugradebook.model.grade.User;
 import com.example.omstugradebook.model.schedule.Schedule;
-import com.example.omstugradebook.service.TimetableService;
+import com.example.omstugradebook.model.schedule.ScheduleOwner;
+import com.example.omstugradebook.service.ScheduleService;
 import com.example.omstugradebook.view.fragments.model.TimetableModel;
 
 import java.text.SimpleDateFormat;
@@ -20,7 +21,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-public class TimeTableViewModel extends ViewModel {
+public class ScheduleViewModel extends ViewModel {
 
     private MutableLiveData<TimetableModel> timetableLiveData = new MutableLiveData<>();
     private MutableLiveData<Integer> infoLiveData = new MutableLiveData<>();
@@ -39,18 +40,12 @@ public class TimeTableViewModel extends ViewModel {
         return titleLiveData;
     }
 
-    public void getSchedules(Calendar calendar) {
-        User activeUser = DataBaseManager.getUserDao().getActiveUser();
-        String group;
-        if (activeUser != null) {
-            group = activeUser.getStudent().getSpeciality();
-        } else {
-            group = "ПИН-181";
-        }
-        getSchedules( calendar, group);
+    public void getSchedules() {
+        Calendar calendar = Calendar.getInstance();
+        getSchedules(calendar, "", "group");
     }
 
-    public void getSchedules(Calendar calendar, String param) {
+    public void getSchedules(Calendar calendar, String id, String type) {
         User user = DataBaseManager.getUserDao().getActiveUser();
         if (user != null) {
             List<Schedule> schedules = DataBaseManager.getScheduleDao().readScheduleByUserId(user.getId());
@@ -59,7 +54,7 @@ public class TimeTableViewModel extends ViewModel {
         }
         Calendar start = getStartCalendar(calendar);
         Calendar finish = getFinishCalendar(start);
-        new OmSTUSender().execute(getDateString(start), getDateString(finish), param);
+        new OmSTUSender().execute(getDateString(start), getDateString(finish), id, type);
     }
 
     private Calendar getStartCalendar(Calendar calendar) {
@@ -99,6 +94,11 @@ public class TimeTableViewModel extends ViewModel {
         return false;
     }
 
+    private String getId(String group, ScheduleService scheduleService) {
+        List<ScheduleOwner> scheduleOwners = scheduleService.getScheduleOwners(group);
+        return !scheduleOwners.isEmpty() ? String.valueOf(scheduleOwners.get(0).getId()) : "351";
+    }
+
 
     class OmSTUSender extends AsyncTask<String, String, String> {
 
@@ -106,13 +106,17 @@ public class TimeTableViewModel extends ViewModel {
         protected String doInBackground(String... strings) {
             String start = strings[0];
             String finish = strings[1];
-            String param = strings[2];
-            TimetableService timetableService = new TimetableService();
+            String id = strings[2];
+            String type = strings[3];
+            ScheduleService scheduleService = new ScheduleService();
             User user = DataBaseManager.getUserDao().getActiveUser();
+            if (id.equals("")) {
+                id = getId(user.getStudent().getSpeciality().trim(), scheduleService);
+            }
             if (user == null) {
                 infoLiveData.postValue(R.string.timetable_information_string);
             } else {
-                List<Schedule> schedules = timetableService.getTimetable(param, start, finish, 1);
+                List<Schedule> schedules = scheduleService.getTimetable(id, start, finish, type, 1);
                 if (updateDataBase(schedules)) {
                     TimetableModel timetableModel = new TimetableModel(schedules);
                     timetableLiveData.postValue(timetableModel);

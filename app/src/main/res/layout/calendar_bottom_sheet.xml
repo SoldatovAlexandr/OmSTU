@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/calendar_bottom_sheet"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -15,22 +14,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/search_edit_text"
-            android:layout_width="150dp"
-            android:layout_height="50dp"
-            tools:ignore="MissingConstraints" />
-
-        <ImageButton
-            android:id="@+id/search_button_calendar"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/ic_search"
-            app:layout_constraintLeft_toRightOf="@+id/search_edit_text"
-            tools:ignore="MissingConstraints" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <AutoCompleteTextView
+        android:id="@+id/actv"
+        android:layout_margin="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:completionHint="Select a param"
+        android:completionThreshold="1"
+        android:hint="@string/autoCompleteHint" />
 
     <CalendarView
         android:id="@+id/calendar_view"
