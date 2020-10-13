@@ -59,8 +59,8 @@ public class TimetableFragment extends Fragment implements Updatable, CalendarPr
     }
 
     @Override
-    public void sendRequest(String requestType, Calendar calendar, String param) {
-        timeTableViewModel.getSchedules(requestType, calendar, param);
+    public void sendRequest(Calendar calendar, String param) {
+        timeTableViewModel.getSchedules(calendar, param);
     }
 
     private void initRecyclerView(View view) {

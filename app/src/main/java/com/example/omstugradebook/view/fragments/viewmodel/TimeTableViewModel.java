@@ -47,10 +47,10 @@ public class TimeTableViewModel extends ViewModel {
         } else {
             group = "ПИН-181";
         }
-        getSchedules("Группа", calendar, group);
+        getSchedules( calendar, group);
     }
 
-    public void getSchedules(String requestType, Calendar calendar, String param) {
+    public void getSchedules(Calendar calendar, String param) {
         User user = DataBaseManager.getUserDao().getActiveUser();
         if (user != null) {
             List<Schedule> schedules = DataBaseManager.getScheduleDao().readScheduleByUserId(user.getId());
@@ -59,7 +59,7 @@ public class TimeTableViewModel extends ViewModel {
         }
         Calendar start = getStartCalendar(calendar);
         Calendar finish = getFinishCalendar(start);
-        new OmSTUSender().execute(getDateString(start), getDateString(finish), requestType, param);
+        new OmSTUSender().execute(getDateString(start), getDateString(finish), param);
     }
 
     private Calendar getStartCalendar(Calendar calendar) {
@@ -99,16 +99,6 @@ public class TimeTableViewModel extends ViewModel {
         return false;
     }
 
-    private String getTypeByString(String stringType) {
-        switch (stringType) {
-            case "Группа":
-                return "group";
-            case "Преподаватель":
-                return "lecturer";
-            default:
-                return "auditorium";
-        }
-    }
 
     class OmSTUSender extends AsyncTask<String, String, String> {
 
@@ -116,15 +106,13 @@ public class TimeTableViewModel extends ViewModel {
         protected String doInBackground(String... strings) {
             String start = strings[0];
             String finish = strings[1];
-            String requestType = strings[2];
-            String param = strings[3];
+            String param = strings[2];
             TimetableService timetableService = new TimetableService();
             User user = DataBaseManager.getUserDao().getActiveUser();
             if (user == null) {
                 infoLiveData.postValue(R.string.timetable_information_string);
             } else {
-                String type = getTypeByString(requestType);
-                List<Schedule> schedules = timetableService.getTimetable(type, param, start, finish, 1);
+                List<Schedule> schedules = timetableService.getTimetable(param, start, finish, 1);
                 if (updateDataBase(schedules)) {
                     TimetableModel timetableModel = new TimetableModel(schedules);
                     timetableLiveData.postValue(timetableModel);

@@ -16,11 +16,11 @@ import java.util.List;
 public class TimetableService {
     private ScheduleConverter builder = new ScheduleConverter();
 
-    public List<Schedule> getTimetable(String type, String param, String start, String finish, int lang) {
+    public List<Schedule> getTimetable(String param, String start, String finish, int lang) {
         String requestParam = getRequestParam(param, start, finish, lang);
         List<Schedule> scheduleList = new ArrayList<>();
         try {
-            String API_URL = "https://rasp.omgtu.ru/api/schedule/" + type + "/";
+            String API_URL = "https://rasp.omgtu.ru/api/schedule/";
             String response = Jsoup.connect(API_URL + requestParam)
                     .ignoreContentType(true).get().text();
             Gson gson = new Gson();
@@ -36,10 +36,10 @@ public class TimetableService {
     }
 
     private String getRequestParam(String param, String start, String finish, int lang) {
-        return getIdByParam(param) + "?start=" + start + "&finish=" + finish + "&lng=" + lang;
+        return getTypeAndIdByParam(param) + "?start=" + start + "&finish=" + finish + "&lng=" + lang;
     }
 
-    public int getIdByParam(String param) {
+    public String getTypeAndIdByParam(String param) {
         try {
             String response = Jsoup.connect("https://rasp.omgtu.ru/api/search?term=" + param.trim())
                     .ignoreContentType(true).get().text();
@@ -47,11 +47,12 @@ public class TimetableService {
             GetIdForTypeDtoResponse[] dtoResponses = gson.fromJson(response, GetIdForTypeDtoResponse[].class);
             if (dtoResponses.length > 0) {
                 GetIdForTypeDtoResponse groupDtoResponse = dtoResponses[0];
-                return groupDtoResponse.getId();
+
+                return groupDtoResponse.getType() + "/" + groupDtoResponse.getId();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return 0;
+        return "";
     }
 }
