@@ -22,13 +22,12 @@ public class ScheduleService {
         List<Schedule> scheduleList = new ArrayList<>();
         try {
             String API_URL = "https://rasp.omgtu.ru/api/schedule/";
-            String response = Jsoup.connect(API_URL + requestParam)
-                    .ignoreContentType(true).get().text();
+            String response = Jsoup.connect(API_URL + requestParam).ignoreContentType(true).get().text();
             Gson gson = new Gson();
             ScheduleDtoResponse[] dtoResponses = gson.fromJson(response, ScheduleDtoResponse[].class);
+            long userId = DataBaseManager.getUserDao().getUserActiveId();
             for (ScheduleDtoResponse dtoResponse : dtoResponses) {
-                scheduleList.add(builder.convert(dtoResponse,
-                        DataBaseManager.getUserDao().getActiveUser().getId()));
+                scheduleList.add(builder.convert(dtoResponse, userId));
             }
         } catch (IOException e) {
             e.printStackTrace();

@@ -165,6 +165,12 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
+    @Override
+    public long getUserActiveId() {
+        User user = getActiveUser();
+        return user != null ? user.getId() : 0;
+    }
+
     private User getUser(String selection, String[] selectionArgs) {
         try (DataBaseHelper dbHelper = new DataBaseHelper();
              SQLiteDatabase database = dbHelper.getWritableDatabase()) {

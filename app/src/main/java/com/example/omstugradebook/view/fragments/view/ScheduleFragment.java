@@ -22,7 +22,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.Calendar;
 import java.util.List;
 
-public class TimetableFragment extends Fragment implements Updatable, CalendarProvider {
+public class ScheduleFragment extends Fragment implements Updatable, CalendarProvider {
 
     private final ScheduleRVAdapter adapter = new ScheduleRVAdapter();
     private TextView information;
@@ -30,7 +30,7 @@ public class TimetableFragment extends Fragment implements Updatable, CalendarPr
     private FloatingActionButton fab;
     private View.OnClickListener fabListener;
 
-    public TimetableFragment(View.OnClickListener fabListener) {
+    public ScheduleFragment(View.OnClickListener fabListener) {
         this.fabListener = fabListener;
     }
 

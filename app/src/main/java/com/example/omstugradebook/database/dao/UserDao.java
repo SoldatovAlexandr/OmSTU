@@ -24,4 +24,6 @@ public interface UserDao {
     void changeActiveUser(User newUser);
 
     boolean removeUser(User user);
+
+    long getUserActiveId();
 }

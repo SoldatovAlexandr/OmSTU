@@ -20,7 +20,7 @@ import com.example.omstugradebook.view.activity.viewmodel.MainViewModel;
 import com.example.omstugradebook.view.fragments.view.AccountFragment;
 import com.example.omstugradebook.view.fragments.view.ContactWorkFragment;
 import com.example.omstugradebook.view.fragments.view.GradeFragment;
-import com.example.omstugradebook.view.fragments.view.TimetableFragment;
+import com.example.omstugradebook.view.fragments.view.ScheduleFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
                     loadFragment(new GradeFragment());
                     return true;
                 case R.id.bottom_navigation_item_timetable:
-                    loadTimetableFragment(new TimetableFragment(fabListener));
+                    loadTimetableFragment(new ScheduleFragment(fabListener));
                     return true;
                 case R.id.bottom_navigation_item_profile:
                     loadFragment(new AccountFragment());
@@ -78,7 +78,9 @@ public class MainActivity extends AppCompatActivity {
 
         initNavigationMenu();
         initCalendarBottomShit(mainViewModel);
-        loadTimetableFragment(new TimetableFragment(fabListener));
+        initAutoCompleteTextView();
+
+        loadTimetableFragment(new ScheduleFragment(fabListener));
     }
 
     private void loadFragment(Fragment fragment) {
@@ -91,22 +93,23 @@ public class MainActivity extends AppCompatActivity {
         calendarBottomSheetBehavior = BottomSheetBehavior.from(calendarLLBottomSheet);
         calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
 
-
-        autoCompleteTextView = findViewById(R.id.actv);
-        autoCompleteTextView.setThreshold(3);
-        autoCompleteTextView.setAdapter(new ScheduleTypeAutoComponentAdapter(this));
-        autoCompleteTextView.setOnItemClickListener((parent, view, position, id) -> {
-            scheduleOwner = (ScheduleOwner) parent.getItemAtPosition(position);
-            autoCompleteTextView.setText(scheduleOwner.getName());
-            sendRequest(String.valueOf(scheduleOwner.getId()), scheduleOwner.getType());
-        });
-
         mainViewModel.getUserGroupLiveData().observe(this, this::setUserGroup);
         mainViewModel.getUserGroup();
 
         CalendarView calendarView = findViewById(R.id.calendar_view);
         calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
             calendar = new GregorianCalendar(year, month, dayOfMonth);
+            sendRequest(String.valueOf(scheduleOwner.getId()), scheduleOwner.getType());
+        });
+    }
+
+    private void initAutoCompleteTextView() {
+        autoCompleteTextView = findViewById(R.id.actv);
+        autoCompleteTextView.setThreshold(3);
+        autoCompleteTextView.setAdapter(new ScheduleTypeAutoComponentAdapter(this));
+        autoCompleteTextView.setOnItemClickListener((parent, view, position, id) -> {
+            scheduleOwner = (ScheduleOwner) parent.getItemAtPosition(position);
+            autoCompleteTextView.setText(scheduleOwner.getName());
             sendRequest(String.valueOf(scheduleOwner.getId()), scheduleOwner.getType());
         });
     }
@@ -118,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
     private void sendRequest(String id, String type) {
         calendarProvider.sendRequest(calendar, id, type);
         calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        // TODO: keyboard behavior
     }
 
 
@@ -134,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void loadTimetableFragment(TimetableFragment timetableFragment) {
+    private void loadTimetableFragment(ScheduleFragment timetableFragment) {
         calendarProvider = timetableFragment;
         loadFragment(timetableFragment);
     }

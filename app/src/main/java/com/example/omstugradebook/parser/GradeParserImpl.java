@@ -15,7 +15,7 @@ import java.util.List;
 
 public class GradeParserImpl {
     public GradeBook getGradeBook(final Document document) {
-        Student user = getUser(document.selectFirst("div.jumbotron.bs-example-bg-classes"));
+        Student user = getStudent(document.selectFirst("div.jumbotron.bs-example-bg-classes"));
         List<Term> terms = getTerms(document.select("div.row.tab-pane"));
         return new GradeBook(terms, user);
     }
@@ -66,8 +66,8 @@ public class GradeParserImpl {
             return null;
         }
         List<Element> elementList = new ArrayList<>(elements);
-        String name = elementList.get(0).text();
-        String hours = elementList.get(1).text();
+        String name = elementList.get(0).text().trim();
+        String hours = elementList.get(1).text().trim();
         String attendance = null;
         String tempRating = "";
         String mark;
@@ -75,28 +75,28 @@ public class GradeParserImpl {
         String teacher;
         String toDiploma = "";
         if (elementList.size() == 6) {
-            mark = elementList.get(2).text();
-            date = elementList.get(3).text();
-            teacher = elementList.get(4).text();
-            toDiploma = elementList.get(5).text();
+            mark = elementList.get(2).text().trim();
+            date = elementList.get(3).text().trim();
+            teacher = elementList.get(4).text().trim();
+            toDiploma = elementList.get(5).text().trim();
         } else if (elementList.size() == 7) {
-            attendance = elementList.get(2).text();
-            tempRating = elementList.get(3).text();
-            mark = elementList.get(4).text();
-            date = elementList.get(5).text();
-            teacher = elementList.get(6).text();
+            attendance = elementList.get(2).text().trim();
+            tempRating = elementList.get(3).text().trim();
+            mark = elementList.get(4).text().trim();
+            date = elementList.get(5).text().trim();
+            teacher = elementList.get(6).text().trim();
         } else {
-            attendance = elementList.get(2).text();
-            tempRating = elementList.get(3).text();
-            mark = elementList.get(4).text();
-            date = elementList.get(5).text();
-            teacher = elementList.get(6).text();
-            toDiploma = elementList.get(7).text();
+            attendance = elementList.get(2).text().trim();
+            tempRating = elementList.get(3).text().trim();
+            mark = elementList.get(4).text().trim();
+            date = elementList.get(5).text().trim();
+            teacher = elementList.get(6).text().trim();
+            toDiploma = elementList.get(7).text().trim();
         }
         return new Subject(name, hours, attendance, tempRating, mark, date, teacher, toDiploma, term, type);
     }
 
-    private Student getUser(Element element) {
+    private Student getStudent(Element element) {
         String fullName = element.selectFirst("h1").text();
         Element elementsUserInfo = element.selectFirst("p");
         String[] strings = elementsUserInfo.toString().split("(</b>|<br>)");
@@ -106,6 +106,6 @@ public class GradeParserImpl {
                 userData.add(string);
             }
         }
-        return new Student(fullName, userData.get(0), userData.get(2), userData.get(3));
+        return new Student(fullName.trim(), userData.get(0).trim(), userData.get(2).trim(), userData.get(3).trim());
     }
 }

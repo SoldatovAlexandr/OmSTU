@@ -7,7 +7,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.omstugradebook.R;
 import com.example.omstugradebook.database.DataBaseManager;
 import com.example.omstugradebook.database.dao.ScheduleDao;
 import com.example.omstugradebook.model.grade.User;
@@ -47,10 +46,10 @@ public class ScheduleViewModel extends ViewModel {
 
     public void getSchedules(Calendar calendar, String id, String type) {
         User user = DataBaseManager.getUserDao().getActiveUser();
+        titleLiveData.postValue("Расписание");
         if (user != null) {
             List<Schedule> schedules = DataBaseManager.getScheduleDao().readScheduleByUserId(user.getId());
             timetableLiveData.postValue(new TimetableModel(schedules));
-            titleLiveData.postValue("Расписание");
         }
         Calendar start = getStartCalendar(calendar);
         Calendar finish = getFinishCalendar(start);
@@ -85,9 +84,9 @@ public class ScheduleViewModel extends ViewModel {
     private boolean updateDataBase(List<Schedule> schedules) {
         ScheduleDao scheduleDao = DataBaseManager.getScheduleDao();
         List<Schedule> schedulesFromDB = scheduleDao.readScheduleByUserId(DataBaseManager
-                .getUserDao().getActiveUser().getId());
+                .getUserDao().getUserActiveId());
         if (!schedules.equals(schedulesFromDB)) {
-            scheduleDao.removeSchedulesById(DataBaseManager.getUserDao().getActiveUser().getId());
+            scheduleDao.removeSchedulesById(DataBaseManager.getUserDao().getUserActiveId());
             scheduleDao.insertAllSchedule(schedules);
             return true;
         }
@@ -97,6 +96,14 @@ public class ScheduleViewModel extends ViewModel {
     private String getId(String group, ScheduleService scheduleService) {
         List<ScheduleOwner> scheduleOwners = scheduleService.getScheduleOwners(group);
         return !scheduleOwners.isEmpty() ? String.valueOf(scheduleOwners.get(0).getId()) : "351";
+    }
+
+    private void sendScheduleLiveData(ScheduleService scheduleService, String id, String start,
+                                      String finish, String type) {
+        List<Schedule> schedules = scheduleService.getTimetable(id, start, finish, type, 1);
+        updateDataBase(schedules);
+        TimetableModel timetableModel = new TimetableModel(schedules);
+        timetableLiveData.postValue(timetableModel);
     }
 
 
@@ -110,18 +117,16 @@ public class ScheduleViewModel extends ViewModel {
             String type = strings[3];
             ScheduleService scheduleService = new ScheduleService();
             User user = DataBaseManager.getUserDao().getActiveUser();
-            if (id.equals("")) {
-                id = getId(user.getStudent().getSpeciality().trim(), scheduleService);
-            }
-            if (user == null) {
-                infoLiveData.postValue(R.string.timetable_information_string);
-            } else {
-                List<Schedule> schedules = scheduleService.getTimetable(id, start, finish, type, 1);
-                if (updateDataBase(schedules)) {
-                    TimetableModel timetableModel = new TimetableModel(schedules);
-                    timetableLiveData.postValue(timetableModel);
+            if (id.isEmpty()) {
+                String param;
+                if (user != null) {
+                    param = user.getStudent().getSpeciality();
+                } else {
+                    param = "ПИН-181";
                 }
+                id = getId(param, scheduleService);
             }
+            sendScheduleLiveData(scheduleService, id, start, finish, type);
             return null;
         }
     }
