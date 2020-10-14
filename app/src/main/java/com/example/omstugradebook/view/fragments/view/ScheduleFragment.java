@@ -30,6 +30,7 @@ public class ScheduleFragment extends Fragment implements Updatable, CalendarPro
     private FloatingActionButton fab;
     private View.OnClickListener fabListener;
 
+
     public ScheduleFragment(View.OnClickListener fabListener) {
         this.fabListener = fabListener;
     }
@@ -49,6 +50,7 @@ public class ScheduleFragment extends Fragment implements Updatable, CalendarPro
                 .observe(getViewLifecycleOwner(), info -> initInformationTextView(getString(info)));
         timeTableViewModel.getTitleLiveData().observe(getViewLifecycleOwner(), this::setTitle);
         timeTableViewModel.getSchedules();
+
         return view;
     }
 
@@ -58,6 +60,7 @@ public class ScheduleFragment extends Fragment implements Updatable, CalendarPro
 
     @Override
     public void sendRequest(Calendar calendar, String id, String type) {
+        adapter.notifyDataSetChanged();
         timeTableViewModel.getSchedules(calendar, id, type);
     }
 

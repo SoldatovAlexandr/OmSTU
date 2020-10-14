@@ -1,8 +1,10 @@
 package com.example.omstugradebook.view.activity.view;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.CalendarView;
 import android.widget.LinearLayout;
@@ -119,9 +121,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendRequest(String id, String type) {
-        calendarProvider.sendRequest(calendar, id, type);
+        // navigation.setVisibility(BottomNavigationView.GONE);
+        hideKeyboard();
         calendarBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-        // TODO: keyboard behavior
+        calendarProvider.sendRequest(calendar, id, type);
     }
 
 
@@ -141,5 +144,14 @@ public class MainActivity extends AppCompatActivity {
     private void loadTimetableFragment(ScheduleFragment timetableFragment) {
         calendarProvider = timetableFragment;
         loadFragment(timetableFragment);
+    }
+
+    public void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        View view = getCurrentFocus();
+        if (view == null) {
+            view = new View(this);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }
