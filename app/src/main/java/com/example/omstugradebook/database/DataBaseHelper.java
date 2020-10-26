@@ -67,6 +67,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 + "user_id integer,"
                 + "dayOfWeekString text,"
                 + "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE" + ");");
+
+        db.execSQL("create table favorite_schedule ("
+                + "id integer primary key autoincrement,"
+                + "user_id integer,"
+                + "value text," +
+                "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE" + ");");
     }
 
     @Override

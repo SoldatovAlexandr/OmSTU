@@ -1,5 +1,6 @@
 package com.example.omstugradebook.view.fragments.view;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,26 +15,21 @@ import com.example.omstugradebook.R;
 import com.example.omstugradebook.model.schedule.Schedule;
 import com.example.omstugradebook.recyclerview.adapter.ScheduleRVAdapter;
 import com.example.omstugradebook.recyclerview.holder.schedule.ScheduleContentHolderConverter;
-import com.example.omstugradebook.view.activity.CalendarProvider;
+import com.example.omstugradebook.view.activity.view.SearchActivity;
 import com.example.omstugradebook.view.fragments.Updatable;
 import com.example.omstugradebook.view.fragments.viewmodel.ScheduleViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
-public class ScheduleFragment extends Fragment implements Updatable, CalendarProvider {
+public class ScheduleFragment extends Fragment implements Updatable {
 
     private final ScheduleRVAdapter adapter = new ScheduleRVAdapter();
     private TextView information;
-    private ScheduleViewModel timeTableViewModel;
     private FloatingActionButton fab;
-    private View.OnClickListener fabListener;
-
-
-    public ScheduleFragment(View.OnClickListener fabListener) {
-        this.fabListener = fabListener;
-    }
+    private ScheduleViewModel timeTableViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,18 +46,11 @@ public class ScheduleFragment extends Fragment implements Updatable, CalendarPro
                 .observe(getViewLifecycleOwner(), info -> initInformationTextView(getString(info)));
         timeTableViewModel.getTitleLiveData().observe(getViewLifecycleOwner(), this::setTitle);
         timeTableViewModel.getSchedules();
-
         return view;
     }
 
     @Override
     public void update() {
-    }
-
-    @Override
-    public void sendRequest(Calendar calendar, String id, String type) {
-        adapter.notifyDataSetChanged();
-        timeTableViewModel.getSchedules(calendar, id, type);
     }
 
     private void initRecyclerView(View view) {
@@ -80,7 +69,6 @@ public class ScheduleFragment extends Fragment implements Updatable, CalendarPro
         });
     }
 
-
     private void initInformationTextView(String informationString) {
         information.setText(informationString);
     }
@@ -94,8 +82,25 @@ public class ScheduleFragment extends Fragment implements Updatable, CalendarPro
         adapter.notifyDataSetChanged();
     }
 
-    private void initFloatingActionBar(View v) {
-        fab = v.findViewById(R.id.fab);
-        fab.setOnClickListener(fabListener);
+    private void initFloatingActionBar(View view) {
+        fab = view.findViewById(R.id.fab);
+        fab.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), SearchActivity.class);
+            startActivityForResult(intent, 1);
+        });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (intent == null) {
+            return;
+        }
+        int year = intent.getIntExtra("year", 0);
+        int month = intent.getIntExtra("month", 0);
+        int dayOfMonth = intent.getIntExtra("dayOfMonth", 0);
+        Calendar calendar = new GregorianCalendar(year, month, dayOfMonth);
+        String id = intent.getStringExtra("id");
+        String type = intent.getStringExtra("type");
+        timeTableViewModel.getSchedules(calendar, id, type);
     }
 }

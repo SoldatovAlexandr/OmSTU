@@ -34,6 +34,6 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <include layout="@layout/calendar_bottom_sheet" />
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -44,6 +44,7 @@ public class ScheduleViewModel extends ViewModel {
         getSchedules(calendar, "", "group");
     }
 
+
     public void getSchedules(Calendar calendar, String id, String type) {
         User user = DataBaseManager.getUserDao().getActiveUser();
         titleLiveData.postValue("Расписание");
@@ -106,6 +107,19 @@ public class ScheduleViewModel extends ViewModel {
         timetableLiveData.postValue(timetableModel);
     }
 
+    public String getParam(User user) {
+        ScheduleDao scheduleDao = DataBaseManager.getScheduleDao();
+        long id = DataBaseManager.getUserDao().getUserActiveId();
+        List<String> strings = scheduleDao.readFavoriteScheduleByUserId(id);
+        if (!strings.isEmpty()) {
+            return strings.get(0);
+        }
+        if (user != null) {
+            return user.getStudent().getSpeciality();
+        }
+        return "";
+    }
+
 
     class OmSTUSender extends AsyncTask<String, String, String> {
 
@@ -118,13 +132,7 @@ public class ScheduleViewModel extends ViewModel {
             ScheduleService scheduleService = new ScheduleService();
             User user = DataBaseManager.getUserDao().getActiveUser();
             if (id.isEmpty()) {
-                String param;
-                if (user != null) {
-                    param = user.getStudent().getSpeciality();
-                } else {
-                    param = "ПИН-181";
-                }
-                id = getId(param, scheduleService);
+                id = getId(getParam(user), scheduleService);
             }
             sendScheduleLiveData(scheduleService, id, start, finish, type);
             return null;

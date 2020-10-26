@@ -71,24 +71,6 @@ public class ScheduleDaoImpl implements ScheduleDao {
     }
 
     @Override
-    public List<Schedule> readAllSchedule() {
-        try (DataBaseHelper dbHelper = new DataBaseHelper();
-             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            Cursor cursor = database.query(SCHEDULES,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null);
-            return getSchedules(cursor);
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
-    }
-
-    @Override
     public boolean insertAllSchedule(List<Schedule> schedules) {
         try (DataBaseHelper dbHelper = new DataBaseHelper();
              SQLiteDatabase database = dbHelper.getWritableDatabase()) {
@@ -117,8 +99,62 @@ public class ScheduleDaoImpl implements ScheduleDao {
     }
 
     @Override
-    public boolean equalsSchedule(List<Schedule> schedules) {
-        return false;
+    public boolean insertFavoriteSchedule(long userId, String value) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("value", value);
+            contentValues.put(USER_ID, userId);
+            database.insert("favorite_schedule", null, contentValues);
+            return true;
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public List<String> readFavoriteScheduleByUserId(long userId) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            String selection = "user_id = ?";
+            String[] selectionArgs = new String[]{String.valueOf(userId)};
+            Cursor cursor = database.query("favorite_schedule",
+                    null,
+                    selection,
+                    selectionArgs,
+                    null,
+                    null,
+                    null);
+            return getFavoriteSchedules(cursor);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
+    public int removeAllFavoriteSchedules(long userId) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            String whereClause = "user_id = ?";
+            String[] whereArgs = new String[]{String.valueOf(userId)};
+            return database.delete("favorite_schedule", whereClause, whereArgs);
+        } catch (NullPointerException e) {
+            return -1;
+        }
+    }
+
+    @Override
+    public int removeFavoriteSchedule(long user_id, String value) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            String whereClause = "value = ?";
+            String[] whereArgs = new String[]{value};
+            return database.delete("favorite_schedule", whereClause, whereArgs);
+        } catch (NullPointerException e) {
+            return -1;
+        }
     }
 
     private List<Schedule> getSchedules(Cursor cursor) {
@@ -166,6 +202,19 @@ public class ScheduleDaoImpl implements ScheduleDao {
                         dayOfWeekString,
                         userId
                 ));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return schedules;
+    }
+
+    private List<String> getFavoriteSchedules(Cursor cursor) {
+        List<String> schedules = new ArrayList<>();
+        if (cursor.moveToFirst()) {
+            int valueColIndex = cursor.getColumnIndex("value");
+            do {
+                String value = cursor.getString(valueColIndex);
+                schedules.add(value);
             } while (cursor.moveToNext());
         }
         cursor.close();
