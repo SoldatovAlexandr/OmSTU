@@ -17,7 +17,6 @@ public class ContactWorkDaoImpl implements ContactWorkDao {
     private static final String TEACHER = "teacher";
     private static final String NUMBER_OF_TASKS = "number_of_tasks";
     private static final String TASK_LINK = "task_link";
-    private static final String USER_ID = "user_id";
 
     @Override
     public int removeAllToContactWork() {
@@ -56,14 +55,12 @@ public class ContactWorkDaoImpl implements ContactWorkDao {
             int teacherColIndex = cursor.getColumnIndex(TEACHER);
             int numberOfTasksColIndex = cursor.getColumnIndex(NUMBER_OF_TASKS);
             int taskLinkColIndex = cursor.getColumnIndex(TASK_LINK);
-            int userIdColIndex = cursor.getColumnIndex(USER_ID);
             do {
                 String discipline = cursor.getString(disciplineColIndex);
                 String teacher = cursor.getString(teacherColIndex);
                 String numberOfTasks = cursor.getString(numberOfTasksColIndex);
                 String taskLink = cursor.getString(taskLinkColIndex);
-                int userId = cursor.getInt(userIdColIndex);
-                contactWorks.add(new ContactWork(discipline, teacher, numberOfTasks, taskLink, userId));
+                contactWorks.add(new ContactWork(discipline, teacher, numberOfTasks, taskLink));
             } while (cursor.moveToNext());
         }
         cursor.close();
@@ -81,7 +78,6 @@ public class ContactWorkDaoImpl implements ContactWorkDao {
                 contentValues.put(TEACHER, contactWork.getTeacher());
                 contentValues.put(NUMBER_OF_TASKS, contactWork.getNumberOfTasks());
                 contentValues.put(TASK_LINK, contactWork.getTaskLink());
-                contentValues.put(USER_ID, contactWork.getUserId());
                 database.insert(CONTACT_WORK, null, contentValues);
             }
             return true;

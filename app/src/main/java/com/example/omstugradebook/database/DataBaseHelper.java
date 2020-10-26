@@ -31,9 +31,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 + "discipline text,"
                 + "teacher text,"
                 + "number_of_tasks text,"
-                + "task_link text,"
-                + "user_id integer," +
-                "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE" + ");");
+                + "task_link text"
+                + ");");
 
         db.execSQL("create table subjects ("
                 + "id integer primary key autoincrement,"

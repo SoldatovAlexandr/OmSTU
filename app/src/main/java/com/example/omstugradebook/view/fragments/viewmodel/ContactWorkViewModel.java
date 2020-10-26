@@ -38,7 +38,7 @@ public class ContactWorkViewModel extends ViewModel {
             if (contactWorks != null) {
                 contactWorkModelLiveData.postValue(new ContactWorkModel(contactWorks));
             }
-            new OmSTUSender().execute(String.valueOf(activeUser.getId()));
+            new OmSTUSender().execute();
         } else {
             errorLiveData.postValue("Чтобы пользоваться контактной работой, войдите в аккаунт.");
         }
@@ -48,11 +48,10 @@ public class ContactWorkViewModel extends ViewModel {
 
         @Override
         protected String doInBackground(String... strings) {
-            long id = Long.parseLong(strings[0]);
             ContactWorkService contactWorkService = new ContactWorkService();
             ContactWorkDao contactWorkDao = DataBaseManager.getContactWorkDao();
             List<ContactWork> contactWorksFromDB = contactWorkDao.readAllToContactWork();
-            List<ContactWork> contactWorks = contactWorkService.getContactWork(id);
+            List<ContactWork> contactWorks = contactWorkService.getContactWork();
             if (contactWorks == null) {
                 errorLiveData.postValue("Возникли проблемы на сервере");
             } else {

@@ -12,8 +12,8 @@ import java.util.List;
 
 public class ContactWorkParserImpl {
 
-    public List<ContactWork> getContactWorks(Document document, long userId) {
-        return shareContactWorks(document.selectFirst("tbody"), userId);
+    public List<ContactWork> getContactWorks(Document document) {
+        return shareContactWorks(document.selectFirst("tbody"));
     }
 
     public List<ContactWorksTask> getTasks(Document doc) {
@@ -42,22 +42,22 @@ public class ContactWorkParserImpl {
         return new ContactWorksTask(number, comment, teacher, file, date, link);
     }
 
-    private List<ContactWork> shareContactWorks(Element element, long userId) {
+    private List<ContactWork> shareContactWorks(Element element) {
         Elements elements = element.select("tr");
         List<ContactWork> contactWorks = new ArrayList<>();
         for (int i = 1; i < elements.size(); i++) {
-            contactWorks.add(getContactWork(elements.get(i), userId));
+            contactWorks.add(getContactWork(elements.get(i)));
         }
         return contactWorks;
     }
 
-    private ContactWork getContactWork(Element element, long userId) {
+    private ContactWork getContactWork(Element element) {
         List<Element> elementList = new ArrayList<>(element.select("td"));
         String discipline = elementList.get(0).text();
         String teacher = elementList.get(1).text();
         String numberOfTasks = elementList.get(2).text();
         Element link = elementList.get(3).selectFirst("a");
         String url = link.attr("href");
-        return new ContactWork(discipline, teacher, numberOfTasks, url, userId);
+        return new ContactWork(discipline, teacher, numberOfTasks, url);
     }
 }

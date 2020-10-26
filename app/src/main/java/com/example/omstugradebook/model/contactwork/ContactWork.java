@@ -7,19 +7,15 @@ public class ContactWork {
     private final String teacher;
     private final String numberOfTasks;
     private final String taskLink;
-    private final long userId;
 
-    public ContactWork(String discipline, String teacher, String numberOfTasks, String taskLink, long userId) {
+
+    public ContactWork(String discipline, String teacher, String numberOfTasks, String taskLink) {
         this.discipline = discipline;
         this.teacher = teacher;
         this.numberOfTasks = numberOfTasks;
         this.taskLink = taskLink;
-        this.userId = userId;
     }
 
-    public long getUserId() {
-        return userId;
-    }
 
     public String getDiscipline() {
         return discipline;
@@ -38,23 +34,11 @@ public class ContactWork {
     }
 
     @Override
-    public String toString() {
-        return "ContactWork{" +
-                "discipline='" + discipline + '\'' +
-                ", teacher='" + teacher + '\'' +
-                ", numberOfTasks='" + numberOfTasks + '\'' +
-                ", taskLink='" + taskLink + '\'' +
-                ", userId=" + userId +
-                '}';
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ContactWork that = (ContactWork) o;
-        return userId == that.userId &&
-                Objects.equals(discipline, that.discipline) &&
+        return Objects.equals(discipline, that.discipline) &&
                 Objects.equals(teacher, that.teacher) &&
                 Objects.equals(numberOfTasks, that.numberOfTasks) &&
                 Objects.equals(taskLink, that.taskLink);
@@ -62,6 +46,17 @@ public class ContactWork {
 
     @Override
     public int hashCode() {
-        return Objects.hash(discipline, teacher, numberOfTasks, taskLink, userId);
+        return Objects.hash(discipline, teacher, numberOfTasks, taskLink);
     }
+
+    @Override
+    public String toString() {
+        return "ContactWork{" +
+                "discipline='" + discipline + '\'' +
+                ", teacher='" + teacher + '\'' +
+                ", numberOfTasks='" + numberOfTasks + '\'' +
+                ", taskLink='" + taskLink + '\'' +
+                '}';
+    }
+
 }
