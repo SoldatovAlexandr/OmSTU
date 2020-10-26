@@ -45,7 +45,7 @@ public class ContactWorkService {
     private Document tryToGetConnection(String path) {
         Document doc = null;
         UserDaoImpl userTable = new UserDaoImpl();
-        User activeUser = userTable.getActiveUser();
+        User activeUser = userTable.getUser();
         try {
             if (activeUser == null) {
                 return null;
@@ -84,7 +84,7 @@ public class ContactWorkService {
             request.setTitle(fileName);
             request.setDescription("Downloading file");
             request.allowScanningByMediaScanner();
-            String cookie = STUD_SES_ID + "=" + DataBaseManager.getUserDao().getActiveUser().getToken() + "; Path=/; Domain=.up.omgtu.ru;";
+            String cookie = STUD_SES_ID + "=" + DataBaseManager.getUserDao().getUser().getToken() + "; Path=/; Domain=.up.omgtu.ru;";
             request.addRequestHeader("Cookie", cookie);
             request.setMimeType(gitMimeType(fileName));
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);

@@ -15,9 +15,8 @@ public class Schedule {
     private final String lecturer;
     private final String streamType;
     private final String dayOfWeekString;
-    private final long userId;
 
-    public Schedule(String auditorium, String beginLesson, String building, String date, int dayOfWeek, String detailInfo, String discipline, String endLesson, String kindOfWork, String lecturer, String streamType, String dayOfWeekString, long userId) {
+    public Schedule(String auditorium, String beginLesson, String building, String date, int dayOfWeek, String detailInfo, String discipline, String endLesson, String kindOfWork, String lecturer, String streamType, String dayOfWeekString) {
         this.auditorium = auditorium;
         this.beginLesson = beginLesson;
         this.building = building;
@@ -30,11 +29,6 @@ public class Schedule {
         this.lecturer = lecturer;
         this.streamType = streamType;
         this.dayOfWeekString = dayOfWeekString;
-        this.userId = userId;
-    }
-
-    public long getUserId() {
-        return userId;
     }
 
     public String getDayOfWeekString() {

@@ -33,13 +33,11 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         loginViewModel.getErrorLiveData().observe(this, error -> {
-            Toast.makeText(getApplicationContext(), getString(error), Toast.LENGTH_LONG).show();
+            showToastMessage(getString(error));
             buttonOk.setEnabled(true);
         });
 
-        loginViewModel.getInfoLiveData().observe(this, info -> {
-            Toast.makeText(getApplicationContext(), getString(info), Toast.LENGTH_LONG).show();
-        });
+        loginViewModel.getInfoLiveData().observe(this, info -> showToastMessage(getString(info)));
 
         buttonOk.setOnClickListener(v -> {
             buttonOk.setEnabled(false);
@@ -48,6 +46,12 @@ public class LoginActivity extends AppCompatActivity {
             validationFieldsForSignIn(login, password);
             loginViewModel.signIn(login, password);
         });
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        Toast.makeText(this, "Вы неавторизованы!", Toast.LENGTH_SHORT).show();
     }
 
     private void initFields() {

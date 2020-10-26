@@ -89,7 +89,6 @@ public class LoginViewModel extends ViewModel {
                     SubjectDao subjectDao = DataBaseManager.getSubjectDao();
                     UserDao userDao = DataBaseManager.getUserDao();
                     userDao.insert(user);
-                    userDao.changeActiveUser(user);
                     subjectDao.insertAllSubjects(subjects);
                 } else {
                     errorLiveData.postValue(R.string.serverException);

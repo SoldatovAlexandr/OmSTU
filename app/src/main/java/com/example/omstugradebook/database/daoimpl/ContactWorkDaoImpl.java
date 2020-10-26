@@ -30,38 +30,6 @@ public class ContactWorkDaoImpl implements ContactWorkDao {
         }
     }
 
-    @Override
-    public int removeAllToContactWorkById(long id) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper();
-             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            String whereClause = "user_id = ?";
-            String[] whereArgs = new String[]{String.valueOf(id)};
-            return database.delete(CONTACT_WORK, whereClause, whereArgs);
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            return -1;
-        }
-    }
-
-    @Override
-    public List<ContactWork> readContactWorkByUserId(long userId) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper();
-             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            String selection = "user_id = ?";
-            String[] selectionArgs = new String[]{String.valueOf(userId)};
-            Cursor cursor = database.query(CONTACT_WORK,
-                    null,
-                    selection,
-                    selectionArgs,
-                    null,
-                    null,
-                    null);
-            return getContactWorks(cursor);
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
-    }
 
     @Override
     public List<ContactWork> readAllToContactWork() {
@@ -123,9 +91,4 @@ public class ContactWorkDaoImpl implements ContactWorkDao {
         }
     }
 
-    //TODO
-    @Override
-    public boolean equalsContactWorks(List<ContactWork> contactWorks) {
-        return false;
-    }
 }

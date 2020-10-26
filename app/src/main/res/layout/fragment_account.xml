@@ -1,17 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fl_home"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".view.fragments.view.AccountFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/user_recycle_view"
+
+    <TextView
+        android:id="@+id/fullName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_margin="8dp"
+        android:text="fullName"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/login_user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/fullName"
+        android:layout_margin="8dp"
+        android:text="Login"
+        android:textSize="20sp" />
+
+
+    <TextView
+        android:id="@+id/numberGradeBook"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/login_user"
+        android:layout_margin="8dp"
+        android:text="numberGradeBook" />
+
+    <TextView
+        android:id="@+id/speciality"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/numberGradeBook"
+        android:layout_margin="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="speciality" />
+
+    <TextView
+        android:id="@+id/educationForm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/speciality"
+        android:layout_margin="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="Education form" />
+
+    <Button
+        android:id="@+id/logoutButton"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="50dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/user_card_view" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/educationForm"
+        android:text="logout" />
+
 </RelativeLayout>

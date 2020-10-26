@@ -11,31 +11,27 @@ import com.example.omstugradebook.database.dao.UserDao;
 import com.example.omstugradebook.model.grade.User;
 import com.example.omstugradebook.service.AuthService;
 
-import java.util.List;
-
 public class AccountViewModel extends ViewModel {
-    private MutableLiveData<List<User>> usersLiveData = new MutableLiveData<>();
+    private MutableLiveData<User> userLiveData = new MutableLiveData<>();
     private MutableLiveData<String> errorLiveData = new MutableLiveData<>();
 
-    public LiveData<List<User>> getUsersLiveData() {
-        return usersLiveData;
+    public LiveData<User> getUserLiveData() {
+        return userLiveData;
     }
 
     public LiveData<String> getErrorLiveData() {
         return errorLiveData;
     }
 
-    public void checkAuthActiveUser() {
-        User user = DataBaseManager.getUserDao().getActiveUser();
-        if (user != null) {
-            new OmSTUSender().execute(user.getLogin(), user.getPassword());
-        } else {
-            errorLiveData.postValue("Никто не авторизован!");
-        }
+
+
+    public void logoutUser() {
+        UserDao userDao = DataBaseManager.getUserDao();
+        userDao.removeUser(userDao.getUser());
     }
 
-    public void getUsers() {
-        usersLiveData.postValue(DataBaseManager.getUserDao().readAllUsers());
+    public void getUser() {
+        userLiveData.postValue(DataBaseManager.getUserDao().getUser());
     }
 
     class OmSTUSender extends AsyncTask<String, String, String> {
@@ -48,9 +44,11 @@ public class AccountViewModel extends ViewModel {
                 return null;
             }
             UserDao userDao = DataBaseManager.getUserDao();
-            User activeUser = userDao.getActiveUser();
-            activeUser.setToken(auth.getStudSessId(cookie));
-            userDao.update(activeUser);
+            User activeUser = userDao.getUser();
+            if (activeUser != null) {
+                activeUser.setToken(auth.getStudSessId(cookie));
+                userDao.update(activeUser);
+            }
             return null;
         }
     }

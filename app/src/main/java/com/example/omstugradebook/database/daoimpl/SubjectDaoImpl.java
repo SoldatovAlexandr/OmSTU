@@ -38,18 +38,6 @@ public class SubjectDaoImpl implements SubjectDao {
         }
     }
 
-    @Override
-    public int removeSubjectsById(long id) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper();
-             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            String whereClause = "user_id = ?";
-            String[] whereArgs = new String[]{String.valueOf(id)};
-            return database.delete(SUBJECTS, whereClause, whereArgs);
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            return -1;
-        }
-    }
 
     @Override
     public List<Subject> readSubjectsByTerm(int termFilter) {
@@ -140,25 +128,6 @@ public class SubjectDaoImpl implements SubjectDao {
         return readAllSubjects().size();
     }//TODO
 
-    @Override
-    public List<Subject> readSubjectsByUser(long userId) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper();
-             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            String selection = "user_id = ?";
-            String[] selectionArgs = new String[]{String.valueOf(userId)};
-            Cursor cursor = database.query(SUBJECTS,
-                    null,
-                    selection,
-                    selectionArgs,
-                    null,
-                    null,
-                    null);
-            return getSubjects(cursor);
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
-    }
 
     private List<Subject> getSubjects(Cursor cursor) {
         List<Subject> subjects = new ArrayList<>();

@@ -31,10 +31,10 @@ public class ContactWorkViewModel extends ViewModel {
 
     public void getContactWorks() {
         UserDao userDao = DataBaseManager.getUserDao();
-        User activeUser = userDao.getActiveUser();
+        User activeUser = userDao.getUser();
         if (activeUser != null) {
             ContactWorkDao contactWorkDao = DataBaseManager.getContactWorkDao();
-            List<ContactWork> contactWorks = contactWorkDao.readContactWorkByUserId(activeUser.getId());
+            List<ContactWork> contactWorks = contactWorkDao.readAllToContactWork();
             if (contactWorks != null) {
                 contactWorkModelLiveData.postValue(new ContactWorkModel(contactWorks));
             }
@@ -51,14 +51,14 @@ public class ContactWorkViewModel extends ViewModel {
             long id = Long.parseLong(strings[0]);
             ContactWorkService contactWorkService = new ContactWorkService();
             ContactWorkDao contactWorkDao = DataBaseManager.getContactWorkDao();
-            List<ContactWork> contactWorksFromDB = contactWorkDao.readContactWorkByUserId(id);
+            List<ContactWork> contactWorksFromDB = contactWorkDao.readAllToContactWork();
             List<ContactWork> contactWorks = contactWorkService.getContactWork(id);
             if (contactWorks == null) {
                 errorLiveData.postValue("Возникли проблемы на сервере");
             } else {
                 if (!contactWorksFromDB.equals(contactWorks)) {
                     contactWorkModelLiveData.postValue(new ContactWorkModel(contactWorks));
-                    contactWorkDao.removeAllToContactWorkById(id);
+                    contactWorkDao.removeAllToContactWork();
                     contactWorkDao.insertAllToContactWork(contactWorks);
                 }
             }

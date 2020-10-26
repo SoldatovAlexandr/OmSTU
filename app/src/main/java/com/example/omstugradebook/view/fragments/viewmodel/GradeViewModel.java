@@ -41,13 +41,13 @@ public class GradeViewModel extends ViewModel {
     }
 
     public void getSubjects(String selectTerm) {
-        User activeUser = DataBaseManager.getUserDao().getActiveUser();
+        User activeUser = DataBaseManager.getUserDao().getUser();
         if (activeUser == null) {
             infoLiveData.postValue("Пожалуйста, войдите в ваш аккаует, чтобы пользоваться системой");
         } else {
             SubjectDao subjectDao = DataBaseManager.getSubjectDao();
             long id = activeUser.getId();
-            List<Subject> subjectsFromDB = subjectDao.readSubjectsByUser(id);
+            List<Subject> subjectsFromDB = subjectDao.readAllSubjects();
             postValues(makeGradeModel(subjectsFromDB, Integer.parseInt(selectTerm), subjectDao.getCountTerm()));
             new OmSTUSender().execute(selectTerm, String.valueOf(id));
         }
@@ -92,13 +92,13 @@ public class GradeViewModel extends ViewModel {
                 errorLiveData.postValue("Проблемы с подключением к серверу ОмГТУ");
             } else {
                 SubjectDao subjectDao = DataBaseManager.getSubjectDao();
-                List<Subject> subjectsFromDB = subjectDao.readSubjectsByUser(id);
+                List<Subject> subjectsFromDB = subjectDao.readAllSubjects();
                 List<Subject> subjects = getSubjects(gradeBook.getTerms());
                 for (Subject subject : subjects) {
                     subject.setUserId(id);
                 }
                 if (!subjects.equals(subjectsFromDB)) {
-                    subjectDao.removeSubjectsById(id);
+                    subjectDao.readAllSubjects();
                     subjectDao.insertAllSubjects(subjects);
                     postValues(makeGradeModel(subjects, selectTerm, subjectDao.getCountTerm()));
                 }

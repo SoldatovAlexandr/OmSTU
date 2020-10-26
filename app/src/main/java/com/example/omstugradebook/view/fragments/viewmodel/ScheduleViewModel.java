@@ -46,10 +46,10 @@ public class ScheduleViewModel extends ViewModel {
 
 
     public void getSchedules(Calendar calendar, String id, String type) {
-        User user = DataBaseManager.getUserDao().getActiveUser();
+        User user = DataBaseManager.getUserDao().getUser();
         titleLiveData.postValue("Расписание");
         if (user != null) {
-            List<Schedule> schedules = DataBaseManager.getScheduleDao().readScheduleByUserId(user.getId());
+            List<Schedule> schedules = DataBaseManager.getScheduleDao().readAllSchedules();
             timetableLiveData.postValue(new TimetableModel(schedules));
         }
         Calendar start = getStartCalendar(calendar);
@@ -82,16 +82,13 @@ public class ScheduleViewModel extends ViewModel {
         return new SimpleDateFormat("yyyy.MM.dd").format(calendar.getTime());
     }
 
-    private boolean updateDataBase(List<Schedule> schedules) {
+    private void updateDataBase(List<Schedule> schedules) {
         ScheduleDao scheduleDao = DataBaseManager.getScheduleDao();
-        List<Schedule> schedulesFromDB = scheduleDao.readScheduleByUserId(DataBaseManager
-                .getUserDao().getUserActiveId());
+        List<Schedule> schedulesFromDB = scheduleDao.readAllSchedules();
         if (!schedules.equals(schedulesFromDB)) {
-            scheduleDao.removeSchedulesById(DataBaseManager.getUserDao().getUserActiveId());
+            scheduleDao.removeAllSchedules();
             scheduleDao.insertAllSchedule(schedules);
-            return true;
         }
-        return false;
     }
 
     private String getId(String group, ScheduleService scheduleService) {
@@ -109,8 +106,7 @@ public class ScheduleViewModel extends ViewModel {
 
     public String getParam(User user) {
         ScheduleDao scheduleDao = DataBaseManager.getScheduleDao();
-        long id = DataBaseManager.getUserDao().getUserActiveId();
-        List<String> strings = scheduleDao.readFavoriteScheduleByUserId(id);
+        List<String> strings = scheduleDao.readFavoriteSchedule();
         if (!strings.isEmpty()) {
             return strings.get(0);
         }
@@ -130,7 +126,7 @@ public class ScheduleViewModel extends ViewModel {
             String id = strings[2];
             String type = strings[3];
             ScheduleService scheduleService = new ScheduleService();
-            User user = DataBaseManager.getUserDao().getActiveUser();
+            User user = DataBaseManager.getUserDao().getUser();
             if (id.isEmpty()) {
                 id = getId(getParam(user), scheduleService);
             }

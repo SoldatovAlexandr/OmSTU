@@ -25,9 +25,8 @@ public class ScheduleService {
             String response = Jsoup.connect(API_URL + requestParam).ignoreContentType(true).get().text();
             Gson gson = new Gson();
             ScheduleDtoResponse[] dtoResponses = gson.fromJson(response, ScheduleDtoResponse[].class);
-            long userId = DataBaseManager.getUserDao().getUserActiveId();
             for (ScheduleDtoResponse dtoResponse : dtoResponses) {
-                scheduleList.add(builder.convert(dtoResponse, userId));
+                scheduleList.add(builder.convert(dtoResponse));
             }
         } catch (IOException e) {
             e.printStackTrace();

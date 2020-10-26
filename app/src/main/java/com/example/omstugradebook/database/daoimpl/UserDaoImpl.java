@@ -55,69 +55,14 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public User getUserByToken(String token) {
-        String selection = "token = ?";
-        String[] selectionArgs = new String[]{String.valueOf(token)};
-        return getUser(selection, selectionArgs);
-    }
-
-    @Override
-    public User getUserById(long id) {
-        String selection = "id = ?";
-        String[] selectionArgs = new String[]{String.valueOf(id)};
-        return getUser(selection, selectionArgs);
+    public User getUser() {
+        //getUser
+        List<User> users = readAllUsers();
+        return !users.isEmpty() ? users.get(0) : null;
     }
 
 
-    @Override
-    public User getActiveUser() {
-        for (User user : readAllUsers()) {
-            if (user.getIsActive() == 1) {
-                return user;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public int removeAllUsers() {
-        try (DataBaseHelper dbHelper = new DataBaseHelper();
-             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            return database.delete(USERS, null, null);
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            return -1;
-        }
-    }
-
-    @Override
-    public long update(User user) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper();
-             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(LOGIN, user.getLogin());
-            contentValues.put(PASSWORD, user.getPassword());
-            contentValues.put(TOKEN, user.getToken());
-            Student student = user.getStudent();
-            contentValues.put(FULL_NAME, student.getFullName());
-            contentValues.put(NUMBER_GRADE_BOOK, student.getNumberGradeBook());
-            contentValues.put(SPECIALITY, student.getSpeciality());
-            contentValues.put(EDUCATION_FORM, student.getEducationForm());
-            contentValues.put(IS_ACTIVE, user.getIsActive());
-            long id = database.update(USERS,
-                    contentValues,
-                    "id =" + user.getId(),
-                    null);
-            user.setId(id);
-            return id;
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            return -1;
-        }
-    }
-
-    @Override
-    public List<User> readAllUsers() {
+    private List<User> readAllUsers() {
         try (DataBaseHelper dbHelper = new DataBaseHelper();
              SQLiteDatabase database = dbHelper.getWritableDatabase()) {
             Cursor cursor = database.query(USERS,
@@ -134,30 +79,12 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
-    @Override
-    public void changeActiveUser(User newUser) {
-        User user = getActiveUser();
-        if (user != null) {
-            user.setIsActive(0);
-            update(user);
-        }
-        newUser.setIsActive(1);
-        update(newUser);
-    }
 
     @Override
     public boolean removeUser(User user) {
         try (DataBaseHelper dbHelper = new DataBaseHelper();
              SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            if (user.getIsActive() == 1) {
-                List<User> users = readAllUsers();
-                if (users != null) {
-                    changeActiveUser(users.get(0));
-                }
-            }
-            String whereClause = "id = ? ";
-            String[] whereArgs = new String[]{String.valueOf(user.getId())};
-            int result = database.delete(USERS, whereClause, whereArgs);
+            int result = database.delete(USERS, null, null);
             return result > 0;
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -165,11 +92,6 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
-    @Override
-    public long getUserActiveId() {
-        User user = getActiveUser();
-        return user != null ? user.getId() : 0;
-    }
 
     private User getUser(String selection, String[] selectionArgs) {
         try (DataBaseHelper dbHelper = new DataBaseHelper();
@@ -242,5 +164,31 @@ public class UserDaoImpl implements UserDao {
         }
         cursor.close();
         return users;
+    }
+
+    @Override
+    public long update(User user) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(LOGIN, user.getLogin());
+            contentValues.put(PASSWORD, user.getPassword());
+            contentValues.put(TOKEN, user.getToken());
+            Student student = user.getStudent();
+            contentValues.put(FULL_NAME, student.getFullName());
+            contentValues.put(NUMBER_GRADE_BOOK, student.getNumberGradeBook());
+            contentValues.put(SPECIALITY, student.getSpeciality());
+            contentValues.put(EDUCATION_FORM, student.getEducationForm());
+            contentValues.put(IS_ACTIVE, user.getIsActive());
+            long id = database.update(USERS,
+                    contentValues,
+                    "id =" + user.getId(),
+                    null);
+            user.setId(id);
+            return id;
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return -1;
+        }
     }
 }

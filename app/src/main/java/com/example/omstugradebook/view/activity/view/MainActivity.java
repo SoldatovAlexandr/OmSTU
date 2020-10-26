@@ -1,11 +1,14 @@
 package com.example.omstugradebook.view.activity.view;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.omstugradebook.R;
+import com.example.omstugradebook.view.activity.viewmodel.MainViewModel;
 import com.example.omstugradebook.view.fragments.view.AccountFragment;
 import com.example.omstugradebook.view.fragments.view.ContactWorkFragment;
 import com.example.omstugradebook.view.fragments.view.GradeFragment;
@@ -42,9 +45,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        MainViewModel mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        if (!mainViewModel.checkAuthActiveUser()) {
+            startLoginActivity();
+        }
         initNavigationMenu();
         loadFragment(new ScheduleFragment());
+    }
+
+    private void startLoginActivity() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivityForResult(intent, 1);
     }
 
     private void loadFragment(Fragment fragment) {

@@ -4,7 +4,7 @@ import com.example.omstugradebook.model.schedule.DayOfWeek;
 import com.example.omstugradebook.model.schedule.Schedule;
 
 public class ScheduleConverter {
-    public Schedule convert(ScheduleDtoResponse response, long userId) {
+    public Schedule convert(ScheduleDtoResponse response) {
         return new Schedule(response.getAuditorium(),
                 response.getBeginLesson(),
                 response.getBuilding(),
@@ -16,8 +16,7 @@ public class ScheduleConverter {
                 response.getKindOfWork(),
                 response.getLecturer(),
                 getStreamType(response),
-                getDayOfWeekFullString(response.getDayOfWeek()),
-                userId);
+                getDayOfWeekFullString(response.getDayOfWeek()));
     }
 
     private String getStreamType(ScheduleDtoResponse response) {

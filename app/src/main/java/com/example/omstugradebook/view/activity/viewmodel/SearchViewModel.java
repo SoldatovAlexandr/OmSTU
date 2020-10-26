@@ -43,7 +43,7 @@ public class SearchViewModel extends ViewModel {
             return;
         }
         UserDao userDao = DataBaseManager.getUserDao();
-        User user = userDao.getActiveUser();
+        User user = userDao.getUser();
         if (user != null && user.getStudent().getSpeciality() != null) {
             userGroupLiveData.postValue(user.getStudent().getSpeciality());
         }
@@ -59,8 +59,7 @@ public class SearchViewModel extends ViewModel {
 
     public List<String> getAllFavoriteSchedule() {
         ScheduleDao scheduleDao = DataBaseManager.getScheduleDao();
-        long id = DataBaseManager.getUserDao().getUserActiveId();
-        return scheduleDao.readFavoriteScheduleByUserId(id);
+        return scheduleDao.readFavoriteSchedule();
     }
 
     public void changeFavoriteSchedule(String value, boolean like) {
@@ -71,11 +70,10 @@ public class SearchViewModel extends ViewModel {
             }
         } else {
             ScheduleDao scheduleDao = DataBaseManager.getScheduleDao();
-            long userId = DataBaseManager.getUserDao().getUserActiveId();
             if (like) {
-                scheduleDao.removeFavoriteSchedule(userId, value);
+                scheduleDao.removeFavoriteSchedule(value);
             } else {
-                scheduleDao.insertFavoriteSchedule(userId, value);
+                scheduleDao.insertFavoriteSchedule(value);
             }
             changeLikeImageLiveData.postValue(!like);
         }

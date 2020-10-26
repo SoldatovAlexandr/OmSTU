@@ -7,17 +7,15 @@ import java.util.List;
 public interface ScheduleDao {
     int removeAllSchedules();
 
-    int removeSchedulesById(long id);
-
-    List<Schedule> readScheduleByUserId(long userId);
+    List<Schedule> readAllSchedules();
 
     boolean insertAllSchedule(List<Schedule> schedules);
 
-    boolean insertFavoriteSchedule( long userId, String value);
+    boolean insertFavoriteSchedule(String value);
 
-    List<String> readFavoriteScheduleByUserId(long userId);
+    List<String> readFavoriteSchedule();
 
-    int removeAllFavoriteSchedules(long userId);
+    int removeAllFavoriteSchedules();
 
-    int removeFavoriteSchedule(long id, String value);
+    int removeFavoriteSchedule(String value);
 }

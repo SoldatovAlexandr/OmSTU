@@ -116,7 +116,7 @@ public class AuthService {
         Document doc = null;
         UserDaoImpl userTable = new UserDaoImpl();
         try {
-            User activeUser = userTable.getActiveUser();
+            User activeUser = userTable.getUser();
             String token = activeUser.getToken();
             doc = Jsoup.connect(URL).cookie(STUD_SES_ID, token).get();
             Log.d(TAG, "сделан запрос");

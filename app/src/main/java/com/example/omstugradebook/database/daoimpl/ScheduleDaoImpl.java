@@ -38,28 +38,15 @@ public class ScheduleDaoImpl implements ScheduleDao {
         }
     }
 
-    @Override
-    public int removeSchedulesById(long id) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper();
-             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            String whereClause = "user_id = ?";
-            String[] whereArgs = new String[]{String.valueOf(id)};
-            return database.delete(SCHEDULES, whereClause, whereArgs);
-        } catch (NullPointerException e) {
-            return -1;
-        }
-    }
 
     @Override
-    public List<Schedule> readScheduleByUserId(long userId) {
+    public List<Schedule> readAllSchedules() {
         try (DataBaseHelper dbHelper = new DataBaseHelper();
              SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            String selection = "user_id = ?";
-            String[] selectionArgs = new String[]{String.valueOf(userId)};
             Cursor cursor = database.query(SCHEDULES,
                     null,
-                    selection,
-                    selectionArgs,
+                    null,
+                    null,
                     null,
                     null,
                     null);
@@ -88,7 +75,6 @@ public class ScheduleDaoImpl implements ScheduleDao {
                 contentValues.put(LECTURER, schedule.getLecturer());
                 contentValues.put(STREAM_TYPE, schedule.getStreamType());
                 contentValues.put(DAY_OF_WEEK_STRING, schedule.getDayOfWeekString());
-                contentValues.put(USER_ID, schedule.getUserId());
                 database.insert(SCHEDULES, null, contentValues);
             }
             return true;
@@ -99,12 +85,11 @@ public class ScheduleDaoImpl implements ScheduleDao {
     }
 
     @Override
-    public boolean insertFavoriteSchedule(long userId, String value) {
+    public boolean insertFavoriteSchedule(String value) {
         try (DataBaseHelper dbHelper = new DataBaseHelper();
              SQLiteDatabase database = dbHelper.getWritableDatabase()) {
             ContentValues contentValues = new ContentValues();
             contentValues.put("value", value);
-            contentValues.put(USER_ID, userId);
             database.insert("favorite_schedule", null, contentValues);
             return true;
         } catch (NullPointerException e) {
@@ -114,15 +99,13 @@ public class ScheduleDaoImpl implements ScheduleDao {
     }
 
     @Override
-    public List<String> readFavoriteScheduleByUserId(long userId) {
+    public List<String> readFavoriteSchedule() {
         try (DataBaseHelper dbHelper = new DataBaseHelper();
              SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            String selection = "user_id = ?";
-            String[] selectionArgs = new String[]{String.valueOf(userId)};
             Cursor cursor = database.query("favorite_schedule",
                     null,
-                    selection,
-                    selectionArgs,
+                    null,
+                    null,
                     null,
                     null,
                     null);
@@ -134,19 +117,17 @@ public class ScheduleDaoImpl implements ScheduleDao {
     }
 
     @Override
-    public int removeAllFavoriteSchedules(long userId) {
+    public int removeAllFavoriteSchedules() {
         try (DataBaseHelper dbHelper = new DataBaseHelper();
              SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            String whereClause = "user_id = ?";
-            String[] whereArgs = new String[]{String.valueOf(userId)};
-            return database.delete("favorite_schedule", whereClause, whereArgs);
+            return database.delete("favorite_schedule", null, null);
         } catch (NullPointerException e) {
             return -1;
         }
     }
 
     @Override
-    public int removeFavoriteSchedule(long user_id, String value) {
+    public int removeFavoriteSchedule(String value) {
         try (DataBaseHelper dbHelper = new DataBaseHelper();
              SQLiteDatabase database = dbHelper.getWritableDatabase()) {
             String whereClause = "value = ?";
@@ -172,7 +153,6 @@ public class ScheduleDaoImpl implements ScheduleDao {
             int lecturerColIndex = cursor.getColumnIndex(LECTURER);
             int streamTypeColIndex = cursor.getColumnIndex(STREAM_TYPE);
             int dayOfWeekStringColIndex = cursor.getColumnIndex(DAY_OF_WEEK_STRING);
-            int userIdColIndex = cursor.getColumnIndex(USER_ID);
             do {
                 String auditorium = cursor.getString(auditoriumColIndex);
                 String beginLesson = cursor.getString(beginLessonColIndex);
@@ -186,7 +166,6 @@ public class ScheduleDaoImpl implements ScheduleDao {
                 String dayOfWeekString = cursor.getString(dayOfWeekStringColIndex);
                 String date = cursor.getString(dateColIndex);
                 int dayOfWeek = cursor.getInt(dayOfWeekColIndex);
-                long userId = cursor.getLong(userIdColIndex);
                 schedules.add(new Schedule(
                         auditorium,
                         beginLesson,
@@ -199,8 +178,7 @@ public class ScheduleDaoImpl implements ScheduleDao {
                         kindOfWork,
                         lecturer,
                         streamType,
-                        dayOfWeekString,
-                        userId
+                        dayOfWeekString
                 ));
             } while (cursor.moveToNext());
         }
