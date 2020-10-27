@@ -21,7 +21,6 @@ import com.example.omstugradebook.view.fragments.viewmodel.AccountViewModel;
 
 public class AccountFragment extends Fragment implements Updatable {
     private AccountViewModel accountViewModel;
-    private TextView login;
     private TextView fullName;
     private TextView numberGradeBook;
     private TextView speciality;
@@ -46,7 +45,7 @@ public class AccountFragment extends Fragment implements Updatable {
 
     private void updateUser(User user) {
         if (user != null) {
-            login.setText(user.getLogin());
+            getActivity().setTitle(user.getLogin());
             Student student = user.getStudent();
             fullName.setText(student.getFullName());
             numberGradeBook.setText(student.getNumberGradeBook());
@@ -61,7 +60,6 @@ public class AccountFragment extends Fragment implements Updatable {
     }
 
     private void initViews(View view) {
-        login = view.findViewById(R.id.login_user);
         fullName = view.findViewById(R.id.fullName);
         numberGradeBook = view.findViewById(R.id.numberGradeBook);
         speciality = view.findViewById(R.id.speciality);
