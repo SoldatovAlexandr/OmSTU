@@ -37,7 +37,6 @@ public class ContactWorkTasksActivity extends AppCompatActivity {
         } else {
             cwViewModel.startDownloading(task, this);
         }
-        task = null;
     };
     private final ContactWorkListRVAdapter adapter = new ContactWorkListRVAdapter(listener);
 
@@ -55,15 +54,14 @@ public class ContactWorkTasksActivity extends AppCompatActivity {
             adapter.setContactWorksTasksList(contactWorkModel.getContactWorksTasks());
             adapter.notifyDataSetChanged();
         });
-        cwViewModel.getFileStatusLiveData().observe(this, status -> {
-            Toast.makeText(this, status, Toast.LENGTH_SHORT).show();
-        });
+        cwViewModel.getFileStatusLiveData().observe(this, this::showToast);
         final String path = arguments.get(getString(R.string.path)).toString();
         cwViewModel.sendRequestToGetContactWorkTasks(path);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_STORAGE_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 cwViewModel.startDownloading(task, this);
@@ -71,6 +69,10 @@ public class ContactWorkTasksActivity extends AppCompatActivity {
                 Toast.makeText(this, "Система отказывает в доступе!", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     private void setTitle(Bundle bundle) {

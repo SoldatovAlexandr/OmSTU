@@ -18,7 +18,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static BottomNavigationView navigation;
+    private BottomNavigationView navigation;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = item -> {
         if (item.getItemId() == navigation.getSelectedItemId()) {
@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         }
         initNavigationMenu();
         loadFragment(new ScheduleFragment());
+        navigation.setSelectedItemId(R.id.bottom_navigation_item_timetable);
     }
 
     private void startLoginActivity() {

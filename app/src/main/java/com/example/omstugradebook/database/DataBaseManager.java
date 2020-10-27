@@ -25,4 +25,13 @@ public class DataBaseManager {
     public static ContactWorkDao getContactWorkDao() {
         return new ContactWorkDaoImpl();
     }
+
+    public static void clearDataBase() {
+        UserDao userDao = getUserDao();
+        userDao.removeUser(userDao.getUser());
+        getScheduleDao().removeAllFavoriteSchedules();
+        getScheduleDao().removeAllSchedules();
+        getSubjectDao().removeAllSubjects();
+        getContactWorkDao().removeAllToContactWork();
+    }
 }

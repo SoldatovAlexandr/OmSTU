@@ -132,4 +132,5 @@ public class SearchActivity extends AppCompatActivity {
     private void showErrorMessage(String s) {
         Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
     }
+
 }

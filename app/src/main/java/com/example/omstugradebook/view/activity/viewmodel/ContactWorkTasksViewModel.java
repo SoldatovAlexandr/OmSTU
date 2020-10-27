@@ -14,8 +14,8 @@ import com.example.omstugradebook.view.activity.model.ContactWorkTasksModel;
 import java.util.List;
 
 public class ContactWorkTasksViewModel extends ViewModel {
-    private MutableLiveData<ContactWorkTasksModel> contactWorkModelLiveData = new MutableLiveData<>();
-    private MutableLiveData<String> fileStatusLiveData = new MutableLiveData<>();
+    private final MutableLiveData<ContactWorkTasksModel> contactWorkModelLiveData = new MutableLiveData<>();
+    private final MutableLiveData<String> fileStatusLiveData = new MutableLiveData<>();
 
 
     public LiveData<ContactWorkTasksModel> getContactWorkModelLiveData() {

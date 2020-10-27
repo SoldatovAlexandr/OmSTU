@@ -1,6 +1,5 @@
 package com.example.omstugradebook.service;
 
-import com.example.omstugradebook.database.DataBaseManager;
 import com.example.omstugradebook.dto.ScheduleConverter;
 import com.example.omstugradebook.dto.ScheduleDtoResponse;
 import com.example.omstugradebook.dto.ScheduleOwnersDtoResponse;

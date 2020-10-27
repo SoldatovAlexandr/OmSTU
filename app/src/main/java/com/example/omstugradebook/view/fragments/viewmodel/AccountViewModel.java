@@ -12,8 +12,8 @@ import com.example.omstugradebook.model.grade.User;
 import com.example.omstugradebook.service.AuthService;
 
 public class AccountViewModel extends ViewModel {
-    private MutableLiveData<User> userLiveData = new MutableLiveData<>();
-    private MutableLiveData<String> errorLiveData = new MutableLiveData<>();
+    private final MutableLiveData<User> userLiveData = new MutableLiveData<>();
+    private final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
 
     public LiveData<User> getUserLiveData() {
         return userLiveData;
@@ -24,10 +24,8 @@ public class AccountViewModel extends ViewModel {
     }
 
 
-
     public void logoutUser() {
-        UserDao userDao = DataBaseManager.getUserDao();
-        userDao.removeUser(userDao.getUser());
+        DataBaseManager.clearDataBase();
     }
 
     public void getUser() {
