@@ -16,10 +16,9 @@ import com.example.omstugradebook.R;
 import com.example.omstugradebook.model.grade.Student;
 import com.example.omstugradebook.model.grade.User;
 import com.example.omstugradebook.view.activity.view.LoginActivity;
-import com.example.omstugradebook.view.fragments.Updatable;
 import com.example.omstugradebook.view.fragments.viewmodel.AccountViewModel;
 
-public class AccountFragment extends Fragment implements Updatable {
+public class AccountFragment extends Fragment {
     private AccountViewModel accountViewModel;
     private TextView fullName;
     private TextView numberGradeBook;
@@ -71,16 +70,11 @@ public class AccountFragment extends Fragment implements Updatable {
         });
     }
 
-    @Override
-    public void update() {
-        accountViewModel.getUser();
-    }
-
 
     @Override
     public void onStart() {
         super.onStart();
-        update();
+        accountViewModel.getUser();
     }
 
 }

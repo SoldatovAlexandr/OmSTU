@@ -7,12 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".view.fragments.view.ScheduleFragment">
 
-    <TextView
-        android:id="@+id/timetable_information"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:textSize="18sp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv"
@@ -20,7 +14,7 @@
         android:layout_height="match_parent"
         android:paddingBottom="50dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/subject_card_view" />
+        tools:listitem="@layout/schedule_card_view" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"

@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -27,7 +27,6 @@ import java.util.List;
 public class ScheduleFragment extends Fragment implements Updatable {
 
     private final ScheduleRVAdapter adapter = new ScheduleRVAdapter();
-    private TextView information;
     private FloatingActionButton fab;
     private ScheduleViewModel timeTableViewModel;
 
@@ -37,13 +36,12 @@ public class ScheduleFragment extends Fragment implements Updatable {
         View view = inflater.inflate(R.layout.fragment_timetable, container, false);
         initFloatingActionBar(view);
         initRecyclerView(view);
-        information = view.findViewById(R.id.timetable_information);
 
         timeTableViewModel = new ViewModelProvider(this).get(ScheduleViewModel.class);
         timeTableViewModel.getTimetablesLiveData().observe(getViewLifecycleOwner(),
                 timetableModel -> update(timetableModel.getSchedules()));
         timeTableViewModel.getInfoLiveData()
-                .observe(getViewLifecycleOwner(), info -> initInformationTextView(getString(info)));
+                .observe(getViewLifecycleOwner(), info -> showToastMessage(getString(info)));
         timeTableViewModel.getTitleLiveData().observe(getViewLifecycleOwner(), this::setTitle);
         timeTableViewModel.getSchedules();
         return view;
@@ -69,9 +67,10 @@ public class ScheduleFragment extends Fragment implements Updatable {
         });
     }
 
-    private void initInformationTextView(String informationString) {
-        information.setText(informationString);
+    private void showToastMessage(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
     }
+
 
     private void setTitle(String title) {
         requireActivity().setTitle(title);

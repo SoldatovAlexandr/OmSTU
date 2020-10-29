@@ -1,6 +1,7 @@
 package com.example.omstugradebook.recyclerview.holder.contactwork;
 
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -12,7 +13,7 @@ import com.example.omstugradebook.model.contactwork.ContactWorksTask;
 public class ContactWorkListViewHolder extends RecyclerView.ViewHolder {
     private final TextView comment;
     private final TextView teacher;
-    private final TextView file;
+    private final Button file;
     private final TextView date;
     private final TextView number;
 

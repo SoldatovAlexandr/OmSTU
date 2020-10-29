@@ -22,9 +22,9 @@ import java.util.List;
 
 public class ScheduleViewModel extends ViewModel {
 
-    private MutableLiveData<TimetableModel> timetableLiveData = new MutableLiveData<>();
-    private MutableLiveData<Integer> infoLiveData = new MutableLiveData<>();
-    private MutableLiveData<String> titleLiveData = new MutableLiveData<>();
+    private final MutableLiveData<TimetableModel> timetableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Integer> infoLiveData = new MutableLiveData<>();
+    private final MutableLiveData<String> titleLiveData = new MutableLiveData<>();
 
 
     public LiveData<TimetableModel> getTimetablesLiveData() {

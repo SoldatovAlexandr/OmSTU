@@ -6,54 +6,77 @@
     android:layout_height="match_parent"
     tools:context=".view.activity.view.SearchActivity">
 
-
-    <LinearLayout
-        android:id="@+id/liner_layout_search"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_view_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="2dp"
+        app:cardUseCompatPadding="true"
         tools:ignore="MissingConstraints">
 
-        <AutoCompleteTextView
-            android:id="@+id/actv"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_margin="16dp"
-            android:layout_weight="4"
-            android:completionHint="Select a param"
-            android:completionThreshold="1"
-            android:hint="@string/autoCompleteHint" />
-
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:id="@+id/contact_work_constraint_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
 
-            <ImageView
-                android:id="@+id/favorite_image_view"
+            <LinearLayout
+                android:id="@+id/liner_layout_search"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="center"
-                android:src="@drawable/ic_favorite" />
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                tools:ignore="MissingConstraints">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="4">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/actv"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="16dp"
+                        android:completionThreshold="1"
+                        android:hint="@string/autoCompleteHint" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <ImageView
+                        android:id="@+id/favorite_image_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_favorite"
+                        tools:ignore="ContentDescription" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
+
+            <CalendarView
+                android:id="@+id/calendar_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toBottomOf="@+id/liner_layout_search"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/calendar_search_button"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="Найти"
+                android:textSize="20sp"
+                app:layout_constraintTop_toBottomOf="@+id/calendar_view"
+                tools:ignore="MissingConstraints" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </LinearLayout>
-
-    <CalendarView
-        android:id="@+id/calendar_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/liner_layout_search"
-        tools:ignore="MissingConstraints" />
-
-    <Button
-        android:id="@+id/calendar_search_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="search"
-        app:layout_constraintTop_toBottomOf="@+id/calendar_view"
-        tools:ignore="MissingConstraints" />
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

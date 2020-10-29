@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.omstugradebook.R;
+import com.example.omstugradebook.ScheduleAutoCompleteModel;
 import com.example.omstugradebook.ScheduleTypeAutoComponentAdapter;
 import com.example.omstugradebook.model.schedule.ScheduleOwner;
 import com.example.omstugradebook.view.activity.model.SearchStateModel;
@@ -95,7 +96,9 @@ public class SearchActivity extends AppCompatActivity {
         autoCompleteTextView.setThreshold(3);
         autoCompleteTextView.setAdapter(new ScheduleTypeAutoComponentAdapter(this));
         autoCompleteTextView.setOnItemClickListener((parent, view, position, id) -> {
-            scheduleOwner = (ScheduleOwner) parent.getItemAtPosition(position);
+            ScheduleAutoCompleteModel scheduleAutoCompleteModel =
+                    (ScheduleAutoCompleteModel) parent.getItemAtPosition(position);
+            scheduleOwner = scheduleAutoCompleteModel.getScheduleOwner();
             String name = scheduleOwner.getName();
             autoCompleteTextView.setText(name);
             List<String> favoriteSchedule = searchViewModel.getAllFavoriteSchedule();

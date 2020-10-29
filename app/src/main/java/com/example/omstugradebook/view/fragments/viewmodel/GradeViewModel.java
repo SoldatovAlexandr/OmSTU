@@ -19,19 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GradeViewModel extends ViewModel {
-    private MutableLiveData<String> errorLiveData = new MutableLiveData<>();
-    private MutableLiveData<String> infoLiveData = new MutableLiveData<>();
-    private MutableLiveData<GradeModel> gradeLiveData = new MutableLiveData<>();
-    private MutableLiveData<String> titleLiveData = new MutableLiveData<>();
+    private final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
+    private final MutableLiveData<GradeModel> gradeLiveData = new MutableLiveData<>();
+    private final MutableLiveData<String> titleLiveData = new MutableLiveData<>();
 
     public LiveData<String> getErrorLiveData() {
         return errorLiveData;
     }
-
-    public LiveData<String> getInfoLiveData() {
-        return errorLiveData;
-    }
-
     public LiveData<GradeModel> getSubjectsLiveData() {
         return gradeLiveData;
     }
@@ -43,20 +37,17 @@ public class GradeViewModel extends ViewModel {
     public void getSubjects(String selectTerm) {
         User activeUser = DataBaseManager.getUserDao().getUser();
         if (activeUser == null) {
-            infoLiveData.postValue("Пожалуйста, войдите в ваш аккаует, чтобы пользоваться системой");
+            errorLiveData.postValue("Пожалуйста, войдите в ваш аккаует, чтобы пользоваться системой");
         } else {
             SubjectDao subjectDao = DataBaseManager.getSubjectDao();
             long id = activeUser.getId();
             List<Subject> subjectsFromDB = subjectDao.readAllSubjects();
-            postValues(makeGradeModel(subjectsFromDB, Integer.parseInt(selectTerm), subjectDao.getCountTerm()));
+            GradeModel gradeModel = makeGradeModel(subjectsFromDB, Integer.parseInt(selectTerm), subjectDao.getCountTerm());
+            gradeLiveData.postValue(gradeModel);
             new OmSTUSender().execute(selectTerm, String.valueOf(id));
         }
     }
 
-    private void postValues(GradeModel gradeModel) {
-        gradeLiveData.postValue(gradeModel);
-        infoLiveData.postValue("");
-    }
 
     private List<Subject> getWithTerm(List<Subject> subjects, int term) {
         List<Subject> response = new ArrayList<>();
@@ -84,7 +75,6 @@ public class GradeViewModel extends ViewModel {
     class OmSTUSender extends AsyncTask<String, String, String> {
         @Override
         protected String doInBackground(String... strings) {
-            infoLiveData.postValue("");
             int selectTerm = Integer.parseInt(strings[0]);
             int id = Integer.parseInt(strings[1]);
             GradeBook gradeBook = new AuthService().getGradeBook();
@@ -100,7 +90,8 @@ public class GradeViewModel extends ViewModel {
                 if (!subjects.equals(subjectsFromDB)) {
                     subjectDao.readAllSubjects();
                     subjectDao.insertAllSubjects(subjects);
-                    postValues(makeGradeModel(subjects, selectTerm, subjectDao.getCountTerm()));
+                    GradeModel gradeModel = makeGradeModel(subjects, selectTerm, subjectDao.getCountTerm());
+                    gradeLiveData.postValue(gradeModel);
                 }
             }
             return null;
