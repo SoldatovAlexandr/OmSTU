@@ -20,6 +20,7 @@
     <string name="timetable_information_string">Вы можете использовать расписание без авторизации. Для этого просто нажмите на лупу!</string>
     <string name="autoCompleteHint">Просто начните писать...</string>
     <string name="logout">выйти</string>
+    <string name="youAreNotLogin">Вы неавторизованы!</string>
     <string-array name="spinnerStrings">
         <item>Группа</item>
         <item>Преподаватель</item>

@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.example.omstugradebook.database.DataBaseHelper;
 import com.example.omstugradebook.database.dao.ScheduleDao;
 import com.example.omstugradebook.model.schedule.Schedule;
+import com.example.omstugradebook.model.schedule.ScheduleOwner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ public class ScheduleDaoImpl implements ScheduleDao {
     private final static String STREAM_TYPE = "streamType";
     private final static String DAY_OF_WEEK_STRING = "dayOfWeekString";
     private final static String USER_ID = "user_id";
+    private final static String SCHEDULE_OWNER = "schedule_owner";
 
     @Override
     public int removeAllSchedules() {
@@ -58,6 +60,27 @@ public class ScheduleDaoImpl implements ScheduleDao {
     }
 
     @Override
+    public List<Schedule> readSchedulesByFavoriteId(String favoriteId) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            String whereClause = "user_id = ?";
+            String[] whereArgs = new String[]{favoriteId};
+            Cursor cursor = database.query(SCHEDULES,
+                    null,
+                    whereClause,
+                    whereArgs,
+                    null,
+                    null,
+                    null);
+            return getSchedules(cursor);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+
+    @Override
     public boolean insertAllSchedule(List<Schedule> schedules) {
         try (DataBaseHelper dbHelper = new DataBaseHelper();
              SQLiteDatabase database = dbHelper.getWritableDatabase()) {
@@ -74,6 +97,7 @@ public class ScheduleDaoImpl implements ScheduleDao {
                 contentValues.put(KIND_OF_WORK, schedule.getKindOfWork());
                 contentValues.put(LECTURER, schedule.getLecturer());
                 contentValues.put(STREAM_TYPE, schedule.getStreamType());
+                contentValues.put(USER_ID, schedule.getFavoriteId());
                 contentValues.put(DAY_OF_WEEK_STRING, schedule.getDayOfWeekString());
                 database.insert(SCHEDULES, null, contentValues);
             }
@@ -85,54 +109,12 @@ public class ScheduleDaoImpl implements ScheduleDao {
     }
 
     @Override
-    public boolean insertFavoriteSchedule(String value) {
+    public int removeSchedulesByFavoriteId(String favoriteId) {
         try (DataBaseHelper dbHelper = new DataBaseHelper();
              SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            ContentValues contentValues = new ContentValues();
-            contentValues.put("value", value);
-            database.insert("favorite_schedule", null, contentValues);
-            return true;
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    @Override
-    public List<String> readFavoriteSchedule() {
-        try (DataBaseHelper dbHelper = new DataBaseHelper();
-             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            Cursor cursor = database.query("favorite_schedule",
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null);
-            return getFavoriteSchedules(cursor);
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
-    }
-
-    @Override
-    public int removeAllFavoriteSchedules() {
-        try (DataBaseHelper dbHelper = new DataBaseHelper();
-             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            return database.delete("favorite_schedule", null, null);
-        } catch (NullPointerException e) {
-            return -1;
-        }
-    }
-
-    @Override
-    public int removeFavoriteSchedule(String value) {
-        try (DataBaseHelper dbHelper = new DataBaseHelper();
-             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-            String whereClause = "value = ?";
-            String[] whereArgs = new String[]{value};
-            return database.delete("favorite_schedule", whereClause, whereArgs);
+            String whereClause = "user_id = ?";
+            String[] whereArgs = new String[]{favoriteId};
+            return database.delete(SCHEDULES, whereClause, whereArgs);
         } catch (NullPointerException e) {
             return -1;
         }
@@ -153,6 +135,7 @@ public class ScheduleDaoImpl implements ScheduleDao {
             int lecturerColIndex = cursor.getColumnIndex(LECTURER);
             int streamTypeColIndex = cursor.getColumnIndex(STREAM_TYPE);
             int dayOfWeekStringColIndex = cursor.getColumnIndex(DAY_OF_WEEK_STRING);
+            int favoriteIdStringColIndex = cursor.getColumnIndex(USER_ID);
             do {
                 String auditorium = cursor.getString(auditoriumColIndex);
                 String beginLesson = cursor.getString(beginLessonColIndex);
@@ -166,6 +149,7 @@ public class ScheduleDaoImpl implements ScheduleDao {
                 String dayOfWeekString = cursor.getString(dayOfWeekStringColIndex);
                 String date = cursor.getString(dateColIndex);
                 int dayOfWeek = cursor.getInt(dayOfWeekColIndex);
+                int favoriteId = cursor.getInt(favoriteIdStringColIndex);
                 schedules.add(new Schedule(
                         auditorium,
                         beginLesson,
@@ -178,7 +162,8 @@ public class ScheduleDaoImpl implements ScheduleDao {
                         kindOfWork,
                         lecturer,
                         streamType,
-                        dayOfWeekString
+                        dayOfWeekString,
+                        favoriteId
                 ));
             } while (cursor.moveToNext());
         }
@@ -186,16 +171,106 @@ public class ScheduleDaoImpl implements ScheduleDao {
         return schedules;
     }
 
-    private List<String> getFavoriteSchedules(Cursor cursor) {
-        List<String> schedules = new ArrayList<>();
+    @Override
+    public boolean insertFavoriteSchedule(ScheduleOwner scheduleOwner) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("owner_id", scheduleOwner.getId());
+            contentValues.put("type", scheduleOwner.getType());
+            contentValues.put("name", scheduleOwner.getName());
+            database.insert(SCHEDULE_OWNER, null, contentValues);
+            return true;
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public List<ScheduleOwner> readFavoriteSchedule() {
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            Cursor cursor = database.query(SCHEDULE_OWNER,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null);
+            return getFavoriteSchedules(cursor);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
+    public int removeAllFavoriteSchedules() {
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            return database.delete(SCHEDULE_OWNER, null, null);
+        } catch (NullPointerException e) {
+            return -1;
+        }
+    }
+
+    @Override
+    public int removeFavoriteSchedule(ScheduleOwner scheduleOwner) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            String whereClause = "name = ?";
+            String[] whereArgs = new String[]{scheduleOwner.getName()};
+            return database.delete(SCHEDULE_OWNER, whereClause, whereArgs);
+        } catch (NullPointerException e) {
+            return -1;
+        }
+    }
+
+
+    private List<ScheduleOwner> getFavoriteSchedules(Cursor cursor) {
+        List<ScheduleOwner> scheduleOwners = new ArrayList<>();
         if (cursor.moveToFirst()) {
-            int valueColIndex = cursor.getColumnIndex("value");
+            int idColIndex = cursor.getColumnIndex("owner_id");
+            int typeColIndex = cursor.getColumnIndex("type");
+            int nameColIndex = cursor.getColumnIndex("name");
             do {
-                String value = cursor.getString(valueColIndex);
-                schedules.add(value);
+                String type = cursor.getString(typeColIndex);
+                String name = cursor.getString(nameColIndex);
+                int owner_id = cursor.getInt(idColIndex);
+                scheduleOwners.add(new ScheduleOwner(owner_id, name, type));
             } while (cursor.moveToNext());
         }
         cursor.close();
-        return schedules;
+        return scheduleOwners;
+    }
+
+    @Override
+    public ScheduleOwner getFavoriteScheduleByValue(String value) {
+        try (DataBaseHelper dbHelper = new DataBaseHelper();
+             SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            String whereClause = "name = ?";
+            String[] whereArgs = new String[]{value};
+            Cursor cursor = database.query(SCHEDULE_OWNER,
+                    null,
+                    whereClause,
+                    whereArgs,
+                    null,
+                    null,
+                    null);
+            if (cursor.moveToFirst()) {
+                int idColIndex = cursor.getColumnIndex("owner_id");
+                int typeColIndex = cursor.getColumnIndex("type");
+                int nameColIndex = cursor.getColumnIndex("name");
+                String type = cursor.getString(typeColIndex);
+                String name = cursor.getString(nameColIndex);
+                int owner_id = cursor.getInt(idColIndex);
+                return new ScheduleOwner(owner_id, name, type);
+            }
+            cursor.close();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

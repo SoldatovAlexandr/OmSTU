@@ -8,13 +8,16 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.omstugradebook.R;
 import com.example.omstugradebook.database.DataBaseManager;
+import com.example.omstugradebook.database.dao.ScheduleDao;
 import com.example.omstugradebook.database.dao.SubjectDao;
 import com.example.omstugradebook.database.dao.UserDao;
 import com.example.omstugradebook.model.grade.GradeBook;
 import com.example.omstugradebook.model.grade.Subject;
 import com.example.omstugradebook.model.grade.Term;
 import com.example.omstugradebook.model.grade.User;
+import com.example.omstugradebook.model.schedule.ScheduleOwner;
 import com.example.omstugradebook.service.AuthService;
+import com.example.omstugradebook.service.ScheduleService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +44,15 @@ public class LoginViewModel extends ViewModel {
             new LoginSender().execute(login, password);
         } else {
             errorLiveData.postValue(R.string.thisUserIsAlreadyLoggedIn);
+        }
+    }
+
+    private void insertScheduleOwner(String group) {
+        ScheduleService scheduleService = new ScheduleService();
+        List<ScheduleOwner> scheduleOwners = scheduleService.getScheduleOwners(group, true);
+        ScheduleDao scheduleDao = DataBaseManager.getScheduleDao();
+        if (!scheduleOwners.isEmpty()) {
+            scheduleDao.insertFavoriteSchedule(scheduleOwners.get(0));
         }
     }
 
@@ -90,6 +102,7 @@ public class LoginViewModel extends ViewModel {
                     UserDao userDao = DataBaseManager.getUserDao();
                     userDao.insert(user);
                     subjectDao.insertAllSubjects(subjects);
+                    insertScheduleOwner(user.getStudent().getSpeciality());
                 } else {
                     errorLiveData.postValue(R.string.serverException);
                 }

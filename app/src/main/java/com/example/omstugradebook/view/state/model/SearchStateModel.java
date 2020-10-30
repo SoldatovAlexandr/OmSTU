@@ -1,4 +1,4 @@
-package com.example.omstugradebook.view.activity.model;
+package com.example.omstugradebook.view.state.model;
 
 import com.example.omstugradebook.model.schedule.ScheduleOwner;
 
@@ -12,7 +12,6 @@ public class SearchStateModel {
     public SearchStateModel(ScheduleOwner scheduleOwner, Calendar calendar) {
         this.scheduleOwner = scheduleOwner;
         this.calendar = calendar;
-
     }
 
     public ScheduleOwner getScheduleOwner() {

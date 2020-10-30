@@ -15,8 +15,12 @@ public class Schedule {
     private final String lecturer;
     private final String streamType;
     private final String dayOfWeekString;
+    private long favoriteId;
 
-    public Schedule(String auditorium, String beginLesson, String building, String date, int dayOfWeek, String detailInfo, String discipline, String endLesson, String kindOfWork, String lecturer, String streamType, String dayOfWeekString) {
+    public Schedule(String auditorium, String beginLesson, String building, String date,
+                    int dayOfWeek, String detailInfo, String discipline, String endLesson,
+                    String kindOfWork, String lecturer, String streamType, String dayOfWeekString,
+                    long favoriteId) {
         this.auditorium = auditorium;
         this.beginLesson = beginLesson;
         this.building = building;
@@ -29,6 +33,22 @@ public class Schedule {
         this.lecturer = lecturer;
         this.streamType = streamType;
         this.dayOfWeekString = dayOfWeekString;
+        this.favoriteId = favoriteId;
+    }
+
+    public Schedule(String auditorium, String beginLesson, String building, String date,
+                    int dayOfWeek, String detailInfo, String discipline, String endLesson,
+                    String kindOfWork, String lecturer, String streamType, String dayOfWeekString) {
+        this(auditorium, beginLesson, building, date, dayOfWeek, detailInfo, discipline, endLesson,
+                kindOfWork, lecturer, streamType, dayOfWeekString, 0);
+    }
+
+    public long getFavoriteId() {
+        return favoriteId;
+    }
+
+    public void setFavoriteId(long favoriteId) {
+        this.favoriteId = favoriteId;
     }
 
     public String getDayOfWeekString() {

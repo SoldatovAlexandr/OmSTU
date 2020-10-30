@@ -1,5 +1,6 @@
 package com.example.omstugradebook.service;
 
+import com.example.omstugradebook.database.DataBaseManager;
 import com.example.omstugradebook.dto.ScheduleConverter;
 import com.example.omstugradebook.dto.ScheduleDtoResponse;
 import com.example.omstugradebook.dto.ScheduleOwnersDtoResponse;
@@ -14,14 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScheduleService {
-    private ScheduleConverter builder = new ScheduleConverter();
+    private final ScheduleConverter builder = new ScheduleConverter();
 
     public List<Schedule> getTimetable(String id, String start, String finish, String type, int lang) {
         String requestParam = getRequestParam(id, start, finish, type, lang);
         List<Schedule> scheduleList = new ArrayList<>();
         try {
             String API_URL = "https://rasp.omgtu.ru/api/schedule/";
-            String response = Jsoup.connect(API_URL + requestParam).ignoreContentType(true).get().text();
+            String requestString = API_URL + requestParam;
+            String response = Jsoup.connect(requestString).ignoreContentType(true).get().text();
             Gson gson = new Gson();
             ScheduleDtoResponse[] dtoResponses = gson.fromJson(response, ScheduleDtoResponse[].class);
             for (ScheduleDtoResponse dtoResponse : dtoResponses) {
@@ -38,16 +40,20 @@ public class ScheduleService {
     }
 
 
-    public List<ScheduleOwner> getScheduleOwners(String param) {
-        try {
-            String response = Jsoup.connect("https://rasp.omgtu.ru/api/search?term=" + param.trim())
-                    .ignoreContentType(true).get().text();
-            Gson gson = new Gson();
-            ScheduleOwnersDtoResponse[] dtoResponses = gson.fromJson(response, ScheduleOwnersDtoResponse[].class);
-            return convert(dtoResponses);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+    public List<ScheduleOwner> getScheduleOwners(String param, boolean hasInternet) {
+        if (hasInternet) {
+            try {
+                String response = Jsoup.connect("https://rasp.omgtu.ru/api/search?term=" + param.trim())
+                        .ignoreContentType(true).get().text();
+                Gson gson = new Gson();
+                ScheduleOwnersDtoResponse[] dtoResponses = gson.fromJson(response, ScheduleOwnersDtoResponse[].class);
+                return convert(dtoResponses);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return DataBaseManager.getScheduleDao().readFavoriteSchedule();
+            }
+        } else {
+            return DataBaseManager.getScheduleDao().readFavoriteSchedule();
         }
     }
 

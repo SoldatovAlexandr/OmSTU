@@ -6,9 +6,9 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.omstugradebook.database.DataBaseManager;
 import com.example.omstugradebook.database.dao.ScheduleDao;
-import com.example.omstugradebook.database.dao.UserDao;
-import com.example.omstugradebook.model.grade.User;
-import com.example.omstugradebook.view.activity.model.SearchStateModel;
+import com.example.omstugradebook.model.schedule.ScheduleOwner;
+import com.example.omstugradebook.view.state.model.DataCashRepository;
+import com.example.omstugradebook.view.state.model.SearchStateModel;
 
 import java.util.List;
 
@@ -17,7 +17,6 @@ public class SearchViewModel extends ViewModel {
     private final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> changeLikeImageLiveData = new MutableLiveData<>();
 
-    private static SearchStateModel mSearchStateModel;
 
     public LiveData<String> getUserGroupLiveData() {
         return userGroupLiveData;
@@ -33,37 +32,21 @@ public class SearchViewModel extends ViewModel {
     }
 
     public void getUserGroup() {
-        if (mSearchStateModel != null) {
-            userGroupLiveData.postValue(mSearchStateModel.getScheduleOwner().getName());
-            return;
-        }
-        List<String> favoriteSchedules = getAllFavoriteSchedule();
+        userGroupLiveData.postValue(getCash().getScheduleOwner().getName());
+
+        List<ScheduleOwner> favoriteSchedules = getAllFavoriteSchedule();
         if (!favoriteSchedules.isEmpty()) {
-            userGroupLiveData.postValue(favoriteSchedules.get(0));
-            return;
-        }
-        UserDao userDao = DataBaseManager.getUserDao();
-        User user = userDao.getUser();
-        if (user != null && user.getStudent().getSpeciality() != null) {
-            userGroupLiveData.postValue(user.getStudent().getSpeciality());
+            userGroupLiveData.postValue(favoriteSchedules.get(0).getName());
         }
     }
 
-    public void saveSearchState(SearchStateModel searchStateModel) {
-        mSearchStateModel = searchStateModel;
-    }
-
-    public SearchStateModel getSearchState() {
-        return mSearchStateModel;
-    }
-
-    public List<String> getAllFavoriteSchedule() {
+    public List<ScheduleOwner> getAllFavoriteSchedule() {
         ScheduleDao scheduleDao = DataBaseManager.getScheduleDao();
         return scheduleDao.readFavoriteSchedule();
     }
 
-    public void changeFavoriteSchedule(String value, boolean like) {
-        if (value.isEmpty()) {
+    public void changeFavoriteSchedule(ScheduleOwner scheduleOwner, boolean like) {
+        if (scheduleOwner == null) {
             errorLiveData.postValue("Выберите рассписание,\n чтобы его сохранить!");
             if (like) {
                 changeLikeImageLiveData.postValue(false);
@@ -71,11 +54,19 @@ public class SearchViewModel extends ViewModel {
         } else {
             ScheduleDao scheduleDao = DataBaseManager.getScheduleDao();
             if (like) {
-                scheduleDao.removeFavoriteSchedule(value);
+                scheduleDao.removeFavoriteSchedule(scheduleOwner);
             } else {
-                scheduleDao.insertFavoriteSchedule(value);
+                scheduleDao.insertFavoriteSchedule(scheduleOwner);
             }
             changeLikeImageLiveData.postValue(!like);
         }
+    }
+
+    public SearchStateModel getCash() {
+        return DataCashRepository.getInstance().getSearchStateModel();
+    }
+
+    public void saveSearchState(SearchStateModel searchStateModel) {
+        DataCashRepository.getInstance().saveSearchStateModel(searchStateModel);
     }
 }

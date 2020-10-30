@@ -1,6 +1,7 @@
 package com.example.omstugradebook.database.dao;
 
 import com.example.omstugradebook.model.schedule.Schedule;
+import com.example.omstugradebook.model.schedule.ScheduleOwner;
 
 import java.util.List;
 
@@ -9,13 +10,23 @@ public interface ScheduleDao {
 
     List<Schedule> readAllSchedules();
 
+    ScheduleOwner getFavoriteScheduleByValue(String value);
+
     boolean insertAllSchedule(List<Schedule> schedules);
 
-    boolean insertFavoriteSchedule(String value);
+    //schedule owners
 
-    List<String> readFavoriteSchedule();
+    boolean insertFavoriteSchedule(ScheduleOwner scheduleOwner);
+
+    List<ScheduleOwner> readFavoriteSchedule();
 
     int removeAllFavoriteSchedules();
 
-    int removeFavoriteSchedule(String value);
+    int removeFavoriteSchedule(ScheduleOwner scheduleOwner);
+
+    int removeSchedulesByFavoriteId(String favoriteId);
+
+    List<Schedule> readSchedulesByFavoriteId(String favoriteId);
 }
+
+

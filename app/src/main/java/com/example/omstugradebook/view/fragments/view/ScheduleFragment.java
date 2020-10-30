@@ -48,6 +48,12 @@ public class ScheduleFragment extends Fragment implements Updatable {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        timeTableViewModel.getSchedules();
+    }
+
+    @Override
     public void update() {
     }
 
@@ -100,6 +106,7 @@ public class ScheduleFragment extends Fragment implements Updatable {
         Calendar calendar = new GregorianCalendar(year, month, dayOfMonth);
         String id = intent.getStringExtra("id");
         String type = intent.getStringExtra("type");
-        timeTableViewModel.getSchedules(calendar, id, type);
+        String param = intent.getStringExtra("param");
+        timeTableViewModel.getSchedules(calendar, id, type, param);
     }
 }

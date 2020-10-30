@@ -21,14 +21,20 @@ import java.util.List;
 public class ScheduleTypeAutoComponentAdapter extends BaseAdapter implements Filterable {
     private final List<ScheduleAutoCompleteModel> scheduleAutoCompleteModels = new ArrayList<>();
     private final Context mContext;
+    private final boolean mHasInternet;
 
 
-    public ScheduleTypeAutoComponentAdapter(Context context) {
+    public ScheduleTypeAutoComponentAdapter(Context context, boolean hasInternet) {
         mContext = context;
+        mHasInternet = hasInternet;
     }
 
-    private void setResults(List<ScheduleOwner> scheduleOwners, List<String> favoriteStrings) {
+    private void setResults(List<ScheduleOwner> scheduleOwners, List<ScheduleOwner> favoriteScheduleOwners) {
         scheduleAutoCompleteModels.clear();
+        List<String> favoriteStrings = new ArrayList<>();
+        for (ScheduleOwner scheduleOwner : favoriteScheduleOwners) {
+            favoriteStrings.add(scheduleOwner.getName());
+        }
         for (ScheduleOwner scheduleOwner : scheduleOwners) {
             if (favoriteStrings.contains(scheduleOwner.getName())) {
                 scheduleAutoCompleteModels.add(new ScheduleAutoCompleteModel(scheduleOwner, true));
@@ -91,9 +97,9 @@ public class ScheduleTypeAutoComponentAdapter extends BaseAdapter implements Fil
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
                 ScheduleDao scheduleDao = DataBaseManager.getScheduleDao();
-                List<String> favoriteSchedules = scheduleDao.readFavoriteSchedule();
+                List<ScheduleOwner> scheduleOwners = scheduleDao.readFavoriteSchedule();
                 if (results != null && results.count > 0) {
-                    setResults((List<ScheduleOwner>) results.values, favoriteSchedules);
+                    setResults((List<ScheduleOwner>) results.values, scheduleOwners);
                     notifyDataSetChanged();
                 } else {
                     notifyDataSetInvalidated();
@@ -103,6 +109,6 @@ public class ScheduleTypeAutoComponentAdapter extends BaseAdapter implements Fil
     }
 
     private List<ScheduleOwner> findScheduleOwners(String param) {
-        return new ScheduleService().getScheduleOwners(param);
+        return new ScheduleService().getScheduleOwners(param, mHasInternet);
     }
 }

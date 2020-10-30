@@ -6,8 +6,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.example.omstugradebook.OmSTUApplication;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
+    private static final String OMSTU_DB = "OmSTU_DB";
+
     public DataBaseHelper() {
-        super(OmSTUApplication.getContext(), "OmSTU_DB", null, 1);
+        super(OmSTUApplication.getContext(), OMSTU_DB, null, 1);
     }
 
     @Override
@@ -67,11 +69,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 + "dayOfWeekString text,"
                 + "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE" + ");");
 
-        db.execSQL("create table favorite_schedule ("
+        db.execSQL("create table schedule_owner ("
                 + "id integer primary key autoincrement,"
-                + "user_id integer,"
-                + "value text," +
-                "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE" + ");");
+                + "owner_id integer,"
+                + "type text," +
+                "name text" + ");");
     }
 
     @Override

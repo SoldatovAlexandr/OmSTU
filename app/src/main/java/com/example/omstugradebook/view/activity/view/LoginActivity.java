@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Toast.makeText(this, "Вы неавторизованы!", Toast.LENGTH_SHORT).show();
+        showToastMessage(R.string.youAreNotLogin);
     }
 
     private void initFields() {
@@ -62,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void validationFieldsForSignIn(String login, String password) {
         if (login.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, R.string.emptyFields, Toast.LENGTH_SHORT).show();
+            showToastMessage(R.string.emptyFields);
             buttonOk.setEnabled(true);
         }
     }
@@ -76,5 +76,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private void showToastMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void showToastMessage(int id) {
+        showToastMessage(getString(id));
     }
 }

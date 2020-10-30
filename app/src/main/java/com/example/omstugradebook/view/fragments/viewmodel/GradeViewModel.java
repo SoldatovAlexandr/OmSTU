@@ -26,6 +26,7 @@ public class GradeViewModel extends ViewModel {
     public LiveData<String> getErrorLiveData() {
         return errorLiveData;
     }
+
     public LiveData<GradeModel> getSubjectsLiveData() {
         return gradeLiveData;
     }

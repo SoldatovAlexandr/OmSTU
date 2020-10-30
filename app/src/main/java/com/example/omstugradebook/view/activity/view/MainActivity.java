@@ -1,5 +1,6 @@
 package com.example.omstugradebook.view.activity.view;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -19,7 +20,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView navigation;
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+    private static final int REQUEST_CODE = 1;
+
+    @SuppressLint("NonConstantResourceId")
+    private final BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = item -> {
         if (item.getItemId() == navigation.getSelectedItemId()) {
             return false;
@@ -56,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void startLoginActivity() {
         Intent intent = new Intent(this, LoginActivity.class);
-        startActivityForResult(intent, 1);
+        startActivityForResult(intent, REQUEST_CODE);
     }
 
     private void loadFragment(Fragment fragment) {
