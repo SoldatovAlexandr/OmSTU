@@ -27,7 +27,6 @@ public class ContactWorkParserImpl {
     }
 
     private ContactWorksTask getContactWorksTask(Element element) {
-        System.out.println(element);
         List<Element> elementList = new ArrayList<>(element.select("td"));
         int number = Integer.parseInt(elementList.get(0).text());
         String comment = elementList.get(1).text();
@@ -39,6 +38,7 @@ public class ContactWorkParserImpl {
         }
         String date = elementList.get(3).text();
         String teacher = elementList.get(4).text();
+        //тут пиздец
         return new ContactWorksTask(number, comment, teacher, file, date, link);
     }
 

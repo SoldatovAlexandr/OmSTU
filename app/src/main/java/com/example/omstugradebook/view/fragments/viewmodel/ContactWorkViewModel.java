@@ -16,8 +16,8 @@ import com.example.omstugradebook.view.fragments.model.ContactWorkModel;
 import java.util.List;
 
 public class ContactWorkViewModel extends ViewModel {
-    private MutableLiveData<ContactWorkModel> contactWorkModelLiveData = new MutableLiveData<>();
-    private MutableLiveData<String> errorLiveData = new MutableLiveData<>();
+    private final MutableLiveData<ContactWorkModel> contactWorkModelLiveData = new MutableLiveData<>();
+    private final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
 
     public MutableLiveData<ContactWorkModel> getContactWorkLiveData() {
         return contactWorkModelLiveData;

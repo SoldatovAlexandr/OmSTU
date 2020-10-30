@@ -66,7 +66,7 @@ public class ContactWorkTasksActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 cwViewModel.startDownloading(task, this);
             } else {
-                Toast.makeText(this, "Система отказывает в доступе!", Toast.LENGTH_SHORT).show();
+                showToast("Система отказывает в доступе!");
             }
         }
     }
