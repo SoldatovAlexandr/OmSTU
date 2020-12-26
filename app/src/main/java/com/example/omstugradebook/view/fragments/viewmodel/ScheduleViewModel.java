@@ -1,8 +1,9 @@
 package com.example.omstugradebook.view.fragments.viewmodel;
 
 import android.annotation.SuppressLint;
-import android.os.AsyncTask;
+import android.os.Build;
 
+import androidx.annotation.RequiresApi;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -22,11 +23,15 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class ScheduleViewModel extends ViewModel {
     private static final DataCashRepository DATA_CASH_REPOSITORY = DataCashRepository.getInstance();
+
     private final MutableLiveData<TimetableModel> timetableLiveData = new MutableLiveData<>();
+
     private final MutableLiveData<Integer> infoLiveData = new MutableLiveData<>();
+
     private final MutableLiveData<String> titleLiveData = new MutableLiveData<>();
 
 
@@ -42,6 +47,7 @@ public class ScheduleViewModel extends ViewModel {
         return titleLiveData;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void getSchedules() {
         List<Schedule> cash = DATA_CASH_REPOSITORY.getScheduleStateModel().getSchedules();
         timetableLiveData.postValue(new TimetableModel(cash));
@@ -52,6 +58,7 @@ public class ScheduleViewModel extends ViewModel {
                 scheduleOwner.getName());
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void getSchedules(Calendar calendar, String id, String type, String param) {
         titleLiveData.postValue("Расписание");
         ScheduleDao scheduleDao = DataBaseManager.getScheduleDao();
@@ -68,8 +75,21 @@ public class ScheduleViewModel extends ViewModel {
 
         Calendar start = getStartCalendar(calendar);
         Calendar finish = getFinishCalendar(start);
-        new OmSTUSender().execute(getDateString(start),
-                getDateString(finish), id, type, String.valueOf(favoriteId), param);
+        sendRequest(getDateString(start), getDateString(finish), id, type, String.valueOf(favoriteId), param);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void sendRequest(String start, String finish, String id, String type, String favoriteId,
+                             String param) {
+
+        CompletableFuture.runAsync(() -> {
+            ScheduleService scheduleService = new ScheduleService();
+            User user = DataBaseManager.getUserDao().getUser();
+            if (user != null) {
+                sendScheduleLiveData(scheduleService, id, start, finish, type, favoriteId, param);
+            }
+        });
+
     }
 
     private boolean checkFavorite(String param, ScheduleDao scheduleDao) {
@@ -127,41 +147,6 @@ public class ScheduleViewModel extends ViewModel {
             TimetableModel timetableModel = new TimetableModel(schedules);
             timetableLiveData.postValue(timetableModel);
             DATA_CASH_REPOSITORY.saveScheduleStateModel(new ScheduleStateModel(schedules));
-        }
-    }
-
-    //TODO: выпилить это
-    private String checkId(String id, String param) {
-        if (id.isEmpty()) {
-            List<ScheduleOwner> scheduleOwners = new ScheduleService().getScheduleOwners(param, true);
-            if (!scheduleOwners.isEmpty()) {
-                return String.valueOf(scheduleOwners.get(0).getId());
-            } else {
-                return "0";
-            }
-        } else {
-            return id;
-        }
-    }
-
-
-    class OmSTUSender extends AsyncTask<String, String, String> {
-
-        @Override
-        protected String doInBackground(String... strings) {
-            String start = strings[0];
-            String finish = strings[1];
-            String id = strings[2];
-            String type = strings[3];
-            String favoriteId = strings[4];
-            String param = strings[5];
-            ScheduleService scheduleService = new ScheduleService();
-            User user = DataBaseManager.getUserDao().getUser();
-            if (user != null) {
-                id = checkId(id, param);
-                sendScheduleLiveData(scheduleService, id, start, finish, type, favoriteId, param);
-            }
-            return null;
         }
     }
 }

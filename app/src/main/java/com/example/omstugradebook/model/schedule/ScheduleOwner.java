@@ -1,5 +1,7 @@
 package com.example.omstugradebook.model.schedule;
 
+import androidx.annotation.NonNull;
+
 import java.util.Objects;
 
 public class ScheduleOwner {
@@ -39,7 +41,7 @@ public class ScheduleOwner {
     public int hashCode() {
         return Objects.hash(id, name, type);
     }
-
+    
     @Override
     public String toString() {
         return "ScheduleOwner{" +

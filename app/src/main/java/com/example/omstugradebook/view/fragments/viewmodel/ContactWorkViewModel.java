@@ -1,7 +1,8 @@
 package com.example.omstugradebook.view.fragments.viewmodel;
 
-import android.os.AsyncTask;
+import android.os.Build;
 
+import androidx.annotation.RequiresApi;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -14,9 +15,11 @@ import com.example.omstugradebook.service.ContactWorkService;
 import com.example.omstugradebook.view.fragments.model.ContactWorkModel;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class ContactWorkViewModel extends ViewModel {
     private final MutableLiveData<ContactWorkModel> contactWorkModelLiveData = new MutableLiveData<>();
+
     private final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
 
     public MutableLiveData<ContactWorkModel> getContactWorkLiveData() {
@@ -29,39 +32,36 @@ public class ContactWorkViewModel extends ViewModel {
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void getContactWorks() {
         UserDao userDao = DataBaseManager.getUserDao();
         User activeUser = userDao.getUser();
         if (activeUser != null) {
             ContactWorkDao contactWorkDao = DataBaseManager.getContactWorkDao();
-            List<ContactWork> contactWorks = contactWorkDao.readAllToContactWork();
-            if (contactWorks != null) {
-                contactWorkModelLiveData.postValue(new ContactWorkModel(contactWorks));
+            List<ContactWork> contactWorksFromDB = contactWorkDao.readAllToContactWork();
+            if (contactWorksFromDB != null) {
+                contactWorkModelLiveData.postValue(new ContactWorkModel(contactWorksFromDB));
             }
-            new OmSTUSender().execute();
+
+            CompletableFuture
+                    .supplyAsync(() -> {
+                        ContactWorkService contactWorkService = new ContactWorkService();
+                        return contactWorkService.getContactWork();
+                    })
+                    .exceptionally(ex -> {
+                        ex.printStackTrace();
+                        errorLiveData.postValue("Возникли проблемы на сервере");
+                        return null;
+                    })
+                    .thenAccept(contactWorks -> {
+                        if (contactWorks != null && !contactWorks.equals(contactWorksFromDB)) {
+                            contactWorkModelLiveData.postValue(new ContactWorkModel(contactWorks));
+                            contactWorkDao.removeAllToContactWork();
+                            contactWorkDao.insertAllToContactWork(contactWorks);
+                        }
+                    });
         } else {
             errorLiveData.postValue("Чтобы пользоваться контактной работой, войдите в аккаунт.");
-        }
-    }
-
-    class OmSTUSender extends AsyncTask<String, String, String> {
-
-        @Override
-        protected String doInBackground(String... strings) {
-            ContactWorkService contactWorkService = new ContactWorkService();
-            ContactWorkDao contactWorkDao = DataBaseManager.getContactWorkDao();
-            List<ContactWork> contactWorksFromDB = contactWorkDao.readAllToContactWork();
-            List<ContactWork> contactWorks = contactWorkService.getContactWork();
-            if (contactWorks == null) {
-                errorLiveData.postValue("Возникли проблемы на сервере");
-            } else {
-                if (!contactWorksFromDB.equals(contactWorks)) {
-                    contactWorkModelLiveData.postValue(new ContactWorkModel(contactWorks));
-                    contactWorkDao.removeAllToContactWork();
-                    contactWorkDao.insertAllToContactWork(contactWorks);
-                }
-            }
-            return null;
         }
     }
 }

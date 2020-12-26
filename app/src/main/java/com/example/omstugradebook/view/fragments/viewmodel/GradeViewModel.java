@@ -1,14 +1,14 @@
 package com.example.omstugradebook.view.fragments.viewmodel;
 
-import android.os.AsyncTask;
+import android.os.Build;
 
+import androidx.annotation.RequiresApi;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.omstugradebook.database.DataBaseManager;
 import com.example.omstugradebook.database.dao.SubjectDao;
-import com.example.omstugradebook.model.grade.GradeBook;
 import com.example.omstugradebook.model.grade.Subject;
 import com.example.omstugradebook.model.grade.Term;
 import com.example.omstugradebook.model.grade.User;
@@ -17,6 +17,7 @@ import com.example.omstugradebook.view.fragments.model.GradeModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class GradeViewModel extends ViewModel {
     private final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
@@ -35,7 +36,8 @@ public class GradeViewModel extends ViewModel {
         return titleLiveData;
     }
 
-    public void getSubjects(String selectTerm) {
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void getSubjects(int selectTerm) {
         User activeUser = DataBaseManager.getUserDao().getUser();
         if (activeUser == null) {
             errorLiveData.postValue("Пожалуйста, войдите в ваш аккаует, чтобы пользоваться системой");
@@ -43,10 +45,36 @@ public class GradeViewModel extends ViewModel {
             SubjectDao subjectDao = DataBaseManager.getSubjectDao();
             long id = activeUser.getId();
             List<Subject> subjectsFromDB = subjectDao.readAllSubjects();
-            GradeModel gradeModel = makeGradeModel(subjectsFromDB, Integer.parseInt(selectTerm), subjectDao.getCountTerm());
+            GradeModel gradeModel = makeGradeModel(subjectsFromDB, selectTerm, subjectDao.getCountTerm());
             gradeLiveData.postValue(gradeModel);
-            new OmSTUSender().execute(selectTerm, String.valueOf(id));
+            sendRequest(selectTerm, id);
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void sendRequest(int selectTerm, long id) {
+
+        CompletableFuture.supplyAsync(() -> new AuthService().getGradeBook())
+                .thenAccept(gradeBook -> {
+                            if (gradeBook == null) {
+                                errorLiveData.postValue("Проблемы с подключением к серверу ОмГТУ");
+                            } else {
+                                SubjectDao subjectDao = DataBaseManager.getSubjectDao();
+                                List<Subject> subjectsFromDB = subjectDao.readAllSubjects();
+                                List<Subject> subjects = getSubjects(gradeBook.getTerms());
+                                for (Subject subject : subjects) {
+                                    subject.setUserId(id);
+                                }
+                                if (!subjects.equals(subjectsFromDB)) {
+                                    subjectDao.readAllSubjects();
+                                    subjectDao.insertAllSubjects(subjects);
+                                    GradeModel gradeModel = makeGradeModel(subjects, selectTerm,
+                                            subjectDao.getCountTerm());
+                                    gradeLiveData.postValue(gradeModel);
+                                }
+                            }
+                        }
+                );
     }
 
 
@@ -71,31 +99,5 @@ public class GradeViewModel extends ViewModel {
             subjects.addAll(term.getSubjects());
         }
         return subjects;
-    }
-
-    class OmSTUSender extends AsyncTask<String, String, String> {
-        @Override
-        protected String doInBackground(String... strings) {
-            int selectTerm = Integer.parseInt(strings[0]);
-            int id = Integer.parseInt(strings[1]);
-            GradeBook gradeBook = new AuthService().getGradeBook();
-            if (gradeBook == null) {
-                errorLiveData.postValue("Проблемы с подключением к серверу ОмГТУ");
-            } else {
-                SubjectDao subjectDao = DataBaseManager.getSubjectDao();
-                List<Subject> subjectsFromDB = subjectDao.readAllSubjects();
-                List<Subject> subjects = getSubjects(gradeBook.getTerms());
-                for (Subject subject : subjects) {
-                    subject.setUserId(id);
-                }
-                if (!subjects.equals(subjectsFromDB)) {
-                    subjectDao.readAllSubjects();
-                    subjectDao.insertAllSubjects(subjects);
-                    GradeModel gradeModel = makeGradeModel(subjects, selectTerm, subjectDao.getCountTerm());
-                    gradeLiveData.postValue(gradeModel);
-                }
-            }
-            return null;
-        }
     }
 }

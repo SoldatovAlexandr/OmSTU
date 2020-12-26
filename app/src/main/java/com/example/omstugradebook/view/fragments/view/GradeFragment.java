@@ -1,5 +1,6 @@
 package com.example.omstugradebook.view.fragments.view;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,6 +33,7 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     private int countTerms = 0;
     private SwipeRefreshLayout swipeRefreshLayout;
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -50,7 +53,7 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             update(gradeModel.getSubjects());
         });
         gradeViewModel.getTitleLiveData().observe(getViewLifecycleOwner(), this::setTitle);
-        gradeViewModel.getSubjects(String.valueOf(activeTerm));
+        gradeViewModel.getSubjects(activeTerm);
 
         return view;
     }
@@ -64,27 +67,30 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         inflater.inflate(R.menu.term_menu, menu);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         String title = item.getTitle().toString();
         for (int i = 1; i <= countTerms; i++) {
             if (title.equals("Семестр " + i)) {
                 activeTerm = i;
-                gradeViewModel.getSubjects(String.valueOf(i));
+                gradeViewModel.getSubjects(i);
                 return true;
             }
         }
         return super.onOptionsItemSelected(item);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void update() {
         onRefresh();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onRefresh() {
-        gradeViewModel.getSubjects(String.valueOf(activeTerm));
+        gradeViewModel.getSubjects(activeTerm);
     }
 
     private void showToastMessage(String message) {
