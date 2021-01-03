@@ -7,10 +7,12 @@ import java.util.Objects;
 
 public class GradeBook {
     private final List<Term> terms;
+
     private final Student student;
 
     public GradeBook(List<Term> terms, Student student) {
         this.terms = terms;
+
         this.student = student;
     }
 

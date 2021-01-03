@@ -1,48 +1,60 @@
 package com.example.omstugradebook.model.grade;
 
+import androidx.room.Embedded;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import java.util.Objects;
 
+@Entity
 public class User {
+    @PrimaryKey
     private long id;
-    private final String login;
-    private final String password;
+
+    private String login;
+
+    private String password;
+
     private String token;
-    private final Student student;
-    private long isActive;
 
-
-    public User(long id, String login, String password, String token, Student student, long isActive) {
-        this.id = id;
-        this.login = login;
-        this.password = password;
-        this.token = token;
-        this.student = student;
-        this.isActive = isActive;
-    }
+    @Embedded
+    private Student student;
 
     public User(String login, String password, String token, Student student) {
-        this(0, login, password, token, student, 0);
+        this.id = 1;
+
+        this.login = login;
+
+        this.password = password;
+
+        this.token = token;
+
+        this.student = student;
     }
 
 
-    public long getIsActive() {
-        return isActive;
+    public long getId() {
+        return id;
     }
 
-    public void setIsActive(long isActive) {
-        this.isActive = isActive;
-    }
-
-    public Student getStudent() {
-        return student;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getLogin() {
         return login;
     }
 
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
     public String getPassword() {
         return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getToken() {
@@ -53,12 +65,12 @@ public class User {
         this.token = token;
     }
 
-    public long getId() {
-        return id;
+    public Student getStudent() {
+        return student;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setStudent(Student student) {
+        this.student = student;
     }
 
     @Override
@@ -69,7 +81,6 @@ public class User {
                 ", password='" + password + '\'' +
                 ", token='" + token + '\'' +
                 ", student=" + student +
-                ", isActive=" + isActive +
                 '}';
     }
 

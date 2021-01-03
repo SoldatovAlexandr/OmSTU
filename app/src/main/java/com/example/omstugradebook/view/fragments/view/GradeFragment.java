@@ -21,16 +21,19 @@ import com.example.omstugradebook.R;
 import com.example.omstugradebook.model.grade.Subject;
 import com.example.omstugradebook.recyclerview.adapter.GradeRVAdapter;
 import com.example.omstugradebook.recyclerview.holder.subject.SubjectContentHolderConverter;
-import com.example.omstugradebook.view.fragments.Updatable;
 import com.example.omstugradebook.view.fragments.viewmodel.GradeViewModel;
 
 import java.util.List;
 
-public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, Updatable {
+public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private final GradeRVAdapter adapter = new GradeRVAdapter();
+
     private GradeViewModel gradeViewModel;
+
     private static int activeTerm = 1;
+
     private int countTerms = 0;
+
     private SwipeRefreshLayout swipeRefreshLayout;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -38,21 +41,31 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_grade, container, false);
+
         requireActivity().setTitle("Зачетная книжка");
 
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+
         swipeRefreshLayout.setOnRefreshListener(this);
+
         RecyclerView recyclerView = view.findViewById(R.id.rv);
+
         recyclerView.setAdapter(adapter);
+
         setHasOptionsMenu(true);
 
         gradeViewModel = new ViewModelProvider(this).get(GradeViewModel.class);
+
         gradeViewModel.getErrorLiveData().observe(getViewLifecycleOwner(), this::showToastMessage);
+
         gradeViewModel.getSubjectsLiveData().observe(getViewLifecycleOwner(), gradeModel -> {
             countTerms = gradeModel.getCountTerms();
+
             update(gradeModel.getSubjects());
         });
+
         gradeViewModel.getTitleLiveData().observe(getViewLifecycleOwner(), this::setTitle);
+
         gradeViewModel.getSubjects(activeTerm);
 
         return view;
@@ -71,20 +84,18 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         String title = item.getTitle().toString();
+
         for (int i = 1; i <= countTerms; i++) {
             if (title.equals("Семестр " + i)) {
                 activeTerm = i;
+
                 gradeViewModel.getSubjects(i);
+
                 return true;
             }
         }
-        return super.onOptionsItemSelected(item);
-    }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    @Override
-    public void update() {
-        onRefresh();
+        return super.onOptionsItemSelected(item);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -99,7 +110,9 @@ public class GradeFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
     private void update(List<Subject> subjects) {
         adapter.setSubjects(new SubjectContentHolderConverter(subjects));
+
         swipeRefreshLayout.setRefreshing(false);
+
         adapter.notifyDataSetChanged();
     }
 

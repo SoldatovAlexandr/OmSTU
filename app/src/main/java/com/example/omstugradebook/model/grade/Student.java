@@ -1,17 +1,26 @@
 package com.example.omstugradebook.model.grade;
 
+import androidx.room.Entity;
+
 import java.util.Objects;
 
+@Entity
 public class Student {
-    private final String fullName;
-    private final String numberGradeBook;
-    private final String speciality;
-    private final String educationForm;
+    private String fullName;
+
+    private String numberGradeBook;
+
+    private String speciality;
+
+    private String educationForm;
 
     public Student(String fullName, String numberGradeBook, String speciality, String educationForm) {
         this.fullName = fullName;
+
         this.numberGradeBook = numberGradeBook;
+
         this.speciality = speciality;
+
         this.educationForm = educationForm;
     }
 
@@ -32,6 +41,21 @@ public class Student {
         return educationForm;
     }
 
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public void setNumberGradeBook(String numberGradeBook) {
+        this.numberGradeBook = numberGradeBook;
+    }
+
+    public void setSpeciality(String speciality) {
+        this.speciality = speciality;
+    }
+
+    public void setEducationForm(String educationForm) {
+        this.educationForm = educationForm;
+    }
 
     @Override
     public String toString() {

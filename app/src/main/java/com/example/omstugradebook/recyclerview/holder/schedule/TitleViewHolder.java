@@ -14,6 +14,7 @@ public class TitleViewHolder extends AbstractScheduleHolder {
 
     public TitleViewHolder(@NonNull View itemView) {
         super(itemView);
+
         textView = itemView.findViewById(R.id.title_name);
     }
 

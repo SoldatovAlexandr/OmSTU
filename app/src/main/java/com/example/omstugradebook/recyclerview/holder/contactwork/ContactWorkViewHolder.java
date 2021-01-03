@@ -12,27 +12,40 @@ import com.example.omstugradebook.model.contactwork.ContactWork;
 import com.example.omstugradebook.view.activity.view.ContactWorkTasksActivity;
 
 public class ContactWorkViewHolder extends RecyclerView.ViewHolder {
-    private TextView discipline;
-    private TextView teacher;
-    private TextView numberOfTasks;
-    private ImageView imageView;
+    private final TextView discipline;
+
+    private final TextView teacher;
+
+    private final TextView numberOfTasks;
+
+    private final ImageView imageView;
 
     public ContactWorkViewHolder(View itemView) {
         super(itemView);
+
         discipline = itemView.findViewById(R.id.contact_work_discipline);
+
         teacher = itemView.findViewById(R.id.contact_work_teacher);
+
         numberOfTasks = itemView.findViewById(R.id.contact_work_number_of_tasks);
+
         imageView = itemView.findViewById(R.id.contact_work_taskLink);
     }
 
     public void bind(final ContactWork contactWork) {
         discipline.setText(contactWork.getDiscipline());
+
         teacher.setText(contactWork.getTeacher());
+
         numberOfTasks.setText(contactWork.getNumberOfTasks());
+
         imageView.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), ContactWorkTasksActivity.class);
+
             intent.putExtra("path", contactWork.getTaskLink());
+
             intent.putExtra("discipline", contactWork.getDiscipline());
+
             v.getContext().startActivity(intent);
         });
     }

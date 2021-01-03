@@ -6,17 +6,29 @@ import java.util.Objects;
 public class ScheduleDtoResponse implements Serializable {
 
     private final String auditorium;
+
     private final String beginLesson;
+
     private final String building;
+
     private final String date;
+
     private final int dayOfWeek;
+
     private final String detailInfo;
+
     private final String discipline;
+
     private final String endLesson;
+
     private final String kindOfWork;
+
     private final String lecturer;
+
     private final String stream;
+
     private final String group;
+
     private final String subGroup;
 
     public ScheduleDtoResponse(String auditorium, String beginLesson, String building, String date,

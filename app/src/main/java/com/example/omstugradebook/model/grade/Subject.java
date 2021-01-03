@@ -1,46 +1,71 @@
 package com.example.omstugradebook.model.grade;
 
 import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
+
+import com.example.omstugradebook.model.converter.SubjectTypeConverter;
 
 import java.util.Objects;
 
+@Entity
 public class Subject {
-    private final String name;
-    private final String hours;
-    private final String attendance;//не обязательно
-    private final String tempRating;//не обязательно
-    private final String mark;
-    private final String date;
-    private final String teacher;
-    private final String toDiploma;
-    private final int term;
-    private final SubjectType type;
-    private long userId;
 
-    public Subject(String name, String hours, String attendance, String tempRating, String mark, String date, String teacher, String toDiploma, int term, SubjectType type, int userId) {
+    @PrimaryKey(autoGenerate = true)
+    private long id;
+
+    private String name;
+
+    private String hours;
+
+    private String attendance;
+
+    private String tempRating;
+
+    private String mark;
+
+    private String date;
+
+    private String teacher;
+
+    private String toDiploma;
+
+    private int term;
+
+    @TypeConverters({SubjectTypeConverter.class})
+    private SubjectType type;
+
+    public Subject(String name, String hours, String attendance,
+                   String tempRating, String mark, String date,
+                   String teacher, String toDiploma, int term, SubjectType type) {
         this.name = name;
+
         this.hours = hours;
+
         this.attendance = attendance;
+
         this.tempRating = tempRating;
+
         this.mark = mark;
+
         this.date = date;
+
         this.teacher = teacher;
+
         this.toDiploma = toDiploma;
+
         this.term = term;
+
         this.type = type;
-        this.userId = userId;
     }
 
-    public Subject(String name, String hours, String attendance, String tempRating, String mark, String date, String teacher, String toDiploma, int term, SubjectType type) {
-        this(name, hours, attendance, tempRating, mark, date, teacher, toDiploma, term, type, 0);
+    public long getId() {
+        return id;
     }
 
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public SubjectType getType() {
@@ -90,6 +115,46 @@ public class Subject {
 
     public String getToDiploma() {
         return toDiploma;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setHours(String hours) {
+        this.hours = hours;
+    }
+
+    public void setAttendance(String attendance) {
+        this.attendance = attendance;
+    }
+
+    public void setTempRating(String tempRating) {
+        this.tempRating = tempRating;
+    }
+
+    public void setMark(String mark) {
+        this.mark = mark;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public void setTeacher(String teacher) {
+        this.teacher = teacher;
+    }
+
+    public void setToDiploma(String toDiploma) {
+        this.toDiploma = toDiploma;
+    }
+
+    public void setTerm(int term) {
+        this.term = term;
+    }
+
+    public void setType(SubjectType type) {
+        this.type = type;
     }
 
     @Override

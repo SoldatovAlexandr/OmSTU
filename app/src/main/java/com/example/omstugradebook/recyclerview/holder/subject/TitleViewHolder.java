@@ -14,12 +14,14 @@ public class TitleViewHolder extends GradeViewHolder {
 
     public TitleViewHolder(@NonNull View itemView) {
         super(itemView);
+
         textView = itemView.findViewById(R.id.title_name);
     }
 
     @Override
     public void bind(HolderContent holderContent) {
         TitleHolderContent titleHolderContent = ((TitleHolderContent) holderContent);
+
         textView.setText(titleHolderContent.getTitle());
     }
 }

@@ -9,3 +9,4 @@ Pull requests are welcome. If you want to help, just join [me](https://vk.com/s1
 1. You need to get the cookie from https://omgtu.ru/ecab/index.php?login=yes
 2. Then to get studsessid from https://omgtu.ru/ecab/up.php?student=1
 3. Finally you can get your grades by studsessid https://up.omgtu.ru/index.php?r=student/index
+//C:\Users\Xiaomi L\AndroidStudioProjects\OmSTUGradeBook\app\build\outputs\apk\debug

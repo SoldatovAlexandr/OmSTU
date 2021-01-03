@@ -18,18 +18,26 @@ public class ScheduleContentHolderConverter {
 
     public Map<Integer, HolderContent> getContent() {
         final Map<Integer, HolderContent> contentHolderByPosition = new HashMap<>();
+
         int position = 0;
+
         int currentDay = 0;
+
         for (Schedule schedule : scheduleList) {
             if (schedule.getDayOfWeek() != currentDay) {
                 currentDay = schedule.getDayOfWeek();
+
                 String title = schedule.getDayOfWeekString() + ", " + schedule.getDate();
+
                 contentHolderByPosition.put(position, new TitleHolderContent(title));
+
                 position++;
             }
             contentHolderByPosition.put(position, new ScheduleHolderContent(schedule));
+
             position++;
         }
+
         return contentHolderByPosition;
     }
 }

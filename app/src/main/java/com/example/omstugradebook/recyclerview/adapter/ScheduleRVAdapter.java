@@ -39,14 +39,19 @@ public class ScheduleRVAdapter extends RecyclerView.Adapter<AbstractScheduleHold
     @Override
     public AbstractScheduleHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
+
         ScheduleHolderType scheduleHolderType = ScheduleHolderType.values()[viewType];
+
         switch (scheduleHolderType) {
             case TITLE:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.title_view, parent, false);
+                view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.title_view, parent, false);
+
                 return new TitleViewHolder(view);
             default:
-                SCHEDULE:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.schedule_card_view, parent, false);
+                view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.schedule_card_view, parent, false);
+
                 return new ScheduleViewHolder(view);
         }
     }

@@ -15,15 +15,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContactWorkListRVAdapter extends RecyclerView.Adapter<ContactWorkListViewHolder> {
-    private final List<ContactWorksTask> contactWorksTasksList = new ArrayList<>();
+    private final List<ContactWorksTask> contactWorksTasksList;
+
     private final View.OnClickListener listener;
+
 
     public ContactWorkListRVAdapter(View.OnClickListener listener) {
         this.listener = listener;
+        contactWorksTasksList = new ArrayList<>();
     }
 
     public void setContactWorksTasksList(List<ContactWorksTask> contactWorksTasksList) {
         this.contactWorksTasksList.clear();
+
         this.contactWorksTasksList.addAll(contactWorksTasksList);
     }
 
@@ -35,6 +39,7 @@ public class ContactWorkListRVAdapter extends RecyclerView.Adapter<ContactWorkLi
     @Override
     public ContactWorkListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_work_list_card, parent, false);
+
         return new ContactWorkListViewHolder(view);
     }
 

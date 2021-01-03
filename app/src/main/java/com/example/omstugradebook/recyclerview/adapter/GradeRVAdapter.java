@@ -26,6 +26,7 @@ public class GradeRVAdapter extends RecyclerView.Adapter<GradeViewHolder> {
 
     public void setSubjects(final SubjectContentHolderConverter subjectContentHolderConverter) {
         this.contentHolderByPosition.clear();
+
         this.contentHolderByPosition.putAll(subjectContentHolderConverter.getContentHolderByPosition());
     }
 
@@ -40,10 +41,14 @@ public class GradeRVAdapter extends RecyclerView.Adapter<GradeViewHolder> {
         View view;
         switch (viewType) {
             case 0:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.subject_card_view, parent, false);
+                view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.subject_card_view, parent, false);
+
                 return new SubjectViewHolder(view);
             default:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.title_view, parent, false);
+                view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.title_view, parent, false);
+
                 return new TitleViewHolder(view);
         }
     }

@@ -4,14 +4,13 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
 
-import com.example.omstugradebook.database.DataBaseManager;
-import com.example.omstugradebook.database.daoimpl.UserDaoImpl;
+import com.example.omstugradebook.App;
+import com.example.omstugradebook.dao.UserDao;
 import com.example.omstugradebook.model.contactwork.ContactWork;
 import com.example.omstugradebook.model.contactwork.ContactWorksTask;
 import com.example.omstugradebook.model.grade.User;
-import com.example.omstugradebook.parser.ContactWorkParserImpl;
+import com.example.omstugradebook.parser.ContactWorkParser;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -20,51 +19,78 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class ContactWorkService {
     static final String REMOTE_URL = "index.php?r=remote/read";
+
     static final String STUD_SES_ID = "STUDSESSID";
-    private static final String TAG = "Auth Logs";
+
     private static final String UP_OMGTU = "http://up.omgtu.ru/";
+
+
+    //TODO что это за кошмар вообще
+    @Inject
+    UserDao userDao;
+
+    public ContactWorkService() {
+        App.getComponent().injectContactWorkService(this);
+    }
 
     public List<ContactWork> getContactWork() {
         Document doc = tryToGetConnection(REMOTE_URL);
+
         if (doc == null) {
             return null;
         }
-        return new ContactWorkParserImpl().getContactWorks(doc);
+
+        return new ContactWorkParser().getContactWorks(doc);
     }
 
     public List<ContactWorksTask> getTaskContactWork(String path) {
         Document doc = tryToGetConnection(path);
+
         if (doc == null) {
             return null;
         }
-        return new ContactWorkParserImpl().getTasks(doc);
+
+        return new ContactWorkParser().getTasks(doc);
     }
 
     private Document tryToGetConnection(String path) {
         Document doc = null;
-        UserDaoImpl userTable = new UserDaoImpl();
-        User activeUser = userTable.getUser();
+
+        User activeUser = userDao.get();
+
         try {
+
             if (activeUser == null) {
                 return null;
             }
+
             String token = activeUser.getToken();
+
             String url = UP_OMGTU + path;
+
             doc = Jsoup.connect(url).cookie(STUD_SES_ID, token).get();
-            Log.d(TAG, "сделан запрос");
+
             if (!doc.baseUri().equals(url)) {
                 AuthService authService = new AuthService();
-                Log.d(TAG, "токен не активный");
+
                 String cookie = authService.getAuth(activeUser.getLogin(), activeUser.getPassword());
+
                 String studSesId = authService.getStudSessId(cookie);
+
                 activeUser.setToken(studSesId);
-                userTable.update(activeUser);
+
+                userDao.update(activeUser);
+
                 doc = Jsoup.connect(url).cookie(STUD_SES_ID, token).get();
+
                 if (doc == null || !doc.baseUri().equals(url)) {
                     return null;
                 }
+
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -78,19 +104,32 @@ public class ContactWorkService {
             return "Файл уже был загружен...";
         } else {
             String url = UP_OMGTU + path.trim();
+
             DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+
             request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI |
                     DownloadManager.Request.NETWORK_MOBILE);
+
             request.setTitle(fileName);
+
             request.setDescription("Downloading file");
+
             request.allowScanningByMediaScanner();
-            String cookie = STUD_SES_ID + "=" + DataBaseManager.getUserDao().getUser().getToken() + "; Path=/; Domain=.up.omgtu.ru;";
+
+            String cookie = STUD_SES_ID + "=" + userDao.get().getToken() + "; Path=/; Domain=.up.omgtu.ru;";
+
             request.addRequestHeader("Cookie", cookie);
+
             request.setMimeType(gitMimeType(fileName));
+
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+
             request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+
             DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+
             manager.enqueue(request);
+
             if (checkExistsFile(fileName)) {
                 return "Неудалось загрузить файл...";
             } else {
@@ -119,12 +158,15 @@ public class ContactWorkService {
     private boolean checkExistsFile(String fileName) {
         String filePath = Environment.getExternalStorageDirectory()
                 + "/" + Environment.DIRECTORY_DOWNLOADS + "/" + fileName;
+
         File file = new File(filePath);
+
         return file.exists();
     }
 
     private String getExtensionsByFileName(String fileName) {
         String[] strings = fileName.split("\\.");
+
         return strings[strings.length - 1];
     }
 }

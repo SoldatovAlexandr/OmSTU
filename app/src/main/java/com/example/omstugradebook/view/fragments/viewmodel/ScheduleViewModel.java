@@ -8,8 +8,10 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.omstugradebook.database.DataBaseManager;
-import com.example.omstugradebook.database.dao.ScheduleDao;
+import com.example.omstugradebook.App;
+import com.example.omstugradebook.dao.ScheduleDao;
+import com.example.omstugradebook.dao.ScheduleOwnerDao;
+import com.example.omstugradebook.dao.UserDao;
 import com.example.omstugradebook.model.grade.User;
 import com.example.omstugradebook.model.schedule.Schedule;
 import com.example.omstugradebook.model.schedule.ScheduleOwner;
@@ -25,15 +27,33 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import javax.inject.Inject;
+
 public class ScheduleViewModel extends ViewModel {
-    private static final DataCashRepository DATA_CASH_REPOSITORY = DataCashRepository.getInstance();
+    private final MutableLiveData<TimetableModel> timetableLiveData;
 
-    private final MutableLiveData<TimetableModel> timetableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Integer> infoLiveData;
 
-    private final MutableLiveData<Integer> infoLiveData = new MutableLiveData<>();
+    private final MutableLiveData<String> titleLiveData;
 
-    private final MutableLiveData<String> titleLiveData = new MutableLiveData<>();
+    @Inject
+    UserDao userDao;
 
+    @Inject
+    ScheduleDao scheduleDao;
+
+    @Inject
+    ScheduleOwnerDao scheduleOwnerDao;
+
+    public ScheduleViewModel() {
+        App.getComponent().injectScheduleViewModel(this);
+
+        timetableLiveData = new MutableLiveData<>();
+
+        infoLiveData = new MutableLiveData<>();
+
+        titleLiveData = new MutableLiveData<>();
+    }
 
     public LiveData<TimetableModel> getTimetablesLiveData() {
         return timetableLiveData;
@@ -49,64 +69,87 @@ public class ScheduleViewModel extends ViewModel {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void getSchedules() {
-        List<Schedule> cash = DATA_CASH_REPOSITORY.getScheduleStateModel().getSchedules();
-        timetableLiveData.postValue(new TimetableModel(cash));
-        SearchStateModel searchStateModel = DATA_CASH_REPOSITORY.getSearchStateModel();
-        ScheduleOwner scheduleOwner = searchStateModel.getScheduleOwner();
-        Calendar calendar = searchStateModel.getCalendar();
-        getSchedules(calendar, String.valueOf(scheduleOwner.getId()), scheduleOwner.getType(),
-                scheduleOwner.getName());
+        CompletableFuture.runAsync(() -> {
+            List<Schedule> cash = DataCashRepository.getInstance().getScheduleStateModel().getSchedules();
+
+            timetableLiveData.postValue(new TimetableModel(cash));
+
+            SearchStateModel searchStateModel = DataCashRepository.getInstance().getSearchStateModel();
+
+            Calendar calendar = searchStateModel.getCalendar();
+
+            ScheduleOwner scheduleOwner;
+
+            if (searchStateModel.getScheduleOwner() == null) {
+
+                User user = userDao.get();
+
+                String speciality = user.getStudent().getSpeciality();
+
+                scheduleOwner = scheduleOwnerDao.get(speciality);
+
+                DataCashRepository.getInstance().saveSearchStateModel(new SearchStateModel(
+                        scheduleOwner,
+                        Calendar.getInstance()));
+            } else {
+                scheduleOwner = searchStateModel.getScheduleOwner();
+            }
+            String id = String.valueOf(scheduleOwner.getId());
+
+            getSchedules(calendar, id, scheduleOwner.getType(), scheduleOwner.getName());
+        });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void getSchedules(Calendar calendar, String id, String type, String param) {
-        titleLiveData.postValue("Расписание");
-        ScheduleDao scheduleDao = DataBaseManager.getScheduleDao();
+        CompletableFuture.runAsync(() -> {
+            titleLiveData.postValue("Расписание");
 
-        int favoriteId = 0;
-        if (checkFavorite(param, scheduleDao)) {
-            ScheduleOwner scheduleOwner = scheduleDao.getFavoriteScheduleByValue(param);
-            favoriteId = scheduleOwner.getId();
-            String fId = String.valueOf(favoriteId);
-            List<Schedule> schedules = scheduleDao.readSchedulesByFavoriteId(fId);
-            timetableLiveData.postValue(new TimetableModel(schedules));
-            DATA_CASH_REPOSITORY.saveScheduleStateModel(new ScheduleStateModel(schedules));
-        }
+            int favoriteId = 0;
 
-        Calendar start = getStartCalendar(calendar);
-        Calendar finish = getFinishCalendar(start);
-        sendRequest(getDateString(start), getDateString(finish), id, type, String.valueOf(favoriteId), param);
+            if (scheduleOwnerDao.checkFavoriteSchedule(param)) {
+                ScheduleOwner scheduleOwner = scheduleOwnerDao.get(param);
+
+                favoriteId = scheduleOwner.getId();
+
+                List<Schedule> schedules = scheduleDao.getByFavoriteId(favoriteId);
+
+                timetableLiveData.postValue(new TimetableModel(schedules));
+
+                DataCashRepository.getInstance().saveScheduleStateModel(new ScheduleStateModel(schedules));
+            }
+
+            Calendar start = getStartCalendar(calendar);
+
+            Calendar finish = getFinishCalendar(start);
+
+            sendRequest(getDateString(start), getDateString(finish), id, type, String.valueOf(favoriteId), param);
+        });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void sendRequest(String start, String finish, String id, String type, String favoriteId,
                              String param) {
 
-        CompletableFuture.runAsync(() -> {
-            ScheduleService scheduleService = new ScheduleService();
-            User user = DataBaseManager.getUserDao().getUser();
-            if (user != null) {
-                sendScheduleLiveData(scheduleService, id, start, finish, type, favoriteId, param);
-            }
-        });
+        ScheduleService scheduleService = new ScheduleService();
 
-    }
+        User user = userDao.get();
 
-    private boolean checkFavorite(String param, ScheduleDao scheduleDao) {
-        for (ScheduleOwner scheduleOwner : scheduleDao.readFavoriteSchedule()) {
-            if (param.equals(scheduleOwner.getName())) {
-                return true;
-            }
+        if (user != null) {
+            sendScheduleLiveData(scheduleService, id, start, finish, type, favoriteId, param);
         }
-        return false;
     }
+
 
     private Calendar getStartCalendar(Calendar calendar) {
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 2;
+
         if (dayOfWeek == -1) {
             dayOfWeek = 6;
         }
+
         calendar.add(Calendar.DAY_OF_MONTH, -dayOfWeek);
+
         return new GregorianCalendar(calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH));
@@ -116,6 +159,7 @@ public class ScheduleViewModel extends ViewModel {
         Calendar finish = new GregorianCalendar(calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH));
+
         finish.add(Calendar.DAY_OF_MONTH, 6);
         return finish;
     }
@@ -127,26 +171,32 @@ public class ScheduleViewModel extends ViewModel {
     }
 
     private void updateDataBase(List<Schedule> schedules, String favoriteId) {
-        ScheduleDao scheduleDao = DataBaseManager.getScheduleDao();
-        scheduleDao.removeSchedulesByFavoriteId(favoriteId);
         long id = Long.parseLong(favoriteId);
+
+        scheduleDao.deleteByFavoriteId(id);
+
         for (Schedule schedule : schedules) {
             schedule.setFavoriteId(id);
         }
-        scheduleDao.insertAllSchedule(schedules);
+
+        scheduleDao.insert(schedules);
     }
 
 
     private void sendScheduleLiveData(ScheduleService scheduleService, String id, String start,
                                       String finish, String type, String favoriteId, String param) {
         List<Schedule> schedules = scheduleService.getTimetable(id, start, finish, type, 1);
+
         if (!schedules.isEmpty()) {
-            if (checkFavorite(param, DataBaseManager.getScheduleDao())) {
+            if (scheduleOwnerDao.checkFavoriteSchedule(param)) {
                 updateDataBase(schedules, favoriteId);
             }
+
             TimetableModel timetableModel = new TimetableModel(schedules);
+
             timetableLiveData.postValue(timetableModel);
-            DATA_CASH_REPOSITORY.saveScheduleStateModel(new ScheduleStateModel(schedules));
+
+            DataCashRepository.getInstance().saveScheduleStateModel(new ScheduleStateModel(schedules));
         }
     }
 }

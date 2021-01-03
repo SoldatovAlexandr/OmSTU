@@ -7,10 +7,12 @@ import java.util.Objects;
 
 public class SearchStateModel {
     private final ScheduleOwner scheduleOwner;
+
     private final Calendar calendar;
 
     public SearchStateModel(ScheduleOwner scheduleOwner, Calendar calendar) {
         this.scheduleOwner = scheduleOwner;
+
         this.calendar = calendar;
     }
 

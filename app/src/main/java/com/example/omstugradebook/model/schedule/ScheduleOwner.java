@@ -1,13 +1,18 @@
 package com.example.omstugradebook.model.schedule;
 
-import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 import java.util.Objects;
 
+@Entity
 public class ScheduleOwner {
-    private final int id;
-    private final String name;
-    private final String type;
+    @PrimaryKey
+    private int id;
+
+    private String name;
+
+    private String type;
 
     public ScheduleOwner(int id, String name, String type) {
         this.id = id;
@@ -27,6 +32,18 @@ public class ScheduleOwner {
         return type;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -41,7 +58,7 @@ public class ScheduleOwner {
     public int hashCode() {
         return Objects.hash(id, name, type);
     }
-    
+
     @Override
     public String toString() {
         return "ScheduleOwner{" +

@@ -1,13 +1,13 @@
-package com.example.omstugradebook;
-
-import com.example.omstugradebook.model.schedule.ScheduleOwner;
+package com.example.omstugradebook.model.schedule;
 
 public class ScheduleAutoCompleteModel {
     private final ScheduleOwner scheduleOwner;
+
     private final boolean isFavorite;
 
     public ScheduleAutoCompleteModel(ScheduleOwner scheduleOwner, boolean isFavorite) {
         this.scheduleOwner = scheduleOwner;
+
         this.isFavorite = isFavorite;
     }
 
@@ -18,5 +18,4 @@ public class ScheduleAutoCompleteModel {
     public boolean isFavorite() {
         return isFavorite;
     }
-
 }

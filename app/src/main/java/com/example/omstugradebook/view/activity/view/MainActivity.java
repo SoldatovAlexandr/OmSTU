@@ -3,13 +3,12 @@ package com.example.omstugradebook.view.activity.view;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.omstugradebook.R;
-import com.example.omstugradebook.view.activity.viewmodel.MainViewModel;
 import com.example.omstugradebook.view.fragments.view.AccountFragment;
 import com.example.omstugradebook.view.fragments.view.ContactWorkFragment;
 import com.example.omstugradebook.view.fragments.view.GradeFragment;
@@ -20,7 +19,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView navigation;
-    private static final int REQUEST_CODE = 1;
 
     @SuppressLint("NonConstantResourceId")
     private final BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -48,20 +46,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
-        MainViewModel mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
-        if (!mainViewModel.checkAuthActiveUser()) {
-            startLoginActivity();
-        }
+
         initNavigationMenu();
+
         loadFragment(new ScheduleFragment());
+
         navigation.setSelectedItemId(R.id.bottom_navigation_item_timetable);
     }
 
-    private void startLoginActivity() {
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivityForResult(intent, REQUEST_CODE);
-    }
 
     private void loadFragment(Fragment fragment) {
         getSupportFragmentManager().beginTransaction()
@@ -70,6 +64,21 @@ public class MainActivity extends AppCompatActivity {
 
     private void initNavigationMenu() {
         navigation = findViewById(R.id.bottom_navigation_view);
+
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            Intent intent = new Intent();
+
+            intent.setType("MAIN");
+
+            setResult(RESULT_OK, intent);
+
+            this.finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -15,9 +15,15 @@ import com.example.omstugradebook.view.activity.model.ContactWorkTasksModel;
 import java.util.concurrent.CompletableFuture;
 
 public class ContactWorkTasksViewModel extends ViewModel {
-    private final MutableLiveData<ContactWorkTasksModel> contactWorkModelLiveData = new MutableLiveData<>();
-    private final MutableLiveData<String> fileStatusLiveData = new MutableLiveData<>();
+    private final MutableLiveData<ContactWorkTasksModel> contactWorkModelLiveData;
 
+    private final MutableLiveData<String> fileStatusLiveData;
+
+    public ContactWorkTasksViewModel() {
+        contactWorkModelLiveData = new MutableLiveData<>();
+
+        fileStatusLiveData = new MutableLiveData<>();
+    }
 
     public LiveData<ContactWorkTasksModel> getContactWorkModelLiveData() {
         return contactWorkModelLiveData;
@@ -29,6 +35,7 @@ public class ContactWorkTasksViewModel extends ViewModel {
 
     public void startDownloading(ContactWorksTask task, Context context) {
         String fileName = task.getFile().trim().replaceAll(" ", "_");
+
         fileStatusLiveData.postValue(new ContactWorkService()
                 .downloadFile(task.getLink(), fileName, context));
     }

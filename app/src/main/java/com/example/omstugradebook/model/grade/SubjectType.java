@@ -6,6 +6,7 @@ public enum SubjectType {
     PRACTICE("Практики"),
     COURSE_WORK("Курсовые работы"),
     DIF_TEST("Дифференцированные зачеты");
+
     private final String textString;
 
     SubjectType(String textString) {

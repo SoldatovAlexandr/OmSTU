@@ -12,27 +12,41 @@ import com.example.omstugradebook.model.contactwork.ContactWorksTask;
 
 public class ContactWorkListViewHolder extends RecyclerView.ViewHolder {
     private final TextView comment;
+
     private final TextView teacher;
+
     private final Button file;
+
     private final TextView date;
+
     private final TextView number;
 
 
     public ContactWorkListViewHolder(@NonNull View itemView) {
         super(itemView);
+
         number = itemView.findViewById(R.id.contact_work_list_number);
+
         comment = itemView.findViewById(R.id.contact_work_list_comment);
+
         teacher = itemView.findViewById(R.id.contact_work_list_teacher);
+
         file = itemView.findViewById(R.id.contact_work_list_file);
+
         date = itemView.findViewById(R.id.contact_work_list_date);
     }
 
     public void bind(final ContactWorksTask contactWorksTask, final View.OnClickListener listener) {
         number.setText(String.valueOf(contactWorksTask.getNumber()));
+
         comment.setText(contactWorksTask.getComment());
+
         teacher.setText(contactWorksTask.getTeacher());
+
         file.setText(contactWorksTask.getFile());
+
         date.setText(contactWorksTask.getDate());
+
         file.setOnClickListener(listener);
     }
 }

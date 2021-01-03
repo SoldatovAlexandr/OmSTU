@@ -7,10 +7,12 @@ import java.util.Objects;
 
 public class GradeModel {
     private final List<Subject> subjects;
+
     private final int countTerms;
 
     public GradeModel(List<Subject> subjects, int countTerms) {
         this.subjects = subjects;
+
         this.countTerms = countTerms;
     }
 

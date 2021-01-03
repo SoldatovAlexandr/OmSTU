@@ -3,8 +3,8 @@ package com.example.omstugradebook.dto;
 import com.example.omstugradebook.model.schedule.DayOfWeek;
 import com.example.omstugradebook.model.schedule.Schedule;
 
-public class ScheduleConverter {
-    public Schedule convert(ScheduleDtoResponse response) {
+public class ScheduleMapper {
+    public Schedule map(ScheduleDtoResponse response) {
         return new Schedule(response.getAuditorium(),
                 response.getBeginLesson(),
                 response.getBuilding(),
