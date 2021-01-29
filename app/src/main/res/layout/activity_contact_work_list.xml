@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.activity.view.ContactWorkTasksActivity">
+    tools:context=".presentation.view.activity.view.ContactWorkTasksActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/contact_work_list_recycler_view"

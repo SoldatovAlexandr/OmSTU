@@ -1,7 +1,6 @@
 package com.example.omstugradebook;
 
 import android.content.Context;
-import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,13 +10,11 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.RequiresApi;
-
-import com.example.omstugradebook.dao.ScheduleDao;
-import com.example.omstugradebook.dao.ScheduleOwnerDao;
-import com.example.omstugradebook.model.schedule.ScheduleAutoCompleteModel;
-import com.example.omstugradebook.model.schedule.ScheduleOwner;
-import com.example.omstugradebook.service.ScheduleService;
+import com.example.omstugradebook.data.dao.ScheduleDao;
+import com.example.omstugradebook.data.dao.ScheduleOwnerDao;
+import com.example.omstugradebook.data.model.schedule.ScheduleAutoCompleteModel;
+import com.example.omstugradebook.data.model.schedule.ScheduleOwner;
+import com.example.omstugradebook.domain.connector.ScheduleService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +35,7 @@ public class ScheduleTypeAutoComponentAdapter extends BaseAdapter implements Fil
     @Inject
     ScheduleOwnerDao scheduleOwnerDao;
 
+    //TODO Interactor просить у него данные
     public ScheduleTypeAutoComponentAdapter(Context context, boolean hasInternet) {
         App.getComponent().injectScheduleTypeAutoComponentAdapter(this);
 
@@ -58,12 +56,10 @@ public class ScheduleTypeAutoComponentAdapter extends BaseAdapter implements Fil
         }
 
         for (ScheduleOwner scheduleOwner : scheduleOwners) {
-            if (favoriteStrings.contains(scheduleOwner.getName())) {
-                scheduleAutoCompleteModels.add(
-                        new ScheduleAutoCompleteModel(scheduleOwner, true));
-            } else {
-                scheduleAutoCompleteModels.add(
-                        new ScheduleAutoCompleteModel(scheduleOwner, false));
+            if (!scheduleOwner.getType().equals("person")) {
+                boolean isFavorite = favoriteStrings.contains(scheduleOwner.getName());
+
+                scheduleAutoCompleteModels.add(new ScheduleAutoCompleteModel(scheduleOwner, isFavorite));
             }
         }
     }
@@ -95,9 +91,22 @@ public class ScheduleTypeAutoComponentAdapter extends BaseAdapter implements Fil
                     false);
         }
 
-        ScheduleAutoCompleteModel scheduleAutoCompleteModel = getItem(position);
+        ScheduleOwner scheduleOwner;
 
-        ScheduleOwner scheduleOwner = scheduleAutoCompleteModel.getScheduleOwner();
+        boolean isFavorite = true;
+
+        try {
+            ScheduleAutoCompleteModel scheduleAutoCompleteModel = getItem(position);
+
+            scheduleOwner = scheduleAutoCompleteModel.getScheduleOwner();
+
+            isFavorite = scheduleAutoCompleteModel.isFavorite();
+
+        } catch (IndexOutOfBoundsException exception) {
+            scheduleOwner = new ScheduleOwner(0, "-", "group");
+            //todo: разобраться с этим, потому что костыль не выход
+        }
+
 
         ((TextView) convertView.findViewById(R.id.value)).setText(scheduleOwner.getName());
 
@@ -105,7 +114,7 @@ public class ScheduleTypeAutoComponentAdapter extends BaseAdapter implements Fil
 
         ImageView imageView = convertView.findViewById(R.id.favorite_image_view);
 
-        if (scheduleAutoCompleteModel.isFavorite()) {
+        if (isFavorite) {
             imageView.setImageResource(R.drawable.ic_favorite_blue);
         } else {
             imageView.setImageResource(R.drawable.ic_favorite_white);
@@ -116,6 +125,7 @@ public class ScheduleTypeAutoComponentAdapter extends BaseAdapter implements Fil
     @Override
     public Filter getFilter() {
         return new Filter() {
+
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults filterResults = new FilterResults();
@@ -131,7 +141,6 @@ public class ScheduleTypeAutoComponentAdapter extends BaseAdapter implements Fil
             }
 
 
-            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
                 CompletableFuture.runAsync(() -> {
@@ -153,3 +162,4 @@ public class ScheduleTypeAutoComponentAdapter extends BaseAdapter implements Fil
         return new ScheduleService().getScheduleOwners(param, mHasInternet);
     }
 }
+// todo: android recycler with pagination

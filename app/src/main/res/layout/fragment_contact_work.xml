@@ -5,7 +5,7 @@
     android:id="@+id/contact_work_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.fragments.view.ScheduleFragment">
+    tools:context=".presentation.view.fragments.view.ScheduleFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/contact_work_recycler_view"

@@ -33,9 +33,9 @@
 
                     <TextView
                         android:id="@+id/schedule_time_start"
-                        android:layout_marginTop="2pt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="2pt"
                         android:layout_marginEnd="16dp"
                         android:text="start"
                         android:textColor="@color/colorBlack"
@@ -87,6 +87,7 @@
                         app:layout_constraintStart_toStartOf="@+id/schedule_discipline"
                         app:layout_constraintTop_toBottomOf="@+id/schedule_group" />
 
+
                     <TextView
                         android:id="@+id/schedule_auditorium"
                         android:layout_width="wrap_content"
@@ -96,6 +97,16 @@
                         android:text="auditorium"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/schedule_group" />
+
+                    <TextView
+                        android:id="@+id/schedule_kind_of_work"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="kindOfWork"
+                        app:layout_constraintStart_toStartOf="@+id/schedule_discipline"
+                        app:layout_constraintTop_toBottomOf="@+id/schedule_lecturer" />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>

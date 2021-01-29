@@ -1,25 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fl_home"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.fragments.view.GradeFragment">
+    tools:context=".presentation.view.fragments.view.GradeFragment">
 
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefreshLayout"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:animateLayoutChanges="false">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingBottom="50dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/subject_card_view" />
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        android:paddingBottom="50dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/subject_card_view" />
 </RelativeLayout>

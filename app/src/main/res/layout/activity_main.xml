@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:scrollbarThumbHorizontal="@drawable/ic_logs"
-    tools:context=".view.activity.view.MainActivity">
+    tools:context=".presentation.view.activity.view.MainActivity">
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_view"

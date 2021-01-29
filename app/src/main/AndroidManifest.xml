@@ -17,12 +17,12 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-        <activity android:name=".view.activity.view.MainActivity" />
-        <activity android:name=".view.activity.view.SearchActivity" />
-        <activity android:name=".view.activity.view.ContactWorkTasksActivity" />
-        <activity android:name=".view.activity.view.LoginActivity" />
+        <activity android:name=".presentation.view.activity.view.MainActivity" />
+        <activity android:name=".presentation.view.activity.view.SearchActivity" />
+        <activity android:name=".presentation.view.activity.view.ContactWorkTasksActivity" />
+        <activity android:name=".presentation.view.activity.view.LoginActivity" />
         <activity
-            android:name=".view.activity.view.StartActivity">
+            android:name=".presentation.view.activity.view.StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
